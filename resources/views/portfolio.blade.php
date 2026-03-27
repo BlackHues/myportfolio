@@ -38,70 +38,59 @@
     </header>
 
     <main id="top" class="flex-1">
-        {{-- Hero --}}
-        <section id="about" class="border-b border-slate-200 bg-gradient-to-b from-white via-slate-50 to-white">
-            <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-16 lg:py-24 grid gap-12 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] items-center">
-                <div>
-                    <p class="inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700 mb-4">
-                        Full Stack Developer · Laravel · Django · React
+        {{-- Hero (dark teal style) --}}
+        <section id="about" class="border-b border-slate-900 bg-slate-950">
+            <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-16 lg:py-20 grid gap-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] items-center">
+                <div class="space-y-5">
+                    <p class="text-xs font-medium uppercase tracking-[0.25em] text-emerald-400">
+                        Hello, I'm
                     </p>
-                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight">
-                        <span class="block text-slate-700">Hello, I'm</span>
-                        <span class="mt-2 block bg-gradient-to-r from-amber-500 via-orange-400 to-amber-500 bg-clip-text text-transparent">
-                            Arjun Kumar H
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-white">
+                        <span class="block">Arjun Kumar H</span>
+                        <span class="mt-2 block text-lg sm:text-xl text-emerald-300">
+                            Full Stack Web Developer
                         </span>
                     </h1>
-                    <p class="mt-6 text-sm sm:text-base text-slate-700 leading-relaxed max-w-xl">
-                        I’m a Mechanical Engineering graduate from Younus Institute of Technology, Kannannalloor,
-                        currently pursuing my MBA at CET School of Management. I work as a Full Stack Developer,
-                        building robust web and mobile applications using PHP (Laravel), Python (Django),
-                        React.js, React Native, and Yii2.
+                    <p class="text-sm sm:text-base text-slate-300 max-w-xl leading-relaxed">
+                        I build modern, responsive web applications with Laravel, Django and React – from clean landing pages
+                        to full-featured business platforms. I focus on performance, usability, and maintainable code.
                     </p>
-                    <p class="mt-3 text-sm text-slate-500 max-w-xl">
-                        I enjoy turning complex problems into clean, scalable solutions and crafting experiences that feel fast,
-                        intuitive, and reliable.
-                    </p>
-                    <div class="mt-8 flex flex-wrap items-center gap-4">
-                        <a href="#projects" class="inline-flex items-center justify-center rounded-full bg-amber-500 px-6 py-2 text-sm font-semibold text-black shadow hover:bg-amber-400 transition">
-                            <i class="fa-solid fa-arrow-right mr-2"></i>View Projects
+                    <div class="flex flex-wrap items-center gap-4 pt-2">
+                        <a href="#contact" class="inline-flex items-center justify-center rounded-full bg-emerald-500 px-6 py-2 text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/40 hover:bg-emerald-400 transition">
+                            <i class="fa-solid fa-comments mr-2"></i>Let’s Talk
                         </a>
-                        <a href="#contact" class="inline-flex items-center justify-center rounded-full border border-slate-300 px-6 py-2 text-sm font-medium text-slate-700 hover:border-amber-400 hover:text-amber-600 transition">
-                            <i class="fa-solid fa-paper-plane mr-2"></i>Contact Me
+                        <a href="#projects" class="inline-flex items-center justify-center rounded-full border border-slate-600 px-6 py-2 text-sm font-medium text-slate-100 hover:border-emerald-400 hover:text-emerald-300 transition">
+                            <i class="fa-solid fa-briefcase mr-2"></i>View My Work
                         </a>
                     </div>
-                    <div class="mt-8 flex flex-wrap gap-3 text-xs text-slate-600">
-                        <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 border border-slate-200">
-                            <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-                            Open to internships & full-time roles
+                    <div class="flex flex-wrap gap-3 pt-4 text-xs text-slate-300">
+                        <span class="inline-flex items-center gap-2 rounded-full bg-slate-900 px-3 py-1 border border-slate-700">
+                            <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                            Open to freelance projects
+                        </span>
+                        <span class="inline-flex items-center gap-2 rounded-full bg-slate-900 px-3 py-1 border border-slate-700">
+                            <i class="fa-solid fa-indian-rupee-sign text-emerald-400"></i>
+                            Normal websites from ₹5,000 – ₹15,000
                         </span>
                     </div>
                 </div>
 
-                {{-- Photo + quick info --}}
+                {{-- Photo card --}}
                 <div class="relative">
-                    <div class="absolute -inset-1 rounded-3xl bg-gradient-to-tr from-amber-400 via-orange-400 to-yellow-300 blur-2xl opacity-50"></div>
-                    <div class="relative rounded-3xl border border-slate-200 bg-white elevate p-6 shadow-xl shadow-amber-200/60">
-                        <div class="aspect-[4/5] w-full overflow-hidden rounded-2xl bg-slate-100 flex items-center justify-center">
+                    <div class="absolute inset-0 blur-3xl bg-emerald-500/20"></div>
+                    <div class="relative mx-auto max-w-xs rounded-[2rem] bg-gradient-to-b from-slate-800 to-slate-900 p-4 shadow-2xl shadow-emerald-500/20">
+                        <div class="relative aspect-[4/5] w-full overflow-hidden rounded-[2rem] bg-slate-900 flex items-center justify-center">
                             <img
                                 src="{{ asset('images/arjun-profile.png') }}"
                                 alt="Arjun Kumar H"
                                 class="h-full w-full object-cover"
                             />
+                            <div class="pointer-events-none absolute inset-0 rounded-[2rem] ring-1 ring-emerald-400/40"></div>
                         </div>
-                        <dl class="mt-6 grid grid-cols-1 gap-3 text-xs text-slate-600">
-                            <div class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2 border border-slate-200">
-                                <dt class="text-slate-400">Current Program</dt>
-                                <dd class="font-medium text-slate-100 text-right">MBA, CET School of Management</dd>
-                            </div>
-                            <div class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2 border border-slate-200">
-                                <dt class="text-slate-400">Background</dt>
-                                <dd class="font-medium text-slate-100 text-right">B.Tech Mechanical Engg.</dd>
-                            </div>
-                            <div class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2 border border-slate-200">
-                                <dt class="text-slate-400">Location</dt>
-                                <dd class="font-medium text-slate-100 text-right">India (open to relocate/remote)</dd>
-                            </div>
-                        </dl>
+                        <div class="mt-4 space-y-1 text-xs text-slate-300">
+                            <p class="font-semibold text-slate-50">Full Stack Developer</p>
+                            <p class="text-slate-400">Laravel · Django · React · REST APIs</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -116,7 +105,10 @@
                 </h2>
                 <div class="mt-8 grid gap-6 md:grid-cols-2">
                     <article class="relative overflow-hidden rounded-2xl border border-slate-200 bg-white elevate p-6">
-                        <h3 class="text-sm font-semibold text-slate-900">Master of Business Administration (MBA)</h3>
+                        <p class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                            2023 – Present
+                        </p>
+                        <h3 class="mt-2 text-sm font-semibold text-slate-900">Master of Business Administration (MBA)</h3>
                         <p class="mt-1 text-xs text-amber-700">CET, School of Management</p>
                         <p class="mt-1 text-xs text-slate-500">Pursuing</p>
                         <p class="mt-3 text-sm text-slate-700 leading-relaxed">
@@ -126,7 +118,10 @@
                         </p>
                     </article>
                     <article class="relative overflow-hidden rounded-2xl border border-slate-200 bg-white elevate p-6">
-                        <h3 class="text-sm font-semibold text-slate-900">B.Tech in Mechanical Engineering</h3>
+                        <p class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                            2012 – 2016
+                        </p>
+                        <h3 class="mt-2 text-sm font-semibold text-slate-900">B.Tech in Mechanical Engineering</h3>
                         <p class="mt-1 text-xs text-amber-700">Younus Institute of Technology, Kannannalloor</p>
                         <p class="mt-3 text-sm text-slate-700 leading-relaxed">
                             Developed strong analytical and problem-solving skills, with exposure to core engineering concepts,
@@ -293,11 +288,15 @@
                         <ul class="mt-6 space-y-3 text-sm text-slate-700">
                             <li>
                                 <span class="text-slate-500">Email</span><br>
-                                <span class="font-medium text-slate-900">Add your email here</span>
+                                <a href="mailto:arjunh2194@gmail.com" class="font-medium text-slate-900 hover:text-emerald-600">
+                                    arjunh2194@gmail.com
+                                </a>
                             </li>
                             <li>
-                                <span class="text-slate-500">Phone</span><br>
-                                <span class="font-medium text-slate-900">Add your phone number here</span>
+                                <span class="text-slate-500">Phone / WhatsApp</span><br>
+                                <a href="https://wa.me/919995956770" target="_blank" rel="noreferrer" class="font-medium text-slate-900 hover:text-emerald-600">
+                                    +91 99959 56770
+                                </a>
                             </li>
                             <li>
                                 <span class="text-slate-500">GitHub / LinkedIn</span><br>
@@ -327,6 +326,47 @@
                                 <i class="fa-solid fa-paper-plane mr-2"></i>Send (static demo)
                             </button>
                         </form>
+                    </div>
+                </div>
+
+                {{-- Timeline --}}
+                <div class="mt-12 border-t border-slate-200 pt-8">
+                    <h3 class="text-sm font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-timeline text-emerald-500"></i>
+                        My Journey
+                    </h3>
+                    <div class="relative">
+                        <div class="absolute left-2 top-1 bottom-1 w-px bg-slate-200 hidden sm:block"></div>
+                        <ol class="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-4 sm:gap-4 text-xs sm:text-[13px] text-slate-700">
+                            <li class="relative flex items-start gap-3">
+                                <span class="hidden sm:inline-flex h-2 w-2 rounded-full bg-emerald-500 mt-1.5"></span>
+                                <div>
+                                    <p class="font-semibold text-slate-900">2010</p>
+                                    <p class="text-slate-600">SSLC Passout</p>
+                                </div>
+                            </li>
+                            <li class="relative flex items-start gap-3">
+                                <span class="hidden sm:inline-flex h-2 w-2 rounded-full bg-emerald-500 mt-1.5"></span>
+                                <div>
+                                    <p class="font-semibold text-slate-900">2012</p>
+                                    <p class="text-slate-600">12th Passout</p>
+                                </div>
+                            </li>
+                            <li class="relative flex items-start gap-3">
+                                <span class="hidden sm:inline-flex h-2 w-2 rounded-full bg-emerald-500 mt-1.5"></span>
+                                <div>
+                                    <p class="font-semibold text-slate-900">2016</p>
+                                    <p class="text-slate-600">UG / Bachelor’s Degree Passout</p>
+                                </div>
+                            </li>
+                            <li class="relative flex items-start gap-3">
+                                <span class="hidden sm:inline-flex h-2 w-2 rounded-full bg-emerald-500 mt-1.5"></span>
+                                <div>
+                                    <p class="font-semibold text-slate-900">Now</p>
+                                    <p class="text-slate-600">Currently a Developer (Freelance & Professional)</p>
+                                </div>
+                            </li>
+                        </ol>
                     </div>
                 </div>
             </div>
