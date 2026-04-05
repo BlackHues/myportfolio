@@ -115,4 +115,16 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Contact form inbox
+    |--------------------------------------------------------------------------
+    |
+    | Where contact form submissions are delivered. Defaults to MAIL_FROM_ADDRESS
+    | so the same Gmail account can send and receive.
+    |
+    */
+
+    'contact_inbox' => env('CONTACT_MAIL', env('MAIL_FROM_ADDRESS', 'hello@example.com')),
+
 ];
