@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ExpenseCategory;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -15,11 +16,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $adminEmail = (string) env('ADMIN_EMAIL', 'arjunh2194@gmail.com');
+        $adminPassword = (string) env('ADMIN_PASSWORD', 'Achu@4912');
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        User::query()->updateOrCreate(
+            ['email' => $adminEmail],
+            [
+                'name' => 'Arjun Admin',
+                'password' => $adminPassword,
+                'is_admin' => true,
+            ]
+        );
+
+        foreach (['Food', 'Rent', 'Travel', 'Utilities', 'Shopping'] as $category) {
+            ExpenseCategory::query()->firstOrCreate(['name' => $category]);
+        }
     }
 }

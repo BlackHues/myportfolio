@@ -42,7 +42,7 @@ class AdminAuthController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.visitors.index');
+        return redirect()->route('admin.dashboard');
     }
 
     public function logout(Request $request): RedirectResponse

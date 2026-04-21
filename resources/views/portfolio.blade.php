@@ -537,6 +537,83 @@
         }
         footer .text-slate-400, footer .text-slate-300 { color: #c7dedd !important; }
         footer .text-emerald-400\/80 { color: #ffe29a !important; }
+
+        .contact-shell {
+            background: linear-gradient(135deg, #ffffff 0%, #f7f9ff 100%);
+            border: 1px solid #dde6f8;
+            box-shadow: 0 20px 50px rgba(68, 86, 130, 0.14);
+        }
+        .contact-panel {
+            background: linear-gradient(145deg, #0e4f65 0%, #173b7a 52%, #4a2d82 100%);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .contact-chip {
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .contact-form-wrap {
+            border: 1px solid #e6ebf7;
+            background: #ffffff;
+        }
+        .contact-input {
+            border: 1px solid #dbe3f4;
+            background: #f8faff;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+        .contact-input:focus {
+            border-color: rgba(79, 70, 229, 0.5);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+            outline: none;
+        }
+        .site-footer {
+            margin-top: clamp(1rem, 3vw, 2rem);
+            border-top: 1px solid rgba(255, 255, 255, 0.16);
+            background: radial-gradient(circle at top left, rgba(248, 180, 0, 0.14), transparent 36%),
+                        linear-gradient(92deg, #0b3532 0%, #0e4f4a 44%, #092c2a 100%);
+        }
+        .site-footer-link {
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            background: rgba(255, 255, 255, 0.08);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .site-footer-link:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .content-section {
+            padding-block: clamp(2.5rem, 5vw, 4.75rem);
+        }
+        .section-card {
+            width: min(100% - 2rem, 1120px);
+            margin-inline: auto;
+            border-radius: 1.5rem;
+            border: 1px solid #dce6eb;
+            background: linear-gradient(180deg, #ffffff 0%, #f9fcfd 100%);
+            box-shadow: 0 16px 40px rgba(14, 38, 52, 0.08);
+            padding: clamp(1.1rem, 2.6vw, 2rem);
+        }
+        #education,
+        #experience,
+        #skills,
+        #projects,
+        #packages,
+        #contact,
+        #journey {
+            background: transparent !important;
+            border: 0 !important;
+        }
+        #journey .section-card {
+            background: linear-gradient(180deg, #ffffff 0%, #f5f9fb 100%);
+        }
+        @media (max-width: 640px) {
+            .section-card {
+                width: calc(100% - 1.25rem);
+                border-radius: 1.1rem;
+                padding: 0.95rem;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen bg-white text-slate-900 antialiased overflow-x-hidden">
@@ -667,7 +744,8 @@
         </section>
 
         {{-- Education --}}
-        <section id="education" class="bg-gradient-to-br from-violet-100/80 via-fuchsia-50/50 to-white py-14 lg:py-20">
+        <section id="education" class="content-section">
+            <div class="section-card">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 <h2 class="reveal text-xl sm:text-2xl font-semibold tracking-tight text-slate-900 flex items-center gap-2">
                     <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white shadow-lg shadow-violet-400/40">
@@ -702,10 +780,12 @@
                     </article>
                 </div>
             </div>
+            </div>
         </section>
 
         {{-- Experience --}}
-        <section id="experience" class="bg-gradient-to-br from-cyan-50/90 via-sky-50/40 to-blue-100/30 py-14 lg:py-20">
+        <section id="experience" class="content-section">
+            <div class="section-card">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 <div class="reveal flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                     <h2 class="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900 flex items-center gap-2">
@@ -752,10 +832,12 @@
                     </article>
                 </div>
             </div>
+            </div>
         </section>
 
         {{-- Skills --}}
-        <section id="skills" class="bg-gradient-to-br from-amber-50 via-orange-50/40 to-rose-50/30 py-14 lg:py-20">
+        <section id="skills" class="content-section">
+            <div class="section-card">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 <div class="reveal flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
                     <h2 class="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900 flex items-center gap-2">
@@ -812,12 +894,14 @@
                     </div>
                 </div>
             </div>
+            </div>
         </section>
 
         {{-- Projects --}}
-        <section id="projects" class="relative bg-gradient-to-br from-emerald-100/70 via-teal-50/60 to-cyan-100/40 py-14 lg:py-20 overflow-hidden">
+        <section id="projects" class="relative content-section overflow-hidden">
             <div class="pointer-events-none absolute top-0 right-0 h-64 w-64 rounded-full bg-teal-400/20 blur-3xl"></div>
             <div class="pointer-events-none absolute bottom-0 left-0 h-48 w-48 rounded-full bg-emerald-400/15 blur-3xl"></div>
+            <div class="section-card relative z-[1]">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 relative">
                 <div class="reveal flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                     <h2 class="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900 flex items-center gap-2">
@@ -934,11 +1018,13 @@
                     @endforeach
                 </div>
             </div>
+            </div>
         </section>
 
         {{-- Packages (choose a plan) --}}
-        <section id="packages" class="relative bg-gradient-to-b from-white via-indigo-50/40 to-violet-50/30 py-14 lg:py-20">
+        <section id="packages" class="relative content-section">
             <div class="soft-divider absolute bottom-0 left-0 right-0" aria-hidden="true"></div>
+            <div class="section-card relative z-[1]">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 <div class="text-center max-w-2xl mx-auto reveal">
                     <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900 flex flex-wrap items-center justify-center gap-2">
@@ -982,10 +1068,12 @@
                     @endforeach
                 </div>
             </div>
+            </div>
         </section>
 
         {{-- Contact form --}}
-        <section id="contact" class="bg-gradient-to-br from-indigo-50/80 via-violet-50/50 to-fuchsia-50/40 py-14 pb-16 lg:py-24 lg:pb-20">
+        <section id="contact" class="content-section">
+            <div class="section-card">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 <div class="text-center max-w-2xl mx-auto reveal">
                     <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900 flex flex-wrap items-center justify-center gap-2">
@@ -999,23 +1087,29 @@
                     </p>
                 </div>
 
-                <p class="mx-auto mt-6 max-w-2xl text-center text-xs text-slate-500 leading-relaxed reveal">
-                    Prefer direct contact? Same details as the form — reach out anytime. I’m on WhatsApp for quick questions. Open to full stack roles and freelance builds — Laravel, Django, React, and APIs.
-                </p>
-                <div class="mt-5 text-center reveal">
-                    <a
-                        href="https://wa.me/919995956770"
-                        target="_blank"
-                        rel="noreferrer"
-                        class="inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-400/40 hover:bg-[#20bd5a] transition"
-                    >
-                        <i class="fa-brands fa-whatsapp text-base"></i>
-                        Direct Connect on WhatsApp (+91 99959 56770)
-                    </a>
-                </div>
-
-                <div class="mt-10 max-w-2xl mx-auto reveal reveal-delay-1">
-                        <div class="rounded-3xl bg-white/95 backdrop-blur-sm p-6 sm:p-8 shadow-xl shadow-violet-200/50">
+                <div class="contact-shell reveal reveal-delay-1 mt-10 grid gap-0 overflow-hidden rounded-3xl lg:grid-cols-[1fr,1.35fr]">
+                    <div class="contact-panel px-6 py-7 sm:px-7 sm:py-8 text-slate-100">
+                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-amber-200">Fast response</p>
+                        <h3 class="mt-2 text-2xl font-semibold leading-tight text-white">Prefer direct contact first?</h3>
+                        <p class="mt-3 text-sm leading-relaxed text-slate-200/90">
+                            Share a quick overview on WhatsApp or phone, then submit the form for full project details. I usually reply the same day.
+                        </p>
+                        <div class="mt-6 space-y-3">
+                            <a href="https://wa.me/919995956770" target="_blank" rel="noreferrer" class="contact-chip inline-flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-white hover:bg-white/20 transition">
+                                <span class="inline-flex items-center gap-2"><i class="fa-brands fa-whatsapp text-base text-emerald-300"></i> WhatsApp</span>
+                                <span class="text-xs text-slate-200">+91 99959 56770</span>
+                            </a>
+                            <a href="tel:+919995956770" class="contact-chip inline-flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-white hover:bg-white/20 transition">
+                                <span class="inline-flex items-center gap-2"><i class="fa-solid fa-phone text-sm text-amber-300"></i> Call</span>
+                                <span class="text-xs text-slate-200">Mon-Sat</span>
+                            </a>
+                            <a href="mailto:arjunh2194@gmail.com" class="contact-chip inline-flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-white hover:bg-white/20 transition">
+                                <span class="inline-flex items-center gap-2"><i class="fa-solid fa-envelope text-sm text-sky-300"></i> Email</span>
+                                <span class="text-xs text-slate-200">Portfolio inquiry</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="contact-form-wrap p-6 sm:p-8">
                             @if (session('contact_success'))
                                 <div class="mb-6 rounded-2xl bg-emerald-50/95 px-4 py-4 text-sm text-emerald-900 shadow-sm shadow-emerald-900/10" role="status">
                                     <p class="font-semibold flex items-center gap-2"><i class="fa-solid fa-circle-check"></i> Inquiry sent</p>
@@ -1048,7 +1142,7 @@
                                 <div>
                                     <label for="project_type" class="block text-sm font-semibold text-slate-800 mb-2">What are you building?</label>
                                     <div class="relative">
-                                        <select name="project_type" id="project_type" required class="w-full appearance-none rounded-xl border-0 bg-slate-50/90 px-4 py-3 pr-10 text-sm text-slate-900 shadow-sm shadow-slate-200/70 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/35">
+                                        <select name="project_type" id="project_type" required class="contact-input w-full appearance-none rounded-xl px-4 py-3 pr-10 text-sm text-slate-900">
                                             <option value="" disabled {{ old('project_type') ? '' : 'selected' }}>Select category…</option>
                                             @foreach (config('contact.project_types', []) as $value => $label)
                                                 <option value="{{ $value }}" {{ old('project_type') === $value ? 'selected' : '' }}>{{ $label }}</option>
@@ -1061,17 +1155,17 @@
                                 <div class="grid gap-4 sm:grid-cols-2">
                                     <div>
                                         <label for="name" class="block text-sm font-semibold text-slate-800 mb-2">Name</label>
-                                        <input id="name" name="name" type="text" value="{{ old('name') }}" required autocomplete="name" placeholder="Your name" class="w-full rounded-xl border-0 bg-slate-50/90 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm shadow-slate-200/70 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/35">
+                                        <input id="name" name="name" type="text" value="{{ old('name') }}" required autocomplete="name" placeholder="Your name" class="contact-input w-full rounded-xl px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400">
                                     </div>
                                     <div>
                                         <label for="phone" class="block text-sm font-semibold text-slate-800 mb-2">Mobile number</label>
-                                        <input id="phone" name="phone" type="tel" value="{{ old('phone') }}" required autocomplete="tel" inputmode="tel" placeholder="+91 98765 43210" class="w-full rounded-xl border-0 bg-slate-50/90 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm shadow-slate-200/70 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/35">
+                                        <input id="phone" name="phone" type="tel" value="{{ old('phone') }}" required autocomplete="tel" inputmode="tel" placeholder="+91 98765 43210" class="contact-input w-full rounded-xl px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400">
                                     </div>
                                 </div>
 
                                 <div>
                                     <label for="message" class="block text-sm font-semibold text-slate-800 mb-2">Project details <span class="font-normal text-slate-500">(optional)</span></label>
-                                    <textarea id="message" name="message" rows="4" placeholder="Timeline, pages, references, tech preferences…" class="w-full rounded-xl border-0 bg-slate-50/90 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm shadow-slate-200/70 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/35">{{ old('message') }}</textarea>
+                                    <textarea id="message" name="message" rows="4" placeholder="Timeline, pages, references, tech preferences…" class="contact-input w-full rounded-xl px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400">{{ old('message') }}</textarea>
                                 </div>
 
                                 <button type="submit" class="w-full sm:w-auto sm:min-w-[220px] inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/35 hover:from-indigo-500 hover:to-violet-500 hover:shadow-indigo-500/45 transition-all duration-300">
@@ -1079,8 +1173,9 @@
                                     Send inquiry
                                 </button>
                             </form>
-                        </div>
+                    </div>
                 </div>
+            </div>
             </div>
         </section>
 
@@ -1099,7 +1194,8 @@
                 ['year' => '2010', 'title' => 'SSLC', 'text' => 'Schooling milestone — start of the longer climb.'],
             ];
         @endphp
-        <section id="journey" class="scroll-mt-20 bg-[#030f2b] pt-14 pb-16 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-24">
+        <section id="journey" class="scroll-mt-20 content-section">
+            <div class="section-card">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 relative">
                 <div class="pointer-events-none absolute inset-y-0 right-0 hidden w-24 border-l border-white/10 bg-[radial-gradient(circle,rgba(148,163,184,0.35)_1px,transparent_1px)] bg-[length:10px_10px] sm:block" aria-hidden="true"></div>
                 <div class="reveal reveal-delay-2">
@@ -1126,6 +1222,7 @@
                         @endforeach
                     </div>
                 </div>
+            </div>
             </div>
         </section>
     </main>
@@ -1168,21 +1265,29 @@
         </a>
     </div>
 
-    <footer class="mt-8 sm:mt-10 lg:mt-12 bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 text-slate-400">
-        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px]">
-            <p class="text-slate-400">© {{ date('Y') }} Arjun Kumar H. All rights reserved.</p>
-            <div class="flex items-center gap-1">
-                <a href="https://www.linkedin.com/in/arjunkumar21/" target="_blank" rel="noopener noreferrer" class="inline-flex h-11 w-11 items-center justify-center rounded-full text-slate-300 hover:bg-white/10 hover:text-[#0A66C2] hover:scale-110 transition-all duration-300 pointer-events-auto" aria-label="Open LinkedIn profile" title="Open LinkedIn profile">
-                    <i class="fa-brands fa-linkedin text-lg"></i>
-                </a>
-                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=arjunh2194@gmail.com&su=Portfolio%20Inquiry" target="_blank" rel="noopener noreferrer" class="inline-flex h-11 w-11 items-center justify-center rounded-full text-slate-300 hover:bg-white/10 hover:text-emerald-400 hover:scale-110 transition-all duration-300 pointer-events-auto" aria-label="Send email to arjunh2194@gmail.com" title="Send email">
-                    <i class="fa-solid fa-envelope text-lg"></i>
-                </a>
-                <a href="https://wa.me/919995956770" target="_blank" rel="noopener noreferrer" class="inline-flex h-11 w-11 items-center justify-center rounded-full text-slate-300 hover:bg-white/10 hover:text-[#25D366] hover:scale-110 transition-all duration-300 pointer-events-auto" aria-label="Open WhatsApp chat" title="Open WhatsApp chat">
-                    <i class="fa-brands fa-whatsapp text-lg"></i>
-                </a>
+    <footer class="site-footer text-slate-100">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 sm:py-9">
+            <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-sm font-semibold text-white">Arjun Kumar H</p>
+                    <p class="mt-1 text-xs text-slate-200/85">Full Stack Developer · Laravel · Django · React</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a href="https://www.linkedin.com/in/arjunkumar21/" target="_blank" rel="noopener noreferrer" class="site-footer-link inline-flex h-10 w-10 items-center justify-center rounded-full text-slate-200 hover:text-white" aria-label="Open LinkedIn profile" title="Open LinkedIn profile">
+                        <i class="fa-brands fa-linkedin text-base"></i>
+                    </a>
+                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=arjunh2194@gmail.com&su=Portfolio%20Inquiry" target="_blank" rel="noopener noreferrer" class="site-footer-link inline-flex h-10 w-10 items-center justify-center rounded-full text-slate-200 hover:text-white" aria-label="Send email to arjunh2194@gmail.com" title="Send email">
+                        <i class="fa-solid fa-envelope text-sm"></i>
+                    </a>
+                    <a href="https://wa.me/919995956770" target="_blank" rel="noopener noreferrer" class="site-footer-link inline-flex h-10 w-10 items-center justify-center rounded-full text-slate-200 hover:text-white" aria-label="Open WhatsApp chat" title="Open WhatsApp chat">
+                        <i class="fa-brands fa-whatsapp text-base"></i>
+                    </a>
+                </div>
             </div>
-            <p class="text-emerald-400/80">Built with Laravel & Tailwind CSS</p>
+            <div class="mt-6 flex flex-col gap-2 border-t border-white/15 pt-4 text-xs text-slate-200/85 sm:flex-row sm:items-center sm:justify-between">
+                <p>© {{ date('Y') }} Arjun Kumar H. All rights reserved.</p>
+                <p class="text-amber-200">Built with Laravel & Tailwind CSS</p>
+            </div>
         </div>
     </footer>
 </div>

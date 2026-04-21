@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\VisitorLogController;
 use App\Services\SitePaletteService;
@@ -36,6 +37,97 @@ Route::get('/admin/reset-password', [AdminAuthController::class, 'showResetPassw
 Route::post('/admin/reset-password', [AdminAuthController::class, 'resetPassword'])
     ->middleware('throttle:5,1')
     ->name('admin.reset-password.update');
+
+Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])
+    ->middleware('admin.auth')
+    ->name('admin.dashboard');
+Route::post('/admin/categories', [AdminDashboardController::class, 'storeCategory'])
+    ->middleware('admin.auth')
+    ->name('admin.categories.store');
+Route::put('/admin/categories/{category}', [AdminDashboardController::class, 'updateCategory'])
+    ->middleware('admin.auth')
+    ->name('admin.categories.update');
+Route::delete('/admin/categories/{category}', [AdminDashboardController::class, 'deleteCategory'])
+    ->middleware('admin.auth')
+    ->name('admin.categories.delete');
+Route::post('/admin/expenses', [AdminDashboardController::class, 'storeExpense'])
+    ->middleware('admin.auth')
+    ->name('admin.expenses.store');
+Route::put('/admin/expenses/{expense}', [AdminDashboardController::class, 'updateExpense'])
+    ->middleware('admin.auth')
+    ->name('admin.expenses.update');
+Route::delete('/admin/expenses/{expense}', [AdminDashboardController::class, 'deleteExpense'])
+    ->middleware('admin.auth')
+    ->name('admin.expenses.delete');
+Route::get('/admin/expenses/export/csv', [AdminDashboardController::class, 'exportExpensesCsv'])
+    ->middleware('admin.auth')
+    ->name('admin.expenses.export.csv');
+Route::get('/admin/expenses/export/excel', [AdminDashboardController::class, 'exportExpensesExcel'])
+    ->middleware('admin.auth')
+    ->name('admin.expenses.export.excel');
+Route::post('/admin/incomes', [AdminDashboardController::class, 'storeIncome'])
+    ->middleware('admin.auth')
+    ->name('admin.incomes.store');
+Route::put('/admin/incomes/{income}', [AdminDashboardController::class, 'updateIncome'])
+    ->middleware('admin.auth')
+    ->name('admin.incomes.update');
+Route::delete('/admin/incomes/{income}', [AdminDashboardController::class, 'deleteIncome'])
+    ->middleware('admin.auth')
+    ->name('admin.incomes.delete');
+Route::post('/admin/credit-cards', [AdminDashboardController::class, 'storeCreditCard'])
+    ->middleware('admin.auth')
+    ->name('admin.credit-cards.store');
+Route::put('/admin/credit-cards/{creditCard}', [AdminDashboardController::class, 'updateCreditCard'])
+    ->middleware('admin.auth')
+    ->name('admin.credit-cards.update');
+Route::delete('/admin/credit-cards/{creditCard}', [AdminDashboardController::class, 'deleteCreditCard'])
+    ->middleware('admin.auth')
+    ->name('admin.credit-cards.delete');
+Route::post('/admin/debit-cards', [AdminDashboardController::class, 'storeDebitCard'])
+    ->middleware('admin.auth')
+    ->name('admin.debit-cards.store');
+Route::put('/admin/debit-cards/{debitCard}', [AdminDashboardController::class, 'updateDebitCard'])
+    ->middleware('admin.auth')
+    ->name('admin.debit-cards.update');
+Route::delete('/admin/debit-cards/{debitCard}', [AdminDashboardController::class, 'deleteDebitCard'])
+    ->middleware('admin.auth')
+    ->name('admin.debit-cards.delete');
+Route::post('/admin/stocks', [AdminDashboardController::class, 'storeStock'])
+    ->middleware('admin.auth')
+    ->name('admin.stocks.store');
+Route::put('/admin/stocks/{stock}', [AdminDashboardController::class, 'updateStock'])
+    ->middleware('admin.auth')
+    ->name('admin.stocks.update');
+Route::delete('/admin/stocks/{stock}', [AdminDashboardController::class, 'deleteStock'])
+    ->middleware('admin.auth')
+    ->name('admin.stocks.delete');
+Route::post('/admin/savings-adjustments', [AdminDashboardController::class, 'storeSavingsAdjustment'])
+    ->middleware('admin.auth')
+    ->name('admin.savings-adjustments.store');
+Route::put('/admin/savings-adjustments/{adjustment}', [AdminDashboardController::class, 'updateSavingsAdjustment'])
+    ->middleware('admin.auth')
+    ->name('admin.savings-adjustments.update');
+Route::delete('/admin/savings-adjustments/{adjustment}', [AdminDashboardController::class, 'deleteSavingsAdjustment'])
+    ->middleware('admin.auth')
+    ->name('admin.savings-adjustments.delete');
+Route::post('/admin/net-worth', [AdminDashboardController::class, 'storeNetWorth'])
+    ->middleware('admin.auth')
+    ->name('admin.net-worth.store');
+Route::put('/admin/net-worth/{entry}', [AdminDashboardController::class, 'updateNetWorth'])
+    ->middleware('admin.auth')
+    ->name('admin.net-worth.update');
+Route::delete('/admin/net-worth/{entry}', [AdminDashboardController::class, 'deleteNetWorth'])
+    ->middleware('admin.auth')
+    ->name('admin.net-worth.delete');
+Route::post('/admin/weight-logs', [AdminDashboardController::class, 'storeWeightLog'])
+    ->middleware('admin.auth')
+    ->name('admin.weight-logs.store');
+Route::put('/admin/weight-logs/{weightLog}', [AdminDashboardController::class, 'updateWeightLog'])
+    ->middleware('admin.auth')
+    ->name('admin.weight-logs.update');
+Route::delete('/admin/weight-logs/{weightLog}', [AdminDashboardController::class, 'deleteWeightLog'])
+    ->middleware('admin.auth')
+    ->name('admin.weight-logs.delete');
 
 Route::get('/admin/visitors', [VisitorLogController::class, 'index'])
     ->middleware('admin.auth')
