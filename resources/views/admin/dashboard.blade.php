@@ -1870,16 +1870,25 @@
 
     let todoSyncTimer = null;
 
+    function sanitizeTodoForSync(todo, index) {
+        const rawTitle = String(todo?.title ?? '').trim();
+        const title = rawTitle ? rawTitle.slice(0, 150) : 'Untitled task';
+        const rawDueDate = typeof todo?.dueDate === 'string' ? todo.dueDate.trim() : '';
+        const dueDate = /^\d{4}-\d{2}-\d{2}$/.test(rawDueDate) ? rawDueDate : null;
+
+        return {
+            title,
+            status: ['incomplete', 'completed', 'dropped'].includes(todo?.status) ? todo.status : 'incomplete',
+            pinned: Boolean(todo?.pinned),
+            dueDate,
+            createdAt: Number.isFinite(todo?.createdAt) ? Number(todo.createdAt) : Date.now(),
+            order: Number.isFinite(todo?.order) ? Number(todo.order) : (index + 1),
+        };
+    }
+
     async function syncTodosToServer() {
         const payload = {
-            todos: todos.map((todo, index) => ({
-                title: String(todo.title ?? '').trim(),
-                status: ['incomplete', 'completed', 'dropped'].includes(todo.status) ? todo.status : 'incomplete',
-                pinned: Boolean(todo.pinned),
-                dueDate: todo.dueDate || null,
-                createdAt: Number.isFinite(todo.createdAt) ? Number(todo.createdAt) : Date.now(),
-                order: Number.isFinite(todo.order) ? Number(todo.order) : (index + 1),
-            })),
+            todos: todos.map((todo, index) => sanitizeTodoForSync(todo, index)),
         };
 
         const response = await fetch(todoSyncUrl, {
@@ -1894,10 +1903,16 @@
         });
 
         if (!response.ok) {
-            throw new Error(`Todo sync failed: ${response.status}`);
+            const bodyText = await response.text();
+            throw new Error(`Todo sync failed (${response.status}): ${bodyText.slice(0, 220)}`);
         }
 
-        const data = await response.json();
+        let data = null;
+        try {
+            data = await response.json();
+        } catch (_error) {
+            throw new Error('Todo sync response was not valid JSON.');
+        }
         if (Array.isArray(data.todos)) {
             todos = data.todos.map((todo) => ({
                 id: todo.id ?? `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -1916,8 +1931,9 @@
             window.clearTimeout(todoSyncTimer);
         }
         todoSyncTimer = window.setTimeout(() => {
-            syncTodosToServer().catch(() => {
-                window.alert('Unable to sync todos right now. Please refresh and try again.');
+            syncTodosToServer().catch((error) => {
+                const message = error instanceof Error ? error.message : 'Unknown sync error';
+                window.alert(`Unable to sync todos right now. ${message}`);
             });
         }, 180);
     }

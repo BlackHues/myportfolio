@@ -13,6 +13,11 @@ class EnsureAdminAuthenticated
         $user = $request->user();
 
         if (!$user || !$user->is_admin) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Unauthenticated admin session.',
+                ], 401);
+            }
             return redirect()->route('admin.login');
         }
 

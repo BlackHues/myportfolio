@@ -199,10 +199,10 @@ class AdminDashboardController extends Controller
     {
         $validated = $request->validate([
             'todos' => ['array', 'max:500'],
-            'todos.*.title' => ['required', 'string', 'max:150'],
+            'todos.*.title' => ['required', 'string', 'max:1000'],
             'todos.*.status' => ['required', 'in:incomplete,completed,dropped'],
             'todos.*.pinned' => ['nullable', 'boolean'],
-            'todos.*.dueDate' => ['nullable', 'date'],
+            'todos.*.dueDate' => ['nullable', 'date_format:Y-m-d'],
             'todos.*.createdAt' => ['nullable', 'integer', 'min:1'],
             'todos.*.order' => ['nullable', 'integer', 'min:0'],
         ]);
@@ -219,9 +219,13 @@ class AdminDashboardController extends Controller
 
             $now = now();
             $rows = $inputTodos->values()->map(static function (array $todo, int $index) use ($userId, $now): array {
+                $title = trim((string) ($todo['title'] ?? ''));
+                if ($title === '') {
+                    $title = 'Untitled task';
+                }
                 return [
                     'user_id' => $userId,
-                    'title' => (string) $todo['title'],
+                    'title' => mb_substr($title, 0, 150),
                     'status' => (string) $todo['status'],
                     'is_pinned' => (bool) ($todo['pinned'] ?? false),
                     'due_date' => isset($todo['dueDate']) && $todo['dueDate'] !== '' ? $todo['dueDate'] : null,
