@@ -223,6 +223,8 @@ class AdminDashboardController extends Controller
                 if ($title === '') {
                     $title = 'Untitled task';
                 }
+                $safeOrder = (int) ($todo['order'] ?? ($index + 1));
+                $safeOrder = max(0, min($safeOrder, 4294967295));
                 return [
                     'user_id' => $userId,
                     'title' => mb_substr($title, 0, 150),
@@ -230,7 +232,7 @@ class AdminDashboardController extends Controller
                     'is_pinned' => (bool) ($todo['pinned'] ?? false),
                     'due_date' => isset($todo['dueDate']) && $todo['dueDate'] !== '' ? $todo['dueDate'] : null,
                     'created_at_ms' => (int) ($todo['createdAt'] ?? now()->valueOf()),
-                    'order_index' => (int) ($todo['order'] ?? $index + 1),
+                    'order_index' => $safeOrder,
                     'created_at' => $now,
                     'updated_at' => $now,
                 ];

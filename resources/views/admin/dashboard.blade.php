@@ -1887,8 +1887,23 @@
     }
 
     async function syncTodosToServer() {
+        const normalizedTodos = todos
+            .map((todo, index) => sanitizeTodoForSync(todo, index))
+            .sort((a, b) => {
+                const aOrder = Number.isFinite(a.order) ? a.order : 0;
+                const bOrder = Number.isFinite(b.order) ? b.order : 0;
+                if (aOrder !== bOrder) {
+                    return aOrder - bOrder;
+                }
+                return a.createdAt - b.createdAt;
+            })
+            .map((todo, index) => ({
+                ...todo,
+                order: index + 1,
+            }));
+
         const payload = {
-            todos: todos.map((todo, index) => sanitizeTodoForSync(todo, index)),
+            todos: normalizedTodos,
         };
 
         const response = await fetch(todoSyncUrl, {
