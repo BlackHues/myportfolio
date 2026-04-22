@@ -480,7 +480,24 @@
     .weight-calorie-chart-wrap {
         height: 240px;
     }
+    .expense-pie-wrap {
+        width: min(100%, 29rem);
+        height: min(100%, 29rem);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 0.25rem;
+        box-shadow: 0 24px 30px rgba(15, 23, 42, 0.28);
+    }
+    .expense-pie-wrap canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
     @media (max-width: 640px) {
+        .expense-pie-wrap {
+            width: min(100%, 20rem);
+            height: min(100%, 20rem);
+            padding: 0.2rem;
+        }
         .weight-progress-chart-wrap {
             height: 210px;
         }
@@ -505,6 +522,9 @@
         </button>
         <button type="button" class="admin-side-icon open-modal" data-modal="debitCardCreateModal" title="Add Debit Card">
             <i class="fa-solid fa-building-columns"></i>
+        </button>
+        <button type="button" class="admin-side-icon open-modal" data-modal="cashBalanceEditModal" title="Edit cash in hand">
+            <i class="fa-solid fa-money-bill-wave"></i>
         </button>
         <button type="button" class="admin-side-icon open-modal" data-modal="stockCreateModal" title="Add Stock">
             <i class="fa-solid fa-chart-column"></i>
@@ -605,8 +625,12 @@
                     <p class="text-xl font-semibold mt-1 text-emerald-700">Rs {{ number_format($totalIncome, 2) }}</p>
                     <p class="text-xs uppercase text-slate-500 mt-3">Bank savings balance</p>
                     <p class="text-base font-semibold mt-1 text-indigo-700">Rs {{ number_format($totalDebitBalance, 2) }}</p>
-                    <p class="text-xs uppercase text-slate-500 mt-3">Cash in hand balance</p>
+                    <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+                        <p class="text-xs uppercase text-slate-500">Cash in hand balance</p>
+                        <button type="button" class="card-action-btn open-modal" data-modal="cashBalanceEditModal">Edit</button>
+                    </div>
                     <p class="text-base font-semibold mt-1 text-indigo-700">Rs {{ number_format($totalCashInHand, 2) }}</p>
+                    <p class="text-[11px] text-slate-500 mt-1">Updates when you add income or expense as cash; use Edit to set or reconcile the balance.</p>
                     <p class="text-xs uppercase text-slate-500 mt-3">Savings adjustment</p>
                     <p class="text-base font-semibold mt-1 {{ $totalSavingsAdjustment >= 0 ? 'text-emerald-700' : 'text-rose-700' }}">
                         Rs {{ number_format($totalSavingsAdjustment, 2) }}
@@ -617,7 +641,7 @@
                     </p>
                 </div>
                 <div class="hero-card p-4">
-                    <div class="mx-auto w-40 h-40 sm:w-44 sm:h-44 rounded-full bg-white/10 p-2 shadow-2xl">
+                    <div class="expense-pie-wrap mx-auto">
                         <canvas id="pieChart" class="w-full h-full"></canvas>
                     </div>
                     <div id="pieLegend" class="mt-4 w-full space-y-2 max-h-40 overflow-auto pr-1"></div>
@@ -876,15 +900,29 @@
     </section>
 
     <section class="rounded-xl bg-white p-5 mt-6 panel">
-        <h2 class="text-lg font-semibold">Net Worth Trend ({{ $netWorthMonthlyTrend['year'] }})</h2>
-        <p class="text-sm text-slate-500 mt-1">Monthly net worth only: hologram bar + linear line.</p>
+        <h2 class="text-lg font-semibold">Net worth analysis ({{ $netWorthMonthlyTrend['year'] }})</h2>
+        <p class="text-sm text-slate-500 mt-1">Built only from your income and expense records. Solid bars are closed months (actual). Lighter bars are forecast. The current month blends what you logged so far with a projected finish. The line uses actual history through the last closed month, then extends with those monthly figures. Change the year with the filter above and click Apply.</p>
+        @php($fc = $netWorthMonthlyTrend['forecast'] ?? [])
+        <div class="mt-4 grid gap-3 sm:grid-cols-2 rounded-xl border border-slate-200 bg-slate-50/80 p-4">
+            <div>
+                <p class="text-[11px] font-semibold uppercase text-slate-500">This month (forecast)</p>
+                <p class="text-lg font-semibold text-indigo-800 mt-1">{{ $fc['this_month_label'] ?? '' }}</p>
+                <p class="text-xl font-semibold mt-0.5 {{ ($fc['this_month_rs'] ?? 0) >= 0 ? 'text-emerald-700' : 'text-rose-700' }}">Rs {{ number_format((float) ($fc['this_month_rs'] ?? 0), 2) }}</p>
+            </div>
+            <div>
+                <p class="text-[11px] font-semibold uppercase text-slate-500">Next month (forecast)</p>
+                <p class="text-lg font-semibold text-indigo-800 mt-1">{{ $fc['next_month_label'] ?? '' }}</p>
+                <p class="text-xl font-semibold mt-0.5 {{ ($fc['next_month_rs'] ?? 0) >= 0 ? 'text-emerald-700' : 'text-rose-700' }}">Rs {{ number_format((float) ($fc['next_month_rs'] ?? 0), 2) }}</p>
+            </div>
+            <p class="text-xs text-slate-600 sm:col-span-2">{{ $fc['confidence_note'] ?? '' }} Avg monthly net used in forecasts: Rs {{ number_format((float) ($fc['avg_monthly_net_rs'] ?? 0), 2) }}.</p>
+        </div>
         <div class="grid md:grid-cols-2 gap-3 mt-4">
             <div class="rounded-xl border border-indigo-100 bg-gradient-to-br from-indigo-50 via-sky-50 to-cyan-50 p-3 shadow-sm">
-                <p class="text-xs uppercase tracking-wide text-slate-600 mb-2">Net Worth Bar (X / Y)</p>
+                <p class="text-xs uppercase tracking-wide text-slate-600 mb-2">Monthly net (income − expense, incl. forecast)</p>
                 <canvas id="netWorthBarChart" height="140"></canvas>
             </div>
             <div class="rounded-xl border border-teal-100 bg-gradient-to-br from-emerald-50 via-cyan-50 to-blue-50 p-3 shadow-sm">
-                <p class="text-xs uppercase tracking-wide text-slate-600 mb-2">Linear Net Worth Trend</p>
+                <p class="text-xs uppercase tracking-wide text-slate-600 mb-2">Cumulative flow (actual + projected)</p>
                 <canvas id="netWorthLineChart" height="140"></canvas>
             </div>
         </div>
@@ -893,19 +931,56 @@
                 <thead>
                 <tr>
                     <th class="text-left">Month</th>
-                    <th class="text-left">Net Worth</th>
+                    <th class="text-left">Monthly net</th>
+                    <th class="text-left">Type</th>
+                    <th class="text-left">Cumulative</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach ($netWorthMonthlyTrend['labels'] as $idx => $monthLabel)
-                    @php($value = $netWorthMonthlyTrend['values'][$idx] ?? null)
+                    @php($monthly = $netWorthMonthlyTrend['monthly_net'][$idx] ?? 0)
+                    @php($cumulative = $netWorthMonthlyTrend['cumulative_flow'][$idx] ?? 0)
+                    @php($kind = $netWorthMonthlyTrend['monthly_kinds'][$idx] ?? 'actual')
+                    @php($kindLabel = $kind === 'blend' ? 'Blend' : ($kind === 'forecast' ? 'Forecast' : 'Actual'))
                     <tr>
                         <td class="font-medium text-slate-800">{{ $monthLabel }}</td>
-                        <td class="whitespace-nowrap font-semibold {{ ($value ?? 0) >= 0 ? 'text-cyan-700' : 'text-rose-700' }}">
-                            {{ $value === null ? '-' : 'Rs ' . number_format((float) $value, 2) }}
+                        <td class="whitespace-nowrap font-semibold {{ (float) $monthly >= 0 ? 'text-cyan-700' : 'text-rose-700' }}">
+                            Rs {{ number_format((float) $monthly, 2) }}
+                        </td>
+                        <td class="text-xs text-slate-600">{{ $kindLabel }}</td>
+                        <td class="whitespace-nowrap font-semibold {{ (float) $cumulative >= 0 ? 'text-cyan-700' : 'text-rose-700' }}">
+                            Rs {{ number_format((float) $cumulative, 2) }}
                         </td>
                     </tr>
                 @endforeach
+                </tbody>
+            </table>
+        </div>
+        <h3 class="text-sm font-semibold text-slate-800 mt-6">By calendar year (all-time)</h3>
+        <p class="text-xs text-slate-500 mt-1">Totals from every income and expense row grouped by year.</p>
+        <div class="history-table-wrap mt-3 overflow-x-auto">
+            <table class="history-table">
+                <thead>
+                <tr>
+                    <th class="text-left">Year</th>
+                    <th class="text-left">Income</th>
+                    <th class="text-left">Expense</th>
+                    <th class="text-left">Net</th>
+                </tr>
+                </thead>
+                <tbody>
+                @forelse ($netWorthEntries as $row)
+                    <tr>
+                        <td class="font-medium text-slate-800">{{ $row['year'] }}</td>
+                        <td class="whitespace-nowrap text-emerald-700 font-semibold">Rs {{ number_format((float) $row['income'], 2) }}</td>
+                        <td class="whitespace-nowrap text-rose-700 font-semibold">Rs {{ number_format((float) $row['expense'], 2) }}</td>
+                        <td class="whitespace-nowrap font-semibold {{ (float) $row['net'] >= 0 ? 'text-cyan-700' : 'text-rose-700' }}">
+                            Rs {{ number_format((float) $row['net'], 2) }}
+                        </td>
+                    </tr>
+                @empty
+                    <tr><td colspan="4" class="text-center px-3 py-6 text-slate-500">No income or expense data yet.</td></tr>
+                @endforelse
                 </tbody>
             </table>
         </div>
@@ -1290,6 +1365,20 @@
     </form>
 </dialog>
 
+<dialog id="cashBalanceEditModal" class="app-modal">
+    <div class="flex items-center justify-between mb-3">
+        <h3 class="text-base font-semibold"><span class="icon-chip mr-2"><i class="fa-solid fa-money-bill-wave text-xs"></i></span>Cash in hand</h3>
+        <button type="button" class="action-icon-btn close-modal"><i class="fa-solid fa-xmark text-xs"></i></button>
+    </div>
+    <p class="text-sm text-slate-600 mb-3">Set the current cash balance (same idea as editing a bank card balance). Cash income and cash expenses will move this amount automatically.</p>
+    <form method="post" action="{{ route('admin.cash-balance.update') }}" class="grid gap-3">
+        @csrf
+        @method('put')
+        <input type="number" name="current_balance" step="0.01" required value="{{ $cashBalance !== null ? number_format((float) $cashBalance->current_balance, 2, '.', '') : '0' }}" placeholder="Cash balance (Rs)" class="soft-input rounded-lg px-3 py-2 text-sm">
+        <button type="submit" class="primary-btn success-btn px-4 py-2 text-sm">Save balance</button>
+    </form>
+</dialog>
+
 <dialog id="weightLogCreateModal" class="app-modal">
     <div class="flex items-center justify-between mb-3">
         <h3 class="text-base font-semibold"><span class="icon-chip mr-2"><i class="fa-solid fa-weight-scale text-xs"></i></span>Add Daily Weight Entry</h3>
@@ -1387,7 +1476,6 @@
     const pieLegend = document.getElementById('pieLegend');
     const openModalButtons = document.querySelectorAll('.open-modal');
     const closeModalButtons = document.querySelectorAll('.close-modal');
-    const netWorthEntries = @json($netWorthEntries);
     const netWorthMonthlyTrend = @json($netWorthMonthlyTrend);
     const weightTrend = @json($weightTrend);
     const weightGoalKg = 75;
@@ -1506,17 +1594,70 @@
         }
 
         const ctx = pieChart.getContext('2d');
+        const depthColors = ['#075985', '#0f766e', '#b45309', '#be123c', '#4338ca', '#047857', '#7e22ce'];
         const shadowPlugin = {
             id: 'pieShadowDepth',
+            beforeDraw(chart) {
+                const dataset = chart.data.datasets?.[0];
+                const meta = chart.getDatasetMeta(0);
+                if (!dataset || !meta || !meta.data) {
+                    return;
+                }
+
+                const context = chart.ctx;
+                const slices = meta.data;
+                const colors = dataset.backgroundColor || [];
+
+                context.save();
+                slices.forEach((arc, index) => {
+                    const props = arc.getProps(['x', 'y', 'startAngle', 'endAngle', 'outerRadius', 'innerRadius'], true);
+                    context.beginPath();
+                    context.fillStyle = depthColors[index % depthColors.length] || colors[index % colors.length] || '#334155';
+                    context.arc(props.x, props.y + 8, props.outerRadius, props.startAngle, props.endAngle);
+                    context.arc(props.x, props.y + 8, props.innerRadius, props.endAngle, props.startAngle, true);
+                    context.closePath();
+                    context.globalAlpha = 0.55;
+                    context.fill();
+                });
+                context.restore();
+            },
             beforeDatasetDraw(chart) {
                 const context = chart.ctx;
                 context.save();
-                context.shadowColor = 'rgba(15, 23, 42, 0.35)';
-                context.shadowBlur = 18;
-                context.shadowOffsetY = 8;
+                context.shadowColor = 'rgba(15, 23, 42, 0.5)';
+                context.shadowBlur = 22;
+                context.shadowOffsetY = 10;
             },
             afterDatasetDraw(chart) {
-                chart.ctx.restore();
+                const context = chart.ctx;
+                context.restore();
+
+                // Soft top highlight makes slices appear more raised.
+                const meta = chart.getDatasetMeta(0);
+                if (!meta || !meta.data || meta.data.length === 0) {
+                    return;
+                }
+                const firstArc = meta.data[0];
+                const props = firstArc.getProps(['x', 'y', 'outerRadius'], true);
+                const light = context.createRadialGradient(
+                    props.x - props.outerRadius * 0.45,
+                    props.y - props.outerRadius * 0.55,
+                    8,
+                    props.x,
+                    props.y,
+                    props.outerRadius
+                );
+                light.addColorStop(0, 'rgba(255, 255, 255, 0.38)');
+                light.addColorStop(0.45, 'rgba(255, 255, 255, 0.12)');
+                light.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+                context.save();
+                context.beginPath();
+                context.arc(props.x, props.y, props.outerRadius, 0, Math.PI * 2);
+                context.closePath();
+                context.fillStyle = light;
+                context.fill();
+                context.restore();
             },
         };
 
@@ -1535,7 +1676,12 @@
                 ],
             },
             options: {
+                maintainAspectRatio: false,
+                radius: '97%',
                 cutout: '44%',
+                layout: {
+                    padding: 2,
+                },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
@@ -1746,10 +1892,26 @@
     bindMealCalorieTotals();
 
     function renderNetWorthCharts() {
-        const labels = Array.isArray(netWorthMonthlyTrend?.labels) ? netWorthMonthlyTrend.labels : netWorthEntries.map((item) => item.year).reverse();
-        const netSeries = Array.isArray(netWorthMonthlyTrend?.values)
-            ? netWorthMonthlyTrend.values.map((value) => (value === null ? null : Number(value)))
-            : netWorthEntries.map((item) => Number(item.net)).reverse();
+        const labels = Array.isArray(netWorthMonthlyTrend?.labels) ? netWorthMonthlyTrend.labels : [];
+        const monthlyNet = Array.isArray(netWorthMonthlyTrend?.monthly_net)
+            ? netWorthMonthlyTrend.monthly_net.map((value) => Number(value))
+            : [];
+        const monthlyKinds = Array.isArray(netWorthMonthlyTrend?.monthly_kinds)
+            ? netWorthMonthlyTrend.monthly_kinds
+            : [];
+        const cumulativeFlow = Array.isArray(netWorthMonthlyTrend?.cumulative_flow)
+            ? netWorthMonthlyTrend.cumulative_flow.map((value) => Number(value))
+            : [];
+        const barColors = monthlyNet.map((_, i) => {
+            const k = monthlyKinds[i] || 'actual';
+            if (k === 'forecast') {
+                return 'rgba(148, 163, 184, 0.55)';
+            }
+            if (k === 'blend') {
+                return 'rgba(56, 189, 248, 0.72)';
+            }
+            return 'rgba(14, 165, 233, 0.88)';
+        });
 
         const lineEl = document.getElementById('netWorthLineChart');
         const barEl = document.getElementById('netWorthBarChart');
@@ -1763,8 +1925,8 @@
                 labels,
                 datasets: [
                     {
-                        label: 'Net Worth',
-                        data: netSeries,
+                        label: 'Cumulative (Rs)',
+                        data: cumulativeFlow,
                         borderColor: '#0891b2',
                         backgroundColor: 'rgba(8,145,178,0.2)',
                         fill: true,
@@ -1778,6 +1940,14 @@
                 responsive: true,
                 plugins: {
                     legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label(ctx) {
+                                const v = Number(ctx.parsed?.y ?? 0);
+                                return `Rs ${v.toLocaleString()}`;
+                            },
+                        },
+                    },
                 },
                 scales: {
                     x: {
@@ -1785,6 +1955,7 @@
                     },
                     y: {
                         grid: { color: 'rgba(148,163,184,0.2)' },
+                        title: { display: true, text: 'Rs (cumulative)' },
                     },
                 },
             },
@@ -1795,7 +1966,13 @@
             data: {
                 labels,
                 datasets: [
-                    { label: 'Net Worth', data: netSeries, backgroundColor: 'rgba(56,189,248,0.65)', borderColor: '#0284c7', borderWidth: 1.2 },
+                    {
+                        label: 'Monthly net (Rs)',
+                        data: monthlyNet,
+                        backgroundColor: barColors,
+                        borderColor: '#0284c7',
+                        borderWidth: 1.2,
+                    },
                 ],
             },
             options: {
@@ -1806,7 +1983,15 @@
                     },
                 },
                 plugins: {
-                    legend: { position: 'bottom' },
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label(ctx) {
+                                const v = Number(ctx.parsed?.y ?? 0);
+                                return `Rs ${v.toLocaleString()}`;
+                            },
+                        },
+                    },
                 },
                 scales: {
                     x: {
@@ -1815,7 +2000,7 @@
                     },
                     y: {
                         grid: { color: 'rgba(148,163,184,0.2)' },
-                        title: { display: true, text: 'Amount (Rs)' },
+                        title: { display: true, text: 'Rs (this month)' },
                     },
                 },
             },

@@ -92,6 +92,9 @@ Route::put('/admin/debit-cards/{debitCard}', [AdminDashboardController::class, '
 Route::delete('/admin/debit-cards/{debitCard}', [AdminDashboardController::class, 'deleteDebitCard'])
     ->middleware('admin.auth')
     ->name('admin.debit-cards.delete');
+Route::put('/admin/cash-balance', [AdminDashboardController::class, 'updateCashBalance'])
+    ->middleware('admin.auth')
+    ->name('admin.cash-balance.update');
 Route::post('/admin/stocks', [AdminDashboardController::class, 'storeStock'])
     ->middleware('admin.auth')
     ->name('admin.stocks.store');

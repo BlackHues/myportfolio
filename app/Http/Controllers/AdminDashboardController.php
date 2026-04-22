@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\Income;
+use App\Models\CashBalance;
 use App\Models\CreditCard;
 use App\Models\DebitCard;
 use App\Models\NetWorthEntry;
@@ -52,9 +53,8 @@ class AdminDashboardController extends Controller
         $incomeQuery = Income::query()
             ->with(['debitCard', 'creditCard'])
             ->whereBetween('received_on', [$startDate->toDateString(), $endDate->toDateString()]);
-        $cashIncomeTotal = (clone $incomeQuery)->where('payment_channel', 'cash')->sum('amount');
-        $cashExpenseTotal = (clone $expenseQuery)->where('payment_channel', 'cash')->sum('amount');
-        $totalCashInHand = (float) $cashIncomeTotal - (float) $cashExpenseTotal;
+        $cashBalance = CashBalance::query()->first();
+        $totalCashInHand = $cashBalance ? (float) $cashBalance->current_balance : 0.0;
         $totalIncome = (clone $incomeQuery)->sum('amount');
         $incomes = (clone $incomeQuery)
             ->latest('received_on')
@@ -139,11 +139,7 @@ class AdminDashboardController extends Controller
                 'net' => $income - $expense,
             ];
         });
-        $netWorthMonthlyTrend = [
-            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            'values' => [387.62, -4488.07, -26686.01, -32450.63, -32450.63, null, null, null, null, null, null, null],
-            'year' => $selectedYear,
-        ];
+        $netWorthMonthlyTrend = $this->buildNetWorthMonthlyAnalysis($selectedYear);
 
         return view('admin.dashboard', [
             'period' => $period,
@@ -159,6 +155,7 @@ class AdminDashboardController extends Controller
             'totalCreditLimit' => (float) $totalCreditLimit,
             'totalDebitBalance' => (float) $totalDebitBalance,
             'totalCashInHand' => $totalCashInHand,
+            'cashBalance' => $cashBalance,
             'totalStockValue' => (float) $totalStockValue,
             'totalSavingsAdjustment' => (float) $totalSavingsAdjustment,
             'effectiveExpense' => $effectiveExpense,
@@ -671,6 +668,26 @@ class AdminDashboardController extends Controller
         return back()->with('status', 'Weight entry deleted.');
     }
 
+    public function updateCashBalance(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'current_balance' => ['required', 'numeric'],
+        ]);
+
+        DB::transaction(function () use ($data): void {
+            $row = CashBalance::query()->lockForUpdate()->first();
+            if (!$row) {
+                CashBalance::query()->create(['current_balance' => $data['current_balance']]);
+
+                return;
+            }
+            $row->current_balance = $data['current_balance'];
+            $row->save();
+        });
+
+        return back()->with('status', 'Cash in hand balance updated.');
+    }
+
     private function normalizeAccountLinkData(array $data): array
     {
         $channel = $data['payment_channel'] ?? 'cash';
@@ -695,6 +712,10 @@ class AdminDashboardController extends Controller
         if ($expense->payment_channel === 'debit_card' && $expense->debit_card_id) {
             $this->adjustDebitBalance((int) $expense->debit_card_id, -$amount);
         }
+
+        if ($expense->payment_channel === 'cash') {
+            $this->adjustCashBalance(-$amount);
+        }
     }
 
     private function revertExpenseImpact(Expense $expense): void
@@ -710,6 +731,10 @@ class AdminDashboardController extends Controller
 
         if ($expense->payment_channel === 'debit_card' && $expense->debit_card_id) {
             $this->adjustDebitBalance((int) $expense->debit_card_id, $amount);
+        }
+
+        if ($expense->payment_channel === 'cash') {
+            $this->adjustCashBalance($amount);
         }
     }
 
@@ -727,6 +752,10 @@ class AdminDashboardController extends Controller
         if ($income->payment_channel === 'credit_card' && $income->credit_card_id) {
             $this->adjustCreditUsedAmount((int) $income->credit_card_id, -$amount);
         }
+
+        if ($income->payment_channel === 'cash') {
+            $this->adjustCashBalance($amount);
+        }
     }
 
     private function revertIncomeImpact(Income $income): void
@@ -743,6 +772,23 @@ class AdminDashboardController extends Controller
         if ($income->payment_channel === 'credit_card' && $income->credit_card_id) {
             $this->adjustCreditUsedAmount((int) $income->credit_card_id, $amount);
         }
+
+        if ($income->payment_channel === 'cash') {
+            $this->adjustCashBalance(-$amount);
+        }
+    }
+
+    private function adjustCashBalance(float $delta): void
+    {
+        $row = CashBalance::query()->lockForUpdate()->first();
+        if (!$row) {
+            CashBalance::query()->create(['current_balance' => $delta]);
+
+            return;
+        }
+
+        $row->current_balance = (float) $row->current_balance + $delta;
+        $row->save();
     }
 
     private function adjustDebitBalance(int $debitCardId, float $delta): void
@@ -786,6 +832,288 @@ class AdminDashboardController extends Controller
     {
         return Expense::query()
             ->whereBetween('spent_on', [$startDate->toDateString(), $endDate->toDateString()]);
+    }
+
+    /**
+     * Monthly and cumulative cash-flow from incomes and expenses, with forecasts for
+     * the current partial month and future months so charts are never empty-looking.
+     *
+     * @return array<string, mixed>
+     */
+    private function buildNetWorthMonthlyAnalysis(int $year): array
+    {
+        $labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        $now = now();
+
+        $rawMonthly = [];
+        $hasDataByMonth = [];
+        for ($month = 1; $month <= 12; $month++) {
+            $rawMonthly[] = $this->monthNetActual($year, $month);
+            $hasDataByMonth[] = $this->monthHasAnyData($year, $month);
+        }
+
+        $avgNet = $this->pickAverageMonthlyNetForForecast($year, $now, $rawMonthly);
+
+        $monthlyNet = [];
+        $monthlyKinds = [];
+        for ($month = 1; $month <= 12; $month++) {
+            [$value, $kind] = $this->blendMonthlyNetWithForecast($year, $month, $rawMonthly[$month - 1], $avgNet, $now);
+            $monthlyNet[] = $value;
+            $monthlyKinds[] = $kind;
+        }
+
+        $cumulativeFlow = $this->buildForecastCumulativeSeries($year, $monthlyNet, $now);
+
+        $thisMonthStart = $now->copy()->startOfMonth();
+        $nextMonthStart = $now->copy()->addMonth()->startOfMonth();
+        $forecastThis = $this->forecastFullMonthAmount(
+            (int) $thisMonthStart->year,
+            (int) $thisMonthStart->month,
+            $now,
+            $avgNet
+        );
+        $forecastNext = $this->forecastFullMonthAmount(
+            (int) $nextMonthStart->year,
+            (int) $nextMonthStart->month,
+            $now,
+            $avgNet
+        );
+
+        $confidenceNote = $avgNet !== 0.0
+            ? 'Forecast uses your recent monthly net (last up to 12 closed months, or same-year completed months when enough data). It refines as you add more entries.'
+            : 'Add a few months of income and expense data to unlock smarter forecasts; showing zeros until then.';
+
+        $startMonth = $this->resolveNetWorthStartMonth($year, $now, $hasDataByMonth);
+        $startIdx = max(0, $startMonth - 1);
+
+        return [
+            'year' => $year,
+            'labels' => array_slice($labels, $startIdx),
+            'monthly_net' => array_slice($monthlyNet, $startIdx),
+            'monthly_kinds' => array_slice($monthlyKinds, $startIdx),
+            'cumulative_flow' => array_slice($cumulativeFlow, $startIdx),
+            'forecast' => [
+                'this_month_label' => $thisMonthStart->format('F Y'),
+                'this_month_rs' => $forecastThis,
+                'next_month_label' => $nextMonthStart->format('F Y'),
+                'next_month_rs' => $forecastNext,
+                'avg_monthly_net_rs' => $avgNet,
+                'confidence_note' => $confidenceNote,
+            ],
+        ];
+    }
+
+    private function monthHasAnyData(int $year, int $month): bool
+    {
+        $start = Carbon::create($year, $month, 1)->startOfMonth();
+        $end = Carbon::create($year, $month, 1)->endOfMonth();
+
+        $incomeCount = Income::query()
+            ->whereBetween('received_on', [$start->toDateString(), $end->toDateString()])
+            ->count();
+        $expenseCount = Expense::query()
+            ->whereBetween('spent_on', [$start->toDateString(), $end->toDateString()])
+            ->count();
+
+        return ($incomeCount + $expenseCount) > 0;
+    }
+
+    /**
+     * Find first month to display in the series.
+     * - Start from first month that has actual entries.
+     * - If no month has entries in current year, start at current month.
+     * - For years with no data and not current year, keep from Jan.
+     */
+    private function resolveNetWorthStartMonth(int $year, Carbon $now, array $hasDataByMonth): int
+    {
+        foreach ($hasDataByMonth as $idx => $hasData) {
+            if ($hasData) {
+                return $idx + 1;
+            }
+        }
+
+        if ($year === (int) $now->year) {
+            return (int) $now->month;
+        }
+
+        return 1;
+    }
+
+    private function monthNetActual(int $year, int $month): float
+    {
+        $start = Carbon::create($year, $month, 1)->startOfMonth();
+        $end = Carbon::create($year, $month, 1)->endOfMonth();
+
+        $incomeMonth = (float) Income::query()
+            ->whereBetween('received_on', [$start->toDateString(), $end->toDateString()])
+            ->sum('amount');
+        $expenseMonth = (float) Expense::query()
+            ->whereBetween('spent_on', [$start->toDateString(), $end->toDateString()])
+            ->sum('amount');
+
+        return round($incomeMonth - $expenseMonth, 2);
+    }
+
+    private function monthNetPartialThrough(int $year, int $month, Carbon $through): float
+    {
+        $start = Carbon::create($year, $month, 1)->startOfMonth();
+        $end = Carbon::create($year, $month, 1)->endOfMonth();
+        $throughDate = min($through->toDateString(), $end->toDateString());
+
+        $incomePart = (float) Income::query()
+            ->whereBetween('received_on', [$start->toDateString(), $throughDate])
+            ->sum('amount');
+        $expensePart = (float) Expense::query()
+            ->whereBetween('spent_on', [$start->toDateString(), $throughDate])
+            ->sum('amount');
+
+        return round($incomePart - $expensePart, 2);
+    }
+
+    private function allTimeNetAtEndOfDate(Carbon $date): float
+    {
+        $d = $date->toDateString();
+
+        return round(
+            (float) Income::query()->where('received_on', '<=', $d)->sum('amount')
+            - (float) Expense::query()->where('spent_on', '<=', $d)->sum('amount'),
+            2
+        );
+    }
+
+    private function trailingAverageMonthlyNetClosedMonths(int $monthsBack): float
+    {
+        $cursor = now()->copy()->firstOfMonth()->subMonth();
+        $nets = [];
+        for ($i = 0; $i < $monthsBack; $i++) {
+            $nets[] = $this->monthNetActual((int) $cursor->year, (int) $cursor->month);
+            $cursor->subMonth();
+        }
+
+        return $nets === [] ? 0.0 : round(array_sum($nets) / count($nets), 2);
+    }
+
+    private function sameYearCompletedAverage(int $year, int $beforeMonth): float
+    {
+        if ($beforeMonth <= 1) {
+            return 0.0;
+        }
+        $sum = 0.0;
+        $n = 0;
+        for ($m = 1; $m < $beforeMonth; $m++) {
+            $sum += $this->monthNetActual($year, $m);
+            $n++;
+        }
+
+        return $n > 0 ? round($sum / $n, 2) : 0.0;
+    }
+
+    private function pickAverageMonthlyNetForForecast(int $year, Carbon $now, array $rawMonthly): float
+    {
+        $y = (int) $now->year;
+        $trailing = $this->trailingAverageMonthlyNetClosedMonths(12);
+
+        if ($year < $y) {
+            $sum = array_sum($rawMonthly);
+
+            return round($sum / 12, 2);
+        }
+
+        if ($year > $y) {
+            return $trailing;
+        }
+
+        $inYearAvg = $this->sameYearCompletedAverage($year, (int) $now->month);
+        if ($now->month > 2 && $inYearAvg !== 0.0) {
+            return $inYearAvg;
+        }
+
+        return $trailing !== 0.0 ? $trailing : $inYearAvg;
+    }
+
+    /**
+     * @return array{0: float, 1: 'actual'|'blend'|'forecast'}
+     */
+    private function blendMonthlyNetWithForecast(int $year, int $month, float $rawFullMonth, float $avgNet, Carbon $now): array
+    {
+        $monthStart = Carbon::create($year, $month, 1)->startOfMonth();
+        $monthEnd = Carbon::create($year, $month, 1)->endOfMonth();
+        $currentMonthStart = $now->copy()->startOfMonth();
+
+        if ($monthEnd->lt($currentMonthStart) || $year < (int) $now->year) {
+            return [$rawFullMonth, 'actual'];
+        }
+
+        if ($year > (int) $now->year) {
+            $v = $avgNet !== 0.0 ? $avgNet : $rawFullMonth;
+
+            return [round($v, 2), 'forecast'];
+        }
+
+        if ($month > (int) $now->month) {
+            $v = $avgNet !== 0.0 ? $avgNet : $rawFullMonth;
+
+            return [round($v, 2), 'forecast'];
+        }
+
+        $daysInMonth = $monthEnd->daysInMonth;
+        $remaining = max(0, $daysInMonth - (int) $now->day);
+        $partial = $this->monthNetPartialThrough($year, $month, $now);
+        $daily = $avgNet / max(1, $daysInMonth);
+        $projected = $partial + $daily * $remaining;
+
+        return [round($projected, 2), 'blend'];
+    }
+
+    private function forecastFullMonthAmount(int $year, int $month, Carbon $now, float $avgNet): float
+    {
+        $monthStart = Carbon::create($year, $month, 1)->startOfMonth();
+        if ($monthStart->gt($now->copy()->startOfMonth())) {
+            return round($avgNet !== 0.0 ? $avgNet : $this->monthNetActual($year, $month), 2);
+        }
+
+        if ($monthStart->equalTo($now->copy()->startOfMonth())) {
+            [$v] = $this->blendMonthlyNetWithForecast($year, $month, $this->monthNetActual($year, $month), $avgNet, $now);
+
+            return $v;
+        }
+
+        return round($this->monthNetActual($year, $month), 2);
+    }
+
+    /**
+     * @param list<float> $monthlyNet
+     * @return list<float>
+     */
+    private function buildForecastCumulativeSeries(int $year, array $monthlyNet, Carbon $now): array
+    {
+        $out = [];
+        $run = null;
+
+        for ($month = 1; $month <= 12; $month++) {
+            $monthStart = Carbon::create($year, $month, 1)->startOfMonth();
+            $monthEnd = Carbon::create($year, $month, 1)->endOfMonth();
+            $currentMonthStart = $now->copy()->startOfMonth();
+
+            if ($monthEnd->lt($currentMonthStart) || $year < (int) $now->year) {
+                $out[] = $this->allTimeNetAtEndOfDate($monthEnd);
+                $run = $out[count($out) - 1];
+                continue;
+            }
+
+            if ($run === null) {
+                if ($year > (int) $now->year && $month === 1) {
+                    $run = $this->allTimeNetAtEndOfDate($now->copy()->startOfDay());
+                } else {
+                    $run = $this->allTimeNetAtEndOfDate($monthStart->copy()->subDay());
+                }
+            }
+
+            $run += $monthlyNet[$month - 1];
+            $out[] = round((float) $run, 2);
+        }
+
+        return $out;
     }
 
     private function resolveCaloriesIntake(array $data): ?int
