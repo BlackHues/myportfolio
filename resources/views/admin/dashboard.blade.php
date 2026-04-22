@@ -280,6 +280,8 @@
     }
     .todo-item {
         border-left-width: 4px;
+        border-left-style: solid;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
     }
     .todo-priority-overdue {
         border-left-color: #dc2626;
@@ -292,6 +294,18 @@
     .todo-priority-upcoming {
         border-left-color: #2563eb;
         background: #eff6ff;
+    }
+    .todo-priority-soon {
+        border-left-color: #f97316;
+        background: #fff7ed;
+    }
+    .todo-priority-mid {
+        border-left-color: #2563eb;
+        background: #eff6ff;
+    }
+    .todo-priority-far {
+        border-left-color: #14b8a6;
+        background: #ecfeff;
     }
     .todo-priority-none {
         border-left-color: #cbd5e1;
@@ -320,10 +334,36 @@
         color: #1d4ed8;
         border-color: #bfdbfe;
     }
+    .todo-chip-soon {
+        background: #ffedd5;
+        color: #c2410c;
+        border-color: #fed7aa;
+    }
+    .todo-chip-mid {
+        background: #dbeafe;
+        color: #1d4ed8;
+        border-color: #bfdbfe;
+    }
+    .todo-chip-far {
+        background: #ccfbf1;
+        color: #0f766e;
+        border-color: #99f6e4;
+    }
     .todo-chip-none {
         background: #f1f5f9;
         color: #475569;
         border-color: #e2e8f0;
+    }
+    .todo-meta-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.67rem;
+        font-weight: 600;
+        border-radius: 999px;
+        padding: 0.15rem 0.5rem;
+        background: rgba(15, 23, 42, 0.06);
+        color: #334155;
     }
     .todo-action-btn {
         font-size: 0.72rem;
@@ -581,6 +621,16 @@
                     Add
                 </button>
             </form>
+            <div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <select id="todoSortBy" class="soft-input rounded-lg px-3 py-2 text-sm">
+                    <option value="due_date">Sort by: Date</option>
+                    <option value="created">Sort by: Created</option>
+                </select>
+                <select id="todoSortOrder" class="soft-input rounded-lg px-3 py-2 text-sm">
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                </select>
+            </div>
             <ul id="todoList" class="mt-4 space-y-2"></ul>
         </section>
 
@@ -1472,6 +1522,8 @@
     const todoForm = document.getElementById('todoForm');
     const todoInput = document.getElementById('todoInput');
     const todoDueDate = document.getElementById('todoDueDate');
+    const todoSortBy = document.getElementById('todoSortBy');
+    const todoSortOrder = document.getElementById('todoSortOrder');
     const pieChart = document.getElementById('pieChart');
     const pieLegend = document.getElementById('pieLegend');
     const openModalButtons = document.querySelectorAll('.open-modal');
@@ -1514,9 +1566,11 @@
     bindDashboardCrudScrollMemory();
 
     let todos = JSON.parse(localStorage.getItem(todoKey) || '[]').map((todo) => ({
+        id: todo.id ?? `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         title: todo.title ?? '',
         done: Boolean(todo.done),
         dueDate: typeof todo.dueDate === 'string' ? todo.dueDate : '',
+        createdAt: typeof todo.createdAt === 'number' ? todo.createdAt : Date.now(),
     }));
 
     function saveTodos() {
@@ -1539,7 +1593,13 @@
         if (diffDays === 0) {
             return { key: 'today', label: 'Today' };
         }
-        return { key: 'upcoming', label: 'Upcoming' };
+        if (diffDays <= 7) {
+            return { key: 'soon', label: 'Upcoming (1 week)' };
+        }
+        if (diffDays <= 14) {
+            return { key: 'mid', label: 'Upcoming (8-14 days)' };
+        }
+        return { key: 'far', label: 'Upcoming (15+ days)' };
     }
 
     function formatDueDate(dueDate) {
@@ -1550,26 +1610,99 @@
         return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
     }
 
+    function getDaysFromToday(dueDate) {
+        if (!dueDate) {
+            return null;
+        }
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const due = new Date(`${dueDate}T00:00:00`);
+        return Math.floor((due.getTime() - today.getTime()) / 86400000);
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function getSortedTodos() {
+        const sortBy = todoSortBy?.value || 'due_date';
+        const sortOrder = todoSortOrder?.value || 'asc';
+        const direction = sortOrder === 'desc' ? -1 : 1;
+        const mapped = todos.map((todo, index) => ({ ...todo, originalIndex: index }));
+
+        if (sortBy === 'created') {
+            return mapped.sort((a, b) => (a.createdAt - b.createdAt) * direction);
+        }
+
+        return mapped.sort((a, b) => {
+            const aHasDate = Boolean(a.dueDate);
+            const bHasDate = Boolean(b.dueDate);
+            if (aHasDate && bHasDate) {
+                const aTime = new Date(`${a.dueDate}T00:00:00`).getTime();
+                const bTime = new Date(`${b.dueDate}T00:00:00`).getTime();
+                if (aTime !== bTime) {
+                    return (aTime - bTime) * direction;
+                }
+                return (a.createdAt - b.createdAt) * direction;
+            }
+            if (!aHasDate && !bHasDate) {
+                return (a.createdAt - b.createdAt) * direction;
+            }
+            return aHasDate ? -1 : 1;
+        });
+    }
+
     function renderTodos() {
         todoList.innerHTML = '';
-        todos.forEach((todo, index) => {
+        const sortedTodos = getSortedTodos();
+        let previousDatedTask = null;
+
+        sortedTodos.forEach((todo) => {
             const priority = getTodoPriority(todo.dueDate);
+            const showPriorityBadge = !['soon', 'mid', 'far'].includes(priority.key);
+            const dueDiffDays = getDaysFromToday(todo.dueDate);
+            const remainingLabel = dueDiffDays === null
+                ? 'No due date'
+                : dueDiffDays < 0
+                    ? `${Math.abs(dueDiffDays)} day(s) overdue`
+                    : dueDiffDays === 0
+                        ? 'Due today'
+                        : `${dueDiffDays} day(s) left`;
+            let gapLabel = 'Gap: n/a';
+            if (todo.dueDate) {
+                if (!previousDatedTask) {
+                    gapLabel = 'Gap: first dated task';
+                } else {
+                    const currentTime = new Date(`${todo.dueDate}T00:00:00`).getTime();
+                    const previousTime = new Date(`${previousDatedTask.dueDate}T00:00:00`).getTime();
+                    const gapDays = Math.round(Math.abs(currentTime - previousTime) / 86400000);
+                    gapLabel = `Gap: ${gapDays} day(s)`;
+                }
+                previousDatedTask = todo;
+            }
             const li = document.createElement('li');
             li.className = `todo-item flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2 todo-priority-${priority.key}`;
             li.innerHTML = `
-                <div>
+                <div class="flex-1 min-w-0">
                     <label class="flex items-center gap-2 text-sm">
-                        <input type="checkbox" ${todo.done ? 'checked' : ''} data-index="${index}" data-type="toggle">
-                        <span class="${todo.done ? 'line-through text-slate-400' : 'text-slate-700'}">${todo.title}</span>
+                        <input type="checkbox" ${todo.done ? 'checked' : ''} data-index="${todo.originalIndex}" data-type="toggle">
+                        <span class="${todo.done ? 'line-through text-slate-400' : 'text-slate-700'}">${escapeHtml(todo.title)}</span>
                     </label>
-                    <div class="mt-1 ml-6 flex items-center gap-2">
+                    <div class="mt-1 ml-6 flex flex-wrap items-center gap-2">
                         <span class="text-xs text-slate-500">${formatDueDate(todo.dueDate)}</span>
-                        <span class="todo-priority-chip todo-chip-${priority.key}">${priority.label}</span>
+                        ${showPriorityBadge ? `<span class="todo-priority-chip todo-chip-${priority.key}">${priority.label}</span>` : ''}
+                        <span class="todo-meta-chip">${remainingLabel}</span>
+                        <span class="todo-meta-chip">${gapLabel}</span>
                     </div>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button class="todo-action-btn" data-index="${index}" data-type="edit">Edit</button>
-                    <button class="todo-action-btn todo-action-btn-danger" data-index="${index}" data-type="delete">Delete</button>
+                <div class="flex items-center gap-2 ml-2">
+                    <button class="todo-action-btn" data-index="${todo.originalIndex}" data-type="edit">Edit</button>
+                    <button class="todo-action-btn todo-action-btn-danger" data-index="${todo.originalIndex}" data-type="delete">Delete</button>
                 </div>
             `;
             todoList.appendChild(li);
@@ -1719,7 +1852,13 @@
         if (!title) {
             return;
         }
-        todos.unshift({ title, done: false, dueDate: todoDueDate.value || '' });
+        todos.unshift({
+            id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            title,
+            done: false,
+            dueDate: todoDueDate.value || '',
+            createdAt: Date.now(),
+        });
         todoInput.value = '';
         todoDueDate.value = '';
         saveTodos();
@@ -1768,6 +1907,17 @@
             renderTodos();
         }
     });
+
+    if (todoSortBy) {
+        todoSortBy.addEventListener('change', () => {
+            renderTodos();
+        });
+    }
+    if (todoSortOrder) {
+        todoSortOrder.addEventListener('change', () => {
+            renderTodos();
+        });
+    }
 
     todoList.addEventListener('change', (event) => {
         const target = event.target;
