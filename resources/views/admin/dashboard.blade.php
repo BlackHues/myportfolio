@@ -282,6 +282,16 @@
         border-left-width: 4px;
         border-left-style: solid;
         box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+        backdrop-filter: blur(6px);
+    }
+    .todo-item.dragging {
+        opacity: 0.55;
+    }
+    .todo-item[data-draggable="true"] {
+        cursor: grab;
+    }
+    .todo-item[data-draggable="true"]:active {
+        cursor: grabbing;
     }
     .todo-priority-overdue {
         border-left-color: #dc2626;
@@ -354,6 +364,21 @@
         color: #475569;
         border-color: #e2e8f0;
     }
+    .todo-chip-completed {
+        background: #dcfce7;
+        color: #166534;
+        border-color: #bbf7d0;
+    }
+    .todo-chip-dropped {
+        background: #fee2e2;
+        color: #991b1b;
+        border-color: #fecaca;
+    }
+    .todo-chip-incomplete {
+        background: #e2e8f0;
+        color: #334155;
+        border-color: #cbd5e1;
+    }
     .todo-meta-chip {
         display: inline-flex;
         align-items: center;
@@ -377,6 +402,112 @@
     .todo-action-btn-danger {
         border-color: #fecdd3;
         color: #be123c;
+    }
+    .todo-pin-btn {
+        width: 1.7rem;
+        height: 1.7rem;
+        border-radius: 999px;
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        color: #64748b;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .todo-pin-btn.is-pinned {
+        border-color: #fbbf24;
+        background: #fef9c3;
+        color: #b45309;
+    }
+    .todo-filter-wrap {
+        position: relative;
+    }
+    .todo-filter-toggle {
+        width: 2.1rem;
+        height: 2.1rem;
+        border-radius: 999px;
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        color: #334155;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .todo-filter-menu {
+        position: absolute;
+        top: 2.4rem;
+        right: 0;
+        width: 13.5rem;
+        z-index: 20;
+        border: 1px solid #dbe3ef;
+        border-radius: 0.75rem;
+        background: #ffffff;
+        box-shadow: 0 14px 28px rgba(15, 23, 42, 0.14);
+        padding: 0.65rem;
+        display: none;
+    }
+    .todo-filter-menu.open {
+        display: block;
+    }
+    .todo-filter-label {
+        font-size: 0.66rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #64748b;
+        margin-bottom: 0.25rem;
+        display: block;
+    }
+    .todo-filter-select {
+        width: 100%;
+        border: 1px solid #cfd9e8;
+        background: #f8fbff;
+        border-radius: 0.5rem;
+        padding: 0.4rem 0.55rem;
+        font-size: 0.78rem;
+        color: #1e293b;
+    }
+    .todo-premium-card {
+        background: linear-gradient(160deg, #ffffff 0%, #f8fbff 55%, #f0f8ff 100%);
+        border: 1px solid #d8e6fb;
+        box-shadow: 0 18px 34px rgba(59, 130, 246, 0.08), 0 10px 20px rgba(15, 23, 42, 0.05);
+    }
+    .todo-section-title {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-weight: 700;
+        color: #64748b;
+        margin-top: 0.95rem;
+        margin-bottom: 0.45rem;
+    }
+    .todo-status-icon-btn {
+        width: 1.7rem;
+        height: 1.7rem;
+        border-radius: 999px;
+        border: 1px solid #d1d9e6;
+        background: #ffffff;
+        color: #5b6678;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.18s ease;
+    }
+    .todo-status-icon-btn:hover {
+        transform: translateY(-1px);
+    }
+    .todo-status-icon-btn.status-incomplete:hover {
+        border-color: #94a3b8;
+        color: #334155;
+    }
+    .todo-status-icon-btn.status-completed:hover {
+        border-color: #86efac;
+        background: #f0fdf4;
+        color: #166534;
+    }
+    .todo-status-icon-btn.status-dropped:hover {
+        border-color: #fda4af;
+        background: #fff1f2;
+        color: #9f1239;
     }
     .history-table-wrap {
         border: 1px solid #e2e8f0;
@@ -610,7 +741,7 @@
     @endif
 
     <div class="grid xl:grid-cols-4 gap-6 mt-6">
-        <section class="lg:col-span-1 rounded-xl bg-white p-5 panel">
+        <section class="lg:col-span-1 rounded-xl bg-white p-5 panel todo-premium-card">
             <h2 class="text-lg font-semibold">Todo List</h2>
             <p class="text-sm text-slate-500 mt-1">Local checklist for your daily tasks.</p>
             <form id="todoForm" class="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto_auto]">
@@ -621,17 +752,45 @@
                     Add
                 </button>
             </form>
-            <div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                <select id="todoSortBy" class="soft-input rounded-lg px-3 py-2 text-sm">
-                    <option value="due_date">Sort by: Date</option>
-                    <option value="created">Sort by: Created</option>
-                </select>
-                <select id="todoSortOrder" class="soft-input rounded-lg px-3 py-2 text-sm">
-                    <option value="asc">Ascending</option>
-                    <option value="desc">Descending</option>
-                </select>
+            <div class="mt-3 flex items-center justify-between gap-2">
+                <p class="text-[11px] text-slate-500">Pin tasks, drag to reorder (manual sort), and filter from the icon.</p>
+                <div class="todo-filter-wrap">
+                    <button type="button" id="todoFilterToggle" class="todo-filter-toggle" title="Sort & Filter">
+                        <i class="fa-solid fa-sliders text-xs"></i>
+                    </button>
+                    <div id="todoFilterMenu" class="todo-filter-menu">
+                        <label class="todo-filter-label" for="todoFilterBy">Filter</label>
+                        <select id="todoFilterBy" class="todo-filter-select">
+                            <option value="all">All tasks</option>
+                            <option value="incomplete">Incomplete only</option>
+                            <option value="completed">Completed only</option>
+                            <option value="dropped">Dropped only</option>
+                            <option value="pinned">Pinned only</option>
+                            <option value="overdue">Overdue</option>
+                            <option value="today">Due today</option>
+                            <option value="week">Due in 1 week</option>
+                            <option value="next14">Due in 8-14 days</option>
+                            <option value="later">Due in 15+ days</option>
+                            <option value="no_date">No due date</option>
+                        </select>
+                        <label class="todo-filter-label mt-2" for="todoSortBy">Sort by</label>
+                        <select id="todoSortBy" class="todo-filter-select">
+                            <option value="manual">Manual (drag)</option>
+                            <option value="due_date">Due date</option>
+                            <option value="created">Created time</option>
+                        </select>
+                        <label class="todo-filter-label mt-2" for="todoSortOrder">Order</label>
+                        <select id="todoSortOrder" class="todo-filter-select">
+                            <option value="asc">Ascending</option>
+                            <option value="desc">Descending</option>
+                        </select>
+                    </div>
+                </div>
             </div>
+            <p class="todo-section-title">Active Tasks</p>
             <ul id="todoList" class="mt-4 space-y-2"></ul>
+            <p class="todo-section-title">Completed / Dropped</p>
+            <ul id="todoCompletedList" class="space-y-2"></ul>
         </section>
 
         <section class="xl:col-span-3 rounded-xl bg-white p-5 panel">
@@ -718,28 +877,28 @@
     <section class="rounded-xl bg-white p-5 mt-6 panel">
         <h2 class="text-lg font-semibold">Stock History</h2>
         <p class="text-sm text-slate-500 mt-1">Manage stock holdings with full CRUD.</p>
-        <div class="overflow-x-auto mt-4">
-            <table class="w-full text-sm">
-                <thead class="bg-slate-50">
+        <div class="history-table-wrap mt-4 overflow-x-auto">
+            <table class="history-table">
+                <thead>
                 <tr>
-                    <th class="text-left px-3 py-2">Symbol</th>
-                    <th class="text-left px-3 py-2">Name</th>
-                    <th class="text-left px-3 py-2">Quantity</th>
-                    <th class="text-left px-3 py-2">Current Value</th>
-                    <th class="text-left px-3 py-2">Notes</th>
-                    <th class="text-left px-3 py-2">Actions</th>
+                    <th>Symbol</th>
+                    <th>Name</th>
+                    <th class="text-right">Quantity</th>
+                    <th class="text-right">Current Value</th>
+                    <th>Notes</th>
+                    <th class="text-center">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 @forelse ($stockHoldings as $stock)
-                    <tr class="border-t border-slate-100">
-                        <td class="px-3 py-2 whitespace-nowrap">{{ $stock->symbol ?: '-' }}</td>
-                        <td class="px-3 py-2">{{ $stock->name }}</td>
-                        <td class="px-3 py-2 whitespace-nowrap">{{ number_format((float) $stock->quantity, 4) }}</td>
-                        <td class="px-3 py-2 whitespace-nowrap font-medium text-indigo-700">Rs {{ number_format((float) $stock->current_value, 2) }}</td>
-                        <td class="px-3 py-2">{{ $stock->notes ?: '-' }}</td>
-                        <td class="px-3 py-2">
-                            <div class="flex items-center gap-2">
+                    <tr>
+                        <td class="whitespace-nowrap">{{ $stock->symbol ?: '-' }}</td>
+                        <td>{{ $stock->name }}</td>
+                        <td class="whitespace-nowrap text-right tabular-nums">{{ number_format((float) $stock->quantity, 4) }}</td>
+                        <td class="whitespace-nowrap text-right tabular-nums font-medium text-indigo-700">Rs {{ number_format((float) $stock->current_value, 2) }}</td>
+                        <td class="history-note-cell">{{ $stock->notes ?: '-' }}</td>
+                        <td>
+                            <div class="flex items-center justify-center gap-2">
                                 <button type="button" class="card-action-btn open-modal" data-modal="stockEditModal{{ $stock->id }}">Edit</button>
                                 <form method="post" action="{{ route('admin.stocks.delete', $stock) }}">
                                     @csrf
@@ -750,7 +909,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="6" class="text-center px-3 py-6 text-slate-500">No stock holdings added yet.</td></tr>
+                    <tr><td colspan="6" class="text-center text-slate-500">No stock holdings added yet.</td></tr>
                 @endforelse
                 </tbody>
             </table>
@@ -1519,11 +1678,15 @@
     const todoKey = 'admin_todo_items';
 
     const todoList = document.getElementById('todoList');
+    const todoCompletedList = document.getElementById('todoCompletedList');
     const todoForm = document.getElementById('todoForm');
     const todoInput = document.getElementById('todoInput');
     const todoDueDate = document.getElementById('todoDueDate');
+    const todoFilterBy = document.getElementById('todoFilterBy');
     const todoSortBy = document.getElementById('todoSortBy');
     const todoSortOrder = document.getElementById('todoSortOrder');
+    const todoFilterToggle = document.getElementById('todoFilterToggle');
+    const todoFilterMenu = document.getElementById('todoFilterMenu');
     const pieChart = document.getElementById('pieChart');
     const pieLegend = document.getElementById('pieLegend');
     const openModalButtons = document.querySelectorAll('.open-modal');
@@ -1568,9 +1731,13 @@
     let todos = JSON.parse(localStorage.getItem(todoKey) || '[]').map((todo) => ({
         id: todo.id ?? `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         title: todo.title ?? '',
-        done: Boolean(todo.done),
+        status: ['incomplete', 'completed', 'dropped'].includes(todo.status)
+            ? todo.status
+            : (todo.done ? 'completed' : 'incomplete'),
+        pinned: Boolean(todo.pinned),
         dueDate: typeof todo.dueDate === 'string' ? todo.dueDate : '',
         createdAt: typeof todo.createdAt === 'number' ? todo.createdAt : Date.now(),
+        order: typeof todo.order === 'number' ? todo.order : Date.now(),
     }));
 
     function saveTodos() {
@@ -1630,16 +1797,67 @@
     }
 
     function getSortedTodos() {
+        const filterBy = todoFilterBy?.value || 'all';
         const sortBy = todoSortBy?.value || 'due_date';
         const sortOrder = todoSortOrder?.value || 'asc';
         const direction = sortOrder === 'desc' ? -1 : 1;
-        const mapped = todos.map((todo, index) => ({ ...todo, originalIndex: index }));
+        const mapped = todos
+            .map((todo, index) => ({ ...todo, originalIndex: index }))
+            .filter((todo) => {
+                const days = getDaysFromToday(todo.dueDate);
+                switch (filterBy) {
+                    case 'incomplete':
+                        return todo.status === 'incomplete';
+                    case 'completed':
+                        return todo.status === 'completed';
+                    case 'dropped':
+                        return todo.status === 'dropped';
+                    case 'pinned':
+                        return todo.pinned;
+                    case 'overdue':
+                        return days !== null && days < 0;
+                    case 'today':
+                        return days === 0;
+                    case 'week':
+                        return days !== null && days >= 1 && days <= 7;
+                    case 'next14':
+                        return days !== null && days >= 8 && days <= 14;
+                    case 'later':
+                        return days !== null && days >= 15;
+                    case 'no_date':
+                        return !todo.dueDate;
+                    default:
+                        return true;
+                }
+            });
+
+        const pinComparator = (a, b) => Number(b.pinned) - Number(a.pinned);
+
+        if (sortBy === 'manual') {
+            return mapped.sort((a, b) => {
+                const pinDiff = pinComparator(a, b);
+                if (pinDiff !== 0) {
+                    return pinDiff;
+                }
+                return a.order - b.order;
+            });
+        }
 
         if (sortBy === 'created') {
-            return mapped.sort((a, b) => (a.createdAt - b.createdAt) * direction);
+            return mapped.sort((a, b) => {
+                const pinDiff = pinComparator(a, b);
+                if (pinDiff !== 0) {
+                    return pinDiff;
+                }
+                return (a.createdAt - b.createdAt) * direction;
+            });
         }
 
         return mapped.sort((a, b) => {
+            const pinDiff = pinComparator(a, b);
+            if (pinDiff !== 0) {
+                return pinDiff;
+            }
             const aHasDate = Boolean(a.dueDate);
             const bHasDate = Boolean(b.dueDate);
             if (aHasDate && bHasDate) {
@@ -1657,55 +1875,111 @@
         });
     }
 
-    function renderTodos() {
-        todoList.innerHTML = '';
-        const sortedTodos = getSortedTodos();
-        let previousDatedTask = null;
-
-        sortedTodos.forEach((todo) => {
-            const priority = getTodoPriority(todo.dueDate);
-            const showPriorityBadge = !['soon', 'mid', 'far'].includes(priority.key);
-            const dueDiffDays = getDaysFromToday(todo.dueDate);
-            const remainingLabel = dueDiffDays === null
-                ? 'No due date'
-                : dueDiffDays < 0
-                    ? `${Math.abs(dueDiffDays)} day(s) overdue`
-                    : dueDiffDays === 0
-                        ? 'Due today'
-                        : `${dueDiffDays} day(s) left`;
-            let gapLabel = 'Gap: n/a';
-            if (todo.dueDate) {
-                if (!previousDatedTask) {
-                    gapLabel = 'Gap: first dated task';
-                } else {
-                    const currentTime = new Date(`${todo.dueDate}T00:00:00`).getTime();
-                    const previousTime = new Date(`${previousDatedTask.dueDate}T00:00:00`).getTime();
-                    const gapDays = Math.round(Math.abs(currentTime - previousTime) / 86400000);
-                    gapLabel = `Gap: ${gapDays} day(s)`;
-                }
-                previousDatedTask = todo;
+    function buildTodoItemHtml(todo, previousDatedTask, isArchiveItem = false) {
+        const priority = getTodoPriority(todo.dueDate);
+        const showPriorityBadge = !['soon', 'mid', 'far'].includes(priority.key);
+        const statusLabel = todo.status === 'completed'
+            ? 'Completed'
+            : (todo.status === 'dropped' ? 'Dropped' : 'Incomplete');
+        const statusClass = todo.status === 'completed'
+            ? 'todo-chip-completed'
+            : (todo.status === 'dropped' ? 'todo-chip-dropped' : 'todo-chip-incomplete');
+        const dueDiffDays = getDaysFromToday(todo.dueDate);
+        const remainingLabel = dueDiffDays === null
+            ? 'No due date'
+            : dueDiffDays < 0
+                ? `${Math.abs(dueDiffDays)} day(s) overdue`
+                : dueDiffDays === 0
+                    ? 'Due today'
+                    : `${dueDiffDays} day(s) left`;
+        let gapLabel = 'Gap: n/a';
+        let nextPrevious = previousDatedTask;
+        if (todo.dueDate) {
+            if (!previousDatedTask) {
+                gapLabel = 'Gap: first dated task';
+            } else {
+                const currentTime = new Date(`${todo.dueDate}T00:00:00`).getTime();
+                const previousTime = new Date(`${previousDatedTask.dueDate}T00:00:00`).getTime();
+                const gapDays = Math.round(Math.abs(currentTime - previousTime) / 86400000);
+                gapLabel = `Gap: ${gapDays} day(s)`;
             }
-            const li = document.createElement('li');
-            li.className = `todo-item flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2 todo-priority-${priority.key}`;
-            li.innerHTML = `
+            nextPrevious = todo;
+        }
+        const actionIcons = isArchiveItem
+            ? `
+                <button class="todo-status-icon-btn status-incomplete" data-index="${todo.originalIndex}" data-type="set-incomplete" title="Mark Incomplete"><i class="fa-regular fa-circle text-[10px]"></i></button>
+                <button class="todo-status-icon-btn status-completed" data-index="${todo.originalIndex}" data-type="set-completed" title="Mark Completed"><i class="fa-solid fa-check text-[10px]"></i></button>
+                <button class="todo-status-icon-btn status-dropped" data-index="${todo.originalIndex}" data-type="set-dropped" title="Mark Dropped"><i class="fa-solid fa-xmark text-[10px]"></i></button>
+            `
+            : `
+                <button class="todo-status-icon-btn status-completed" data-index="${todo.originalIndex}" data-type="set-completed" title="Mark Completed"><i class="fa-solid fa-check text-[10px]"></i></button>
+                <button class="todo-status-icon-btn status-dropped" data-index="${todo.originalIndex}" data-type="set-dropped" title="Mark Dropped"><i class="fa-solid fa-xmark text-[10px]"></i></button>
+            `;
+
+        return {
+            html: `
                 <div class="flex-1 min-w-0">
                     <label class="flex items-center gap-2 text-sm">
-                        <input type="checkbox" ${todo.done ? 'checked' : ''} data-index="${todo.originalIndex}" data-type="toggle">
-                        <span class="${todo.done ? 'line-through text-slate-400' : 'text-slate-700'}">${escapeHtml(todo.title)}</span>
+                        <span class="${
+                            todo.status === 'completed'
+                                ? 'line-through text-slate-400'
+                                : (todo.status === 'dropped' ? 'line-through text-rose-400' : 'text-slate-700')
+                        }">${escapeHtml(todo.title)}</span>
                     </label>
                     <div class="mt-1 ml-6 flex flex-wrap items-center gap-2">
                         <span class="text-xs text-slate-500">${formatDueDate(todo.dueDate)}</span>
+                        <span class="todo-priority-chip ${statusClass}">${statusLabel}</span>
                         ${showPriorityBadge ? `<span class="todo-priority-chip todo-chip-${priority.key}">${priority.label}</span>` : ''}
                         <span class="todo-meta-chip">${remainingLabel}</span>
                         <span class="todo-meta-chip">${gapLabel}</span>
                     </div>
                 </div>
                 <div class="flex items-center gap-2 ml-2">
+                    ${actionIcons}
+                    <button class="todo-pin-btn ${todo.pinned ? 'is-pinned' : ''}" data-index="${todo.originalIndex}" data-type="pin" title="${todo.pinned ? 'Unpin task' : 'Pin task'}">
+                        <i class="fa-solid fa-thumbtack text-[10px]"></i>
+                    </button>
                     <button class="todo-action-btn" data-index="${todo.originalIndex}" data-type="edit">Edit</button>
                     <button class="todo-action-btn todo-action-btn-danger" data-index="${todo.originalIndex}" data-type="delete">Delete</button>
                 </div>
-            `;
+            `,
+            nextPrevious,
+            priorityKey: priority.key,
+        };
+    }
+
+    function renderTodos() {
+        todoList.innerHTML = '';
+        todoCompletedList.innerHTML = '';
+        const sortedTodos = getSortedTodos();
+        const isManualSort = (todoSortBy?.value || 'manual') === 'manual';
+        const activeTodos = sortedTodos.filter((todo) => todo.status === 'incomplete');
+        const archivedTodos = sortedTodos.filter((todo) => todo.status !== 'incomplete');
+
+        let previousDatedTask = null;
+        activeTodos.forEach((todo) => {
+            const built = buildTodoItemHtml(todo, previousDatedTask, false);
+            previousDatedTask = built.nextPrevious;
+            const li = document.createElement('li');
+            li.className = `todo-item flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2 todo-priority-${built.priorityKey}`;
+            li.draggable = isManualSort;
+            li.dataset.draggable = isManualSort ? 'true' : 'false';
+            li.dataset.index = String(todo.originalIndex);
+            li.innerHTML = built.html;
             todoList.appendChild(li);
+        });
+
+        let previousArchiveDate = null;
+        archivedTodos.forEach((todo) => {
+            const built = buildTodoItemHtml(todo, previousArchiveDate, true);
+            previousArchiveDate = built.nextPrevious;
+            const li = document.createElement('li');
+            li.className = `todo-item flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2 todo-priority-${built.priorityKey}`;
+            li.draggable = false;
+            li.dataset.draggable = 'false';
+            li.dataset.index = String(todo.originalIndex);
+            li.innerHTML = built.html;
+            todoCompletedList.appendChild(li);
         });
     }
 
@@ -1855,9 +2129,11 @@
         todos.unshift({
             id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
             title,
-            done: false,
+            status: 'incomplete',
+            pinned: false,
             dueDate: todoDueDate.value || '',
             createdAt: Date.now(),
+            order: Date.now(),
         });
         todoInput.value = '';
         todoDueDate.value = '';
@@ -1865,10 +2141,16 @@
         renderTodos();
     });
 
-    todoList.addEventListener('click', (event) => {
-        const target = event.target;
-        const index = Number(target.dataset.index);
-        const type = target.dataset.type;
+    function handleTodoListClick(event) {
+        const actionEl = event.target.closest('[data-type]');
+        if (!actionEl) {
+            return;
+        }
+        const index = Number(actionEl.dataset.index);
+        const type = actionEl.dataset.type;
+        if (Number.isNaN(index) || !type) {
+            return;
+        }
         if (type === 'edit') {
             const current = todos[index];
             if (!current) {
@@ -1901,12 +2183,38 @@
             renderTodos();
             return;
         }
+        if (type === 'pin') {
+            if (!todos[index]) {
+                return;
+            }
+            todos[index].pinned = !todos[index].pinned;
+            saveTodos();
+            renderTodos();
+            return;
+        }
+        if (['set-incomplete', 'set-completed', 'set-dropped'].includes(type)) {
+            if (!todos[index]) {
+                return;
+            }
+            const statusMap = {
+                'set-incomplete': 'incomplete',
+                'set-completed': 'completed',
+                'set-dropped': 'dropped',
+            };
+            todos[index].status = statusMap[type];
+            saveTodos();
+            renderTodos();
+            return;
+        }
         if (type === 'delete') {
             todos.splice(index, 1);
             saveTodos();
             renderTodos();
         }
-    });
+    }
+
+    todoList.addEventListener('click', handleTodoListClick);
+    todoCompletedList.addEventListener('click', handleTodoListClick);
 
     if (todoSortBy) {
         todoSortBy.addEventListener('change', () => {
@@ -1918,15 +2226,80 @@
             renderTodos();
         });
     }
-
-    todoList.addEventListener('change', (event) => {
-        const target = event.target;
-        const index = Number(target.dataset.index);
-        if (target.dataset.type === 'toggle') {
-            todos[index].done = target.checked;
-            saveTodos();
+    if (todoFilterBy) {
+        todoFilterBy.addEventListener('change', () => {
             renderTodos();
+        });
+    }
+    if (todoFilterToggle && todoFilterMenu) {
+        todoFilterToggle.addEventListener('click', () => {
+            todoFilterMenu.classList.toggle('open');
+        });
+        document.addEventListener('click', (event) => {
+            if (!todoFilterMenu.classList.contains('open')) {
+                return;
+            }
+            if (todoFilterMenu.contains(event.target) || todoFilterToggle.contains(event.target)) {
+                return;
+            }
+            todoFilterMenu.classList.remove('open');
+        });
+    }
+
+    let draggedTodoIndex = null;
+    todoList.addEventListener('dragstart', (event) => {
+        const target = event.target.closest('li[data-index]');
+        if (!target || (todoSortBy?.value || 'manual') !== 'manual') {
+            return;
         }
+        draggedTodoIndex = Number(target.dataset.index);
+        target.classList.add('dragging');
+        event.dataTransfer.effectAllowed = 'move';
+    });
+    todoList.addEventListener('dragover', (event) => {
+        if ((todoSortBy?.value || 'manual') !== 'manual') {
+            return;
+        }
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+    });
+    todoList.addEventListener('drop', (event) => {
+        if ((todoSortBy?.value || 'manual') !== 'manual') {
+            return;
+        }
+        event.preventDefault();
+        const dropTarget = event.target.closest('li[data-index]');
+        if (!dropTarget || draggedTodoIndex === null) {
+            return;
+        }
+        const targetIndex = Number(dropTarget.dataset.index);
+        if (Number.isNaN(targetIndex) || targetIndex === draggedTodoIndex || !todos[draggedTodoIndex] || !todos[targetIndex]) {
+            return;
+        }
+        const movingTodo = todos[draggedTodoIndex];
+        const targetTodo = todos[targetIndex];
+        if (Boolean(movingTodo.pinned) !== Boolean(targetTodo.pinned)) {
+            window.alert('Pin status differs. Drag inside pinned group or unpinned group.');
+            return;
+        }
+
+        const sortedManual = getSortedTodos();
+        const draggedPos = sortedManual.findIndex((item) => item.originalIndex === draggedTodoIndex);
+        const targetPos = sortedManual.findIndex((item) => item.originalIndex === targetIndex);
+        if (draggedPos < 0 || targetPos < 0) {
+            return;
+        }
+        const [moved] = sortedManual.splice(draggedPos, 1);
+        sortedManual.splice(targetPos, 0, moved);
+        sortedManual.forEach((item, orderIndex) => {
+            todos[item.originalIndex].order = orderIndex + 1;
+        });
+        saveTodos();
+        renderTodos();
+    });
+    todoList.addEventListener('dragend', () => {
+        draggedTodoIndex = null;
+        todoList.querySelectorAll('.todo-item.dragging').forEach((item) => item.classList.remove('dragging'));
     });
 
     renderTodos();
