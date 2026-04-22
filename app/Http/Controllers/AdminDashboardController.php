@@ -8,12 +8,14 @@ use App\Models\Income;
 use App\Models\CashBalance;
 use App\Models\CreditCard;
 use App\Models\DebitCard;
+use App\Models\AdminTodo;
 use App\Models\NetWorthEntry;
 use App\Models\SavingsAdjustment;
 use App\Models\StockHolding;
 use App\Models\WeightLog;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -140,6 +142,21 @@ class AdminDashboardController extends Controller
             ];
         });
         $netWorthMonthlyTrend = $this->buildNetWorthMonthlyAnalysis($selectedYear);
+        $todoItems = AdminTodo::query()
+            ->where('user_id', (int) $request->user()->id)
+            ->orderBy('order_index')
+            ->orderBy('id')
+            ->get()
+            ->map(static fn (AdminTodo $todo): array => [
+                'id' => (int) $todo->id,
+                'title' => (string) $todo->title,
+                'status' => (string) $todo->status,
+                'pinned' => (bool) $todo->is_pinned,
+                'dueDate' => optional($todo->due_date)->format('Y-m-d') ?? '',
+                'createdAt' => (int) $todo->created_at_ms,
+                'order' => (int) $todo->order_index,
+            ])
+            ->values();
 
         return view('admin.dashboard', [
             'period' => $period,
@@ -174,6 +191,69 @@ class AdminDashboardController extends Controller
             'savingsAdjustments' => $savingsAdjustments,
             'netWorthEntries' => $netWorthEntries,
             'netWorthMonthlyTrend' => $netWorthMonthlyTrend,
+            'todoItems' => $todoItems,
+        ]);
+    }
+
+    public function syncTodos(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'todos' => ['array', 'max:500'],
+            'todos.*.title' => ['required', 'string', 'max:150'],
+            'todos.*.status' => ['required', 'in:incomplete,completed,dropped'],
+            'todos.*.pinned' => ['nullable', 'boolean'],
+            'todos.*.dueDate' => ['nullable', 'date'],
+            'todos.*.createdAt' => ['nullable', 'integer', 'min:1'],
+            'todos.*.order' => ['nullable', 'integer', 'min:0'],
+        ]);
+
+        $userId = (int) $request->user()->id;
+        $inputTodos = collect($validated['todos'] ?? []);
+
+        DB::transaction(function () use ($userId, $inputTodos): void {
+            AdminTodo::query()->where('user_id', $userId)->delete();
+
+            if ($inputTodos->isEmpty()) {
+                return;
+            }
+
+            $now = now();
+            $rows = $inputTodos->values()->map(static function (array $todo, int $index) use ($userId, $now): array {
+                return [
+                    'user_id' => $userId,
+                    'title' => (string) $todo['title'],
+                    'status' => (string) $todo['status'],
+                    'is_pinned' => (bool) ($todo['pinned'] ?? false),
+                    'due_date' => isset($todo['dueDate']) && $todo['dueDate'] !== '' ? $todo['dueDate'] : null,
+                    'created_at_ms' => (int) ($todo['createdAt'] ?? now()->valueOf()),
+                    'order_index' => (int) ($todo['order'] ?? $index + 1),
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            })->all();
+
+            AdminTodo::query()->insert($rows);
+        });
+
+        $freshTodos = AdminTodo::query()
+            ->where('user_id', $userId)
+            ->orderBy('order_index')
+            ->orderBy('id')
+            ->get()
+            ->map(static fn (AdminTodo $todo): array => [
+                'id' => (int) $todo->id,
+                'title' => (string) $todo->title,
+                'status' => (string) $todo->status,
+                'pinned' => (bool) $todo->is_pinned,
+                'dueDate' => optional($todo->due_date)->format('Y-m-d') ?? '',
+                'createdAt' => (int) $todo->created_at_ms,
+                'order' => (int) $todo->order_index,
+            ])
+            ->values();
+
+        return response()->json([
+            'ok' => true,
+            'todos' => $freshTodos,
         ]);
     }
 

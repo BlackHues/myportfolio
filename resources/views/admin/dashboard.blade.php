@@ -1783,6 +1783,9 @@
     const categoryTotals = @json($categoryTotals);
     const expenseColors = ['#0ea5e9', '#14b8a6', '#f59e0b', '#f43f5e', '#6366f1', '#10b981', '#a855f7'];
     const todoKey = 'admin_todo_items';
+    const initialTodos = @json($todoItems ?? []);
+    const todoSyncUrl = @json(route('admin.todos.sync'));
+    const csrfToken = @json(csrf_token());
 
     const todoList = document.getElementById('todoList');
     const todoCompletedList = document.getElementById('todoCompletedList');
@@ -1835,7 +1838,7 @@
     restoreDashboardScrollPosition();
     bindDashboardCrudScrollMemory();
 
-    let todos = JSON.parse(localStorage.getItem(todoKey) || '[]').map((todo) => ({
+    let todos = (Array.isArray(initialTodos) ? initialTodos : []).map((todo) => ({
         id: todo.id ?? `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         title: todo.title ?? '',
         status: ['incomplete', 'completed', 'dropped'].includes(todo.status)
@@ -1847,8 +1850,76 @@
         order: typeof todo.order === 'number' ? todo.order : Date.now(),
     }));
 
+    let shouldSyncMigratedTodos = false;
+    const legacyTodos = JSON.parse(localStorage.getItem(todoKey) || '[]');
+    if (!todos.length && Array.isArray(legacyTodos) && legacyTodos.length) {
+        todos = legacyTodos.map((todo) => ({
+            id: todo.id ?? `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            title: todo.title ?? '',
+            status: ['incomplete', 'completed', 'dropped'].includes(todo.status)
+                ? todo.status
+                : (todo.done ? 'completed' : 'incomplete'),
+            pinned: Boolean(todo.pinned),
+            dueDate: typeof todo.dueDate === 'string' ? todo.dueDate : '',
+            createdAt: typeof todo.createdAt === 'number' ? todo.createdAt : Date.now(),
+            order: typeof todo.order === 'number' ? todo.order : Date.now(),
+        }));
+        localStorage.removeItem(todoKey);
+        shouldSyncMigratedTodos = true;
+    }
+
+    let todoSyncTimer = null;
+
+    async function syncTodosToServer() {
+        const payload = {
+            todos: todos.map((todo, index) => ({
+                title: String(todo.title ?? '').trim(),
+                status: ['incomplete', 'completed', 'dropped'].includes(todo.status) ? todo.status : 'incomplete',
+                pinned: Boolean(todo.pinned),
+                dueDate: todo.dueDate || null,
+                createdAt: Number.isFinite(todo.createdAt) ? Number(todo.createdAt) : Date.now(),
+                order: Number.isFinite(todo.order) ? Number(todo.order) : (index + 1),
+            })),
+        };
+
+        const response = await fetch(todoSyncUrl, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Todo sync failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (Array.isArray(data.todos)) {
+            todos = data.todos.map((todo) => ({
+                id: todo.id ?? `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                title: todo.title ?? '',
+                status: ['incomplete', 'completed', 'dropped'].includes(todo.status) ? todo.status : 'incomplete',
+                pinned: Boolean(todo.pinned),
+                dueDate: typeof todo.dueDate === 'string' ? todo.dueDate : '',
+                createdAt: typeof todo.createdAt === 'number' ? todo.createdAt : Date.now(),
+                order: typeof todo.order === 'number' ? todo.order : Date.now(),
+            }));
+        }
+    }
+
     function saveTodos() {
-        localStorage.setItem(todoKey, JSON.stringify(todos));
+        if (todoSyncTimer) {
+            window.clearTimeout(todoSyncTimer);
+        }
+        todoSyncTimer = window.setTimeout(() => {
+            syncTodosToServer().catch(() => {
+                window.alert('Unable to sync todos right now. Please refresh and try again.');
+            });
+        }, 180);
     }
 
     function getTodoPriority(dueDate) {
@@ -2423,6 +2494,9 @@
     });
 
     renderTodos();
+    if (shouldSyncMigratedTodos) {
+        saveTodos();
+    }
     renderPieChart();
     renderNetWorthCharts();
     renderWeightProgressChart();
