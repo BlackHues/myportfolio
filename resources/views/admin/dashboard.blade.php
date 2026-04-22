@@ -220,6 +220,13 @@
     }
     .admin-main {
         padding: 1.6rem;
+        min-width: 0;
+    }
+    .admin-topbar,
+    .panel,
+    .hero-card,
+    .history-table-wrap {
+        min-width: 0;
     }
     .admin-topbar {
         background: #ffffff;
@@ -271,8 +278,13 @@
         color: #0f172a;
         border-radius: 0.5rem;
         font-size: 0.75rem;
-        padding: 0.22rem 0.55rem;
+        padding: 0.22rem 0.45rem;
         font-weight: 600;
+        min-width: 1.8rem;
+        min-height: 1.8rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
     .card-action-btn-danger {
         border-color: rgba(190, 24, 93, 0.35);
@@ -397,7 +409,12 @@
         border: 1px solid #cbd5e1;
         background: #ffffff;
         color: #334155;
-        padding: 0.2rem 0.55rem;
+        padding: 0.2rem 0.45rem;
+        min-width: 1.7rem;
+        min-height: 1.7rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
     .todo-action-btn-danger {
         border-color: #fecdd3;
@@ -512,7 +529,9 @@
     .history-table-wrap {
         border: 1px solid #e2e8f0;
         border-radius: 0.9rem;
-        overflow: hidden;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
     }
     .history-table {
         width: 100%;
@@ -558,7 +577,7 @@
     .history-action-cell {
         white-space: nowrap;
     }
-    @media (max-width: 1024px) {
+    @media (max-width: 1200px) {
         .admin-frame {
             grid-template-columns: 1fr;
         }
@@ -568,10 +587,24 @@
             border-right: 0;
             border-bottom: 1px solid #dde5f2;
         }
+        body {
+            font-size: 14px;
+        }
+        .text-sm {
+            font-size: 0.78rem !important;
+            line-height: 1.1rem;
+        }
+        .text-xs {
+            font-size: 0.66rem !important;
+            line-height: 0.95rem;
+        }
     }
     @media (max-width: 768px) {
         .admin-shell {
             padding: 0.4rem;
+        }
+        body {
+            font-size: 13px;
         }
         .admin-frame {
             border-radius: 16px;
@@ -597,8 +630,26 @@
             padding: 0.85rem;
         }
         .admin-topbar h1 {
-            font-size: 1.2rem;
-            line-height: 1.55rem;
+            font-size: 0.98rem;
+            line-height: 1.25rem;
+        }
+        h2.text-lg {
+            font-size: 0.9rem;
+            line-height: 1.15rem;
+        }
+        .text-sm {
+            font-size: 0.72rem !important;
+            line-height: 1rem;
+        }
+        .text-xs {
+            font-size: 0.62rem !important;
+            line-height: 0.9rem;
+        }
+        .history-table {
+            font-size: 0.7rem;
+        }
+        .todo-section-title {
+            font-size: 0.62rem;
         }
         .history-note-cell {
             min-width: 170px;
@@ -614,8 +665,38 @@
             align-items: flex-start;
             gap: 0.6rem;
         }
+        .todo-item .ml-6 {
+            margin-left: 0;
+        }
+        .todo-premium-card {
+            display: block !important;
+            width: 100%;
+        }
+        #todoList,
+        #todoCompletedList {
+            min-height: 1.75rem;
+        }
     }
     @media (max-width: 640px) {
+        body {
+            font-size: 12px;
+        }
+        .admin-topbar h1 {
+            font-size: 0.9rem;
+            line-height: 1.15rem;
+        }
+        h2.text-lg {
+            font-size: 0.82rem;
+            line-height: 1.05rem;
+        }
+        .text-sm {
+            font-size: 0.67rem !important;
+            line-height: 0.95rem;
+        }
+        .text-xs {
+            font-size: 0.58rem !important;
+            line-height: 0.82rem;
+        }
         .admin-action-group {
             width: 100%;
             flex-direction: column;
@@ -836,7 +917,9 @@
                     <p class="text-base font-semibold mt-1 text-indigo-700">Rs {{ number_format($totalDebitBalance, 2) }}</p>
                     <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
                         <p class="text-xs uppercase text-slate-500">Cash in hand balance</p>
-                        <button type="button" class="card-action-btn open-modal" data-modal="cashBalanceEditModal">Edit</button>
+                        <button type="button" class="card-action-btn open-modal" data-modal="cashBalanceEditModal" title="Edit" aria-label="Edit">
+                            <i class="fa-solid fa-pen-to-square text-[10px]"></i>
+                        </button>
                     </div>
                     <p class="text-base font-semibold mt-1 text-indigo-700">Rs {{ number_format($totalCashInHand, 2) }}</p>
                     <p class="text-[11px] text-slate-500 mt-1">Updates when you add income or expense as cash; use Edit to set or reconcile the balance.</p>
@@ -899,11 +982,15 @@
                         <td class="history-note-cell">{{ $stock->notes ?: '-' }}</td>
                         <td>
                             <div class="flex items-center justify-center gap-2">
-                                <button type="button" class="card-action-btn open-modal" data-modal="stockEditModal{{ $stock->id }}">Edit</button>
+                                <button type="button" class="card-action-btn open-modal" data-modal="stockEditModal{{ $stock->id }}" title="Edit" aria-label="Edit">
+                                    <i class="fa-solid fa-pen-to-square text-[10px]"></i>
+                                </button>
                                 <form method="post" action="{{ route('admin.stocks.delete', $stock) }}">
                                     @csrf
                                     @method('delete')
-                                    <button type="submit" class="card-action-btn card-action-btn-danger">Delete</button>
+                                    <button type="submit" class="card-action-btn card-action-btn-danger" title="Delete" aria-label="Delete">
+                                        <i class="fa-solid fa-trash text-[10px]"></i>
+                                    </button>
                                 </form>
                             </div>
                         </td>
@@ -941,11 +1028,15 @@
                             {{ (float) $card->total_limit > 0 ? number_format(((float) $card->used_amount / (float) $card->total_limit) * 100, 1) : '0.0' }}% used
                         </p>
                         <div class="card-actions">
-                            <button type="button" class="card-action-btn open-modal" data-modal="creditCardEditModal{{ $card->id }}">Edit</button>
+                            <button type="button" class="card-action-btn open-modal" data-modal="creditCardEditModal{{ $card->id }}" title="Edit" aria-label="Edit">
+                                <i class="fa-solid fa-pen-to-square text-[10px]"></i>
+                            </button>
                             <form method="post" action="{{ route('admin.credit-cards.delete', $card) }}">
                                 @csrf
                                 @method('delete')
-                                <button type="submit" class="card-action-btn card-action-btn-danger">Delete</button>
+                                <button type="submit" class="card-action-btn card-action-btn-danger" title="Delete" aria-label="Delete">
+                                    <i class="fa-solid fa-trash text-[10px]"></i>
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -971,11 +1062,15 @@
                         <p class="text-[11px] mt-2 text-white/80">Savings Amount</p>
                         <p class="text-base font-semibold">Rs {{ number_format((float) $card->current_balance, 2) }}</p>
                         <div class="card-actions">
-                            <button type="button" class="card-action-btn open-modal" data-modal="debitCardEditModal{{ $card->id }}">Edit</button>
+                            <button type="button" class="card-action-btn open-modal" data-modal="debitCardEditModal{{ $card->id }}" title="Edit" aria-label="Edit">
+                                <i class="fa-solid fa-pen-to-square text-[10px]"></i>
+                            </button>
                             <form method="post" action="{{ route('admin.debit-cards.delete', $card) }}">
                                 @csrf
                                 @method('delete')
-                                <button type="submit" class="card-action-btn card-action-btn-danger">Delete</button>
+                                <button type="submit" class="card-action-btn card-action-btn-danger" title="Delete" aria-label="Delete">
+                                    <i class="fa-solid fa-trash text-[10px]"></i>
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -1014,10 +1109,10 @@
                 <tbody>
                 @forelse ($expenses as $expense)
                     <tr>
-                        <td class="whitespace-nowrap">{{ $expense->spent_on->format('d-m-Y') }}</td>
+                        <td class="whitespace-nowrap">{{ $expense->spent_on->format('d M') }}</td>
                         <td class="font-medium text-slate-800">{{ $expense->title }}</td>
                         <td>{{ $expense->category?->name ?: '-' }}</td>
-                        <td>
+                        <td class="whitespace-nowrap">
                             @if ($expense->payment_channel === 'credit_card')
                                 Credit - {{ $expense->creditCard?->name ?: '-' }}
                             @elseif ($expense->payment_channel === 'debit_card')
@@ -1037,11 +1132,15 @@
                         <td class="history-note-cell">{{ $expense->notes ?: '-' }}</td>
                         <td class="history-action-cell">
                             <div class="flex items-center gap-2">
-                                <button type="button" class="card-action-btn open-modal" data-modal="expenseEditModal{{ $expense->id }}">Edit</button>
+                                <button type="button" class="card-action-btn open-modal" data-modal="expenseEditModal{{ $expense->id }}" title="Edit" aria-label="Edit">
+                                    <i class="fa-solid fa-pen-to-square text-[10px]"></i>
+                                </button>
                                 <form method="post" action="{{ route('admin.expenses.delete', $expense) }}">
                                     @csrf
                                     @method('delete')
-                                    <button type="submit" class="card-action-btn card-action-btn-danger">Delete</button>
+                                    <button type="submit" class="card-action-btn card-action-btn-danger" title="Delete" aria-label="Delete">
+                                        <i class="fa-solid fa-trash text-[10px]"></i>
+                                    </button>
                                 </form>
                             </div>
                         </td>
@@ -1074,10 +1173,10 @@
                 <tbody>
                 @forelse ($incomes as $income)
                     <tr>
-                        <td class="whitespace-nowrap">{{ $income->received_on->format('d-m-Y') }}</td>
+                        <td class="whitespace-nowrap">{{ $income->received_on->format('d M') }}</td>
                         <td class="font-medium text-slate-800">{{ $income->title }}</td>
                         <td>{{ $income->source ?: '-' }}</td>
-                        <td>
+                        <td class="whitespace-nowrap">
                             @if ($income->payment_channel === 'credit_card')
                                 Credit - {{ $income->creditCard?->name ?: '-' }}
                             @elseif ($income->payment_channel === 'debit_card')
@@ -1090,11 +1189,15 @@
                         <td class="history-note-cell">{{ $income->notes ?: '-' }}</td>
                         <td class="history-action-cell">
                             <div class="flex items-center gap-2">
-                                <button type="button" class="card-action-btn open-modal" data-modal="incomeEditModal{{ $income->id }}">Edit</button>
+                                <button type="button" class="card-action-btn open-modal" data-modal="incomeEditModal{{ $income->id }}" title="Edit" aria-label="Edit">
+                                    <i class="fa-solid fa-pen-to-square text-[10px]"></i>
+                                </button>
                                 <form method="post" action="{{ route('admin.incomes.delete', $income) }}">
                                     @csrf
                                     @method('delete')
-                                    <button type="submit" class="card-action-btn card-action-btn-danger">Delete</button>
+                                    <button type="submit" class="card-action-btn card-action-btn-danger" title="Delete" aria-label="Delete">
+                                        <i class="fa-solid fa-trash text-[10px]"></i>
+                                    </button>
                                 </form>
                             </div>
                         </td>
@@ -1272,11 +1375,15 @@
                         </td>
                         <td class="history-action-cell">
                             <div class="flex items-center gap-2">
-                                <button type="button" class="card-action-btn open-modal" data-modal="weightLogEditModal{{ $log->id }}">Edit</button>
+                                <button type="button" class="card-action-btn open-modal" data-modal="weightLogEditModal{{ $log->id }}" title="Edit" aria-label="Edit">
+                                    <i class="fa-solid fa-pen-to-square text-[10px]"></i>
+                                </button>
                                 <form method="post" action="{{ route('admin.weight-logs.delete', $log) }}">
                                     @csrf
                                     @method('delete')
-                                    <button type="submit" class="card-action-btn card-action-btn-danger">Delete</button>
+                                    <button type="submit" class="card-action-btn card-action-btn-danger" title="Delete" aria-label="Delete">
+                                        <i class="fa-solid fa-trash text-[10px]"></i>
+                                    </button>
                                 </form>
                             </div>
                         </td>
@@ -1939,8 +2046,8 @@
                     <button class="todo-pin-btn ${todo.pinned ? 'is-pinned' : ''}" data-index="${todo.originalIndex}" data-type="pin" title="${todo.pinned ? 'Unpin task' : 'Pin task'}">
                         <i class="fa-solid fa-thumbtack text-[10px]"></i>
                     </button>
-                    <button class="todo-action-btn" data-index="${todo.originalIndex}" data-type="edit">Edit</button>
-                    <button class="todo-action-btn todo-action-btn-danger" data-index="${todo.originalIndex}" data-type="delete">Delete</button>
+                    <button class="todo-action-btn" data-index="${todo.originalIndex}" data-type="edit" title="Edit" aria-label="Edit"><i class="fa-solid fa-pen-to-square text-[10px]"></i></button>
+                    <button class="todo-action-btn todo-action-btn-danger" data-index="${todo.originalIndex}" data-type="delete" title="Delete" aria-label="Delete"><i class="fa-solid fa-trash text-[10px]"></i></button>
                 </div>
             `,
             nextPrevious,
@@ -1981,6 +2088,19 @@
             li.innerHTML = built.html;
             todoCompletedList.appendChild(li);
         });
+
+        if (!activeTodos.length) {
+            const emptyActive = document.createElement('li');
+            emptyActive.className = 'rounded-lg border border-dashed border-slate-300 bg-slate-50 px-3 py-2 text-xs text-slate-500';
+            emptyActive.textContent = 'No active tasks yet. Add one above.';
+            todoList.appendChild(emptyActive);
+        }
+        if (!archivedTodos.length) {
+            const emptyArchived = document.createElement('li');
+            emptyArchived.className = 'rounded-lg border border-dashed border-slate-300 bg-slate-50 px-3 py-2 text-xs text-slate-500';
+            emptyArchived.textContent = 'No completed or dropped tasks yet.';
+            todoCompletedList.appendChild(emptyArchived);
+        }
     }
 
     let expensePieInstance = null;
