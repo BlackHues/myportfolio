@@ -378,6 +378,12 @@ class AdminDashboardController extends Controller
             'debit_card_id' => ['nullable', 'required_if:payment_channel,debit_card', 'integer', 'exists:debit_cards,id'],
             'credit_card_id' => ['nullable', 'required_if:payment_channel,credit_card', 'integer', 'exists:credit_cards,id'],
             'is_emi' => ['nullable', 'boolean'],
+        ], [
+            'debit_card_id.required_if' => 'Select a debit/bank card when payment mode is Debit card / bank.',
+            'debit_card_id.exists' => 'Selected debit/bank card is invalid.',
+            'credit_card_id.required_if' => 'Select a credit card when payment mode is Credit card.',
+            'credit_card_id.exists' => 'Selected credit card is invalid.',
+            'payment_channel.in' => 'Choose a valid payment mode.',
         ]);
         $data = $this->normalizeAccountLinkData($data);
 
@@ -401,6 +407,12 @@ class AdminDashboardController extends Controller
             'debit_card_id' => ['nullable', 'required_if:payment_channel,debit_card', 'integer', 'exists:debit_cards,id'],
             'credit_card_id' => ['nullable', 'required_if:payment_channel,credit_card', 'integer', 'exists:credit_cards,id'],
             'is_emi' => ['nullable', 'boolean'],
+        ], [
+            'debit_card_id.required_if' => 'Select a debit/bank card when payment mode is Debit card / bank.',
+            'debit_card_id.exists' => 'Selected debit/bank card is invalid.',
+            'credit_card_id.required_if' => 'Select a credit card when payment mode is Credit card.',
+            'credit_card_id.exists' => 'Selected credit card is invalid.',
+            'payment_channel.in' => 'Choose a valid payment mode.',
         ]);
         $data = $this->normalizeAccountLinkData($data);
 
@@ -436,6 +448,12 @@ class AdminDashboardController extends Controller
             'payment_channel' => ['required', 'in:cash,debit_card,credit_card'],
             'debit_card_id' => ['nullable', 'required_if:payment_channel,debit_card', 'integer', 'exists:debit_cards,id'],
             'credit_card_id' => ['nullable', 'required_if:payment_channel,credit_card', 'integer', 'exists:credit_cards,id'],
+        ], [
+            'debit_card_id.required_if' => 'Select a debit/bank card when income mode is Debit card / bank.',
+            'debit_card_id.exists' => 'Selected debit/bank card is invalid.',
+            'credit_card_id.required_if' => 'Select a credit card when income mode is Credit card repayment.',
+            'credit_card_id.exists' => 'Selected credit card is invalid.',
+            'payment_channel.in' => 'Choose a valid income mode.',
         ]);
         $data = $this->normalizeAccountLinkData($data);
 
@@ -458,6 +476,12 @@ class AdminDashboardController extends Controller
             'payment_channel' => ['required', 'in:cash,debit_card,credit_card'],
             'debit_card_id' => ['nullable', 'required_if:payment_channel,debit_card', 'integer', 'exists:debit_cards,id'],
             'credit_card_id' => ['nullable', 'required_if:payment_channel,credit_card', 'integer', 'exists:credit_cards,id'],
+        ], [
+            'debit_card_id.required_if' => 'Select a debit/bank card when income mode is Debit card / bank.',
+            'debit_card_id.exists' => 'Selected debit/bank card is invalid.',
+            'credit_card_id.required_if' => 'Select a credit card when income mode is Credit card repayment.',
+            'credit_card_id.exists' => 'Selected credit card is invalid.',
+            'payment_channel.in' => 'Choose a valid income mode.',
         ]);
         $data = $this->normalizeAccountLinkData($data);
 

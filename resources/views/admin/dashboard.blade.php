@@ -1807,8 +1807,17 @@
     const previousBestWeightKg = 80.5;
     const previousAvgWeightKg = 85;
     const currentReferenceWeightKg = 89.9;
+    const hasValidationErrors = @json($errors->any());
+    const openExpenseCreateOnError = @json($errors->any() && old('expense_category_id') !== null);
+    const openIncomeCreateOnError = @json($errors->any() && old('received_on') !== null && old('expense_category_id') === null);
 
     function restoreDashboardScrollPosition() {
+        if (hasValidationErrors) {
+            window.requestAnimationFrame(() => {
+                window.scrollTo({ top: 0, behavior: 'auto' });
+            });
+            return;
+        }
         const storedY = sessionStorage.getItem(dashboardScrollKey);
         if (storedY === null) {
             return;
@@ -1835,8 +1844,72 @@
         });
     }
 
+    function bindPaymentChannelDependencies() {
+        const paymentForms = document.querySelectorAll('form[action*="/admin/expenses"], form[action*="/admin/incomes"]');
+
+        paymentForms.forEach((form) => {
+            const paymentChannelField = form.querySelector('select[name="payment_channel"]');
+            const debitCardField = form.querySelector('select[name="debit_card_id"]');
+            const creditCardField = form.querySelector('select[name="credit_card_id"]');
+            if (!paymentChannelField || !debitCardField || !creditCardField) {
+                return;
+            }
+
+            const applyFieldState = () => {
+                const channel = paymentChannelField.value || 'cash';
+
+                if (channel === 'debit_card') {
+                    debitCardField.disabled = false;
+                    debitCardField.required = true;
+                    creditCardField.required = false;
+                    creditCardField.value = '';
+                    creditCardField.disabled = true;
+                    return;
+                }
+
+                if (channel === 'credit_card') {
+                    creditCardField.disabled = false;
+                    creditCardField.required = true;
+                    debitCardField.required = false;
+                    debitCardField.value = '';
+                    debitCardField.disabled = true;
+                    return;
+                }
+
+                debitCardField.required = false;
+                creditCardField.required = false;
+                debitCardField.value = '';
+                creditCardField.value = '';
+                debitCardField.disabled = true;
+                creditCardField.disabled = true;
+            };
+
+            paymentChannelField.addEventListener('change', applyFieldState);
+            applyFieldState();
+        });
+    }
+
+    function openModalById(modalId) {
+        const modal = document.getElementById(modalId);
+        if (!modal) {
+            return;
+        }
+        if (typeof modal.showModal === 'function') {
+            modal.showModal();
+        } else {
+            modal.setAttribute('open', 'open');
+        }
+        modal.classList.add('modal-backdrop');
+    }
+
     restoreDashboardScrollPosition();
     bindDashboardCrudScrollMemory();
+    bindPaymentChannelDependencies();
+    if (openExpenseCreateOnError) {
+        openModalById('expenseCreateModal');
+    } else if (openIncomeCreateOnError) {
+        openModalById('incomeCreateModal');
+    }
 
     let todos = (Array.isArray(initialTodos) ? initialTodos : []).map((todo) => ({
         id: todo.id ?? `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
