@@ -751,6 +751,16 @@
         border: 1px solid #d9e4f2;
         background: #ffffff;
         box-shadow: 0 14px 26px rgba(15, 23, 42, 0.1);
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .side-showcase-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 18px 30px rgba(15, 23, 42, 0.14);
+    }
+    .side-showcase-card.is-active {
+        border-color: #38bdf8;
+        box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.35), 0 14px 26px rgba(15, 23, 42, 0.12);
     }
     .side-showcase-image {
         width: 100%;
@@ -770,6 +780,12 @@
         font-size: 0.68rem;
         color: #64748b;
         margin-top: 0.2rem;
+    }
+    .dashboard-content-panel {
+        display: none;
+    }
+    .dashboard-content-panel.is-visible {
+        display: block;
     }
     @media (max-width: 640px) {
         .expense-pie-wrap {
@@ -849,7 +865,7 @@
     @endif
 
     <div class="grid xl:grid-cols-4 gap-6 mt-6">
-        <section class="lg:col-span-1 rounded-xl bg-white p-5 panel todo-premium-card">
+        <section class="lg:col-span-1 rounded-xl bg-white p-5 panel todo-premium-card dashboard-content-panel" data-dashboard-panel="goal">
             <h2 class="text-lg font-semibold">Todo List</h2>
             <p class="text-sm text-slate-500 mt-1">Local checklist for your daily tasks.</p>
             <form id="todoForm" class="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto_auto]">
@@ -901,7 +917,7 @@
             <ul id="todoCompletedList" class="space-y-2"></ul>
         </section>
 
-        <section class="xl:col-span-3 rounded-xl bg-white p-5 panel">
+        <section class="xl:col-span-3 rounded-xl bg-white p-5 panel dashboard-content-panel" data-dashboard-panel="money">
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
                     <h2 class="text-lg font-semibold">Expenses</h2>
@@ -984,34 +1000,34 @@
     <section class="rounded-xl bg-white p-5 mt-6 panel">
         <div class="flex items-center justify-between gap-3 mb-3">
             <h2 class="text-lg font-semibold">Focus Sections</h2>
-            <p class="text-xs text-slate-500">Finance, fitness, and targets in one glance.</p>
+            <p class="text-xs text-slate-500">Click a card to open only that category.</p>
         </div>
         <div class="grid md:grid-cols-3 gap-4">
-            <article class="side-showcase-card">
+            <article class="side-showcase-card" role="button" tabindex="0" data-open-dashboard-panel="money">
                 <img src="{{ asset('images/dashboard/finance-growth.png') }}" alt="Finance growth savings" class="side-showcase-image">
                 <div class="side-showcase-body">
-                    <p class="side-showcase-title">Money Discipline</p>
-                    <p class="side-showcase-subtitle">Track and grow daily savings with clarity.</p>
+                    <p class="side-showcase-title">Money Management</p>
+                    <p class="side-showcase-subtitle">Expenses, income, cards, stock and cash flow.</p>
                 </div>
             </article>
-            <article class="side-showcase-card">
+            <article class="side-showcase-card" role="button" tabindex="0" data-open-dashboard-panel="fitness">
                 <img src="{{ asset('images/dashboard/fitness-focus.png') }}" alt="Gym focus and workout" class="side-showcase-image">
                 <div class="side-showcase-body">
-                    <p class="side-showcase-title">Fitness Routine</p>
-                    <p class="side-showcase-subtitle">Stay consistent with weight and calorie logs.</p>
+                    <p class="side-showcase-title">Fitness</p>
+                    <p class="side-showcase-subtitle">Weight trend, daily calories and log history.</p>
                 </div>
             </article>
-            <article class="side-showcase-card">
+            <article class="side-showcase-card" role="button" tabindex="0" data-open-dashboard-panel="goal">
                 <img src="{{ asset('images/dashboard/target-goal.png') }}" alt="Goal target concept" class="side-showcase-image">
                 <div class="side-showcase-body">
-                    <p class="side-showcase-title">Goal Targeting</p>
-                    <p class="side-showcase-subtitle">Keep every metric aligned to your next milestone.</p>
+                    <p class="side-showcase-title">Todo In Goal</p>
+                    <p class="side-showcase-subtitle">Todo task planning with goal/progress insights.</p>
                 </div>
             </article>
         </div>
     </section>
 
-    <section class="rounded-xl bg-white p-5 mt-6 panel">
+    <section class="rounded-xl bg-white p-5 mt-6 panel dashboard-content-panel" data-dashboard-panel="money">
         <h2 class="text-lg font-semibold">Stock Value</h2>
         <p class="text-sm text-slate-500 mt-1">Invested stock amount shown separately.</p>
         <div class="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-indigo-200 bg-gradient-to-r from-indigo-100 to-sky-100 px-5 py-6 text-slate-900 shadow">
@@ -1025,7 +1041,7 @@
         </div>
     </section>
 
-    <section class="rounded-xl bg-white p-5 mt-6 panel">
+    <section class="rounded-xl bg-white p-5 mt-6 panel dashboard-content-panel" data-dashboard-panel="money">
         <h2 class="text-lg font-semibold">Stock History</h2>
         <p class="text-sm text-slate-500 mt-1">Manage stock holdings with full CRUD.</p>
         <div class="history-table-wrap mt-4 overflow-x-auto">
@@ -1072,7 +1088,7 @@
         <div class="mt-3">{{ $stockHoldings->links() }}</div>
     </section>
 
-    <section class="rounded-xl bg-white p-5 mt-6 panel">
+    <section class="rounded-xl bg-white p-5 mt-6 panel dashboard-content-panel" data-dashboard-panel="money">
         <div class="flex items-center justify-between gap-3 mb-4">
             <h2 class="text-lg font-semibold">Cards Overview</h2>
             <button type="button" class="primary-btn px-3 py-2 text-xs open-modal" data-modal="debitCardCreateModal">
@@ -1157,7 +1173,7 @@
         @endif
     </section>
 
-    <section class="rounded-xl bg-white p-5 mt-6 panel">
+    <section class="rounded-xl bg-white p-5 mt-6 panel dashboard-content-panel" data-dashboard-panel="money">
         <h2 class="text-lg font-semibold">Expense History</h2>
         <p class="text-sm text-slate-500 mt-1">Neat tabular view with direct edit and delete actions.</p>
         <div class="history-table-wrap mt-4 overflow-x-auto">
@@ -1222,7 +1238,7 @@
         <div class="mt-3">{{ $expenses->links() }}</div>
     </section>
 
-    <section class="rounded-xl bg-white p-5 mt-6 panel">
+    <section class="rounded-xl bg-white p-5 mt-6 panel dashboard-content-panel" data-dashboard-panel="money">
         <h2 class="text-lg font-semibold">Income History</h2>
         <p class="text-sm text-slate-500 mt-1">Clean rows and columns for quick review and updates.</p>
         <div class="history-table-wrap mt-4 overflow-x-auto">
@@ -1279,7 +1295,7 @@
         <div class="mt-3">{{ $incomes->links() }}</div>
     </section>
 
-    <section class="rounded-xl bg-white p-5 mt-6 panel">
+    <section class="rounded-xl bg-white p-5 mt-6 panel dashboard-content-panel" data-dashboard-panel="goal">
         <h2 class="text-lg font-semibold">Net worth analysis ({{ $netWorthMonthlyTrend['year'] }})</h2>
         <p class="text-sm text-slate-500 mt-1">Built only from your income and expense records. Solid bars are closed months (actual). Lighter bars are forecast. The current month blends what you logged so far with a projected finish. The line uses actual history through the last closed month, then extends with those monthly figures. Change the year with the filter above and click Apply.</p>
         @php($fc = $netWorthMonthlyTrend['forecast'] ?? [])
@@ -1366,7 +1382,7 @@
         </div>
     </section>
 
-    <section class="rounded-xl bg-white p-5 mt-6 panel">
+    <section class="rounded-xl bg-white p-5 mt-6 panel dashboard-content-panel" data-dashboard-panel="fitness">
         <div class="flex items-center justify-between gap-3">
             <div>
                 <h2 class="text-lg font-semibold">Weight Management</h2>
@@ -1879,6 +1895,9 @@
     const hasValidationErrors = @json($errors->any());
     const openExpenseCreateOnError = @json($errors->any() && old('expense_category_id') !== null);
     const openIncomeCreateOnError = @json($errors->any() && old('received_on') !== null && old('expense_category_id') === null);
+    const oldWeightContext = @json($errors->any() && old('weight_kg') !== null);
+    const dashboardPanelCards = Array.from(document.querySelectorAll('[data-open-dashboard-panel]'));
+    const dashboardPanels = Array.from(document.querySelectorAll('[data-dashboard-panel]'));
 
     function restoreDashboardScrollPosition() {
         if (hasValidationErrors) {
@@ -1971,9 +1990,71 @@
         modal.classList.add('modal-backdrop');
     }
 
+    const renderedPanelCharts = {
+        money: false,
+        fitness: false,
+        goal: false,
+    };
+
+    function ensurePanelCharts(panelKey) {
+        if (panelKey === 'money' && !renderedPanelCharts.money) {
+            renderPieChart();
+            renderDailyFlowHologramChart();
+            renderedPanelCharts.money = true;
+            return;
+        }
+        if (panelKey === 'fitness' && !renderedPanelCharts.fitness) {
+            renderWeightProgressChart();
+            renderDailyCaloriesChart();
+            renderedPanelCharts.fitness = true;
+            return;
+        }
+        if (panelKey === 'goal' && !renderedPanelCharts.goal) {
+            renderNetWorthCharts();
+            renderedPanelCharts.goal = true;
+        }
+    }
+
+    function setActiveDashboardPanel(panelKey) {
+        dashboardPanels.forEach((panel) => {
+            const isMatch = panel.dataset.dashboardPanel === panelKey;
+            panel.classList.toggle('is-visible', isMatch);
+        });
+        dashboardPanelCards.forEach((card) => {
+            card.classList.toggle('is-active', card.dataset.openDashboardPanel === panelKey);
+        });
+        ensurePanelCharts(panelKey);
+    }
+
+    function bindDashboardPanelCards() {
+        dashboardPanelCards.forEach((card) => {
+            const panelKey = card.dataset.openDashboardPanel;
+            if (!panelKey) {
+                return;
+            }
+            card.addEventListener('click', () => setActiveDashboardPanel(panelKey));
+            card.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    setActiveDashboardPanel(panelKey);
+                }
+            });
+        });
+    }
+
     restoreDashboardScrollPosition();
     bindDashboardCrudScrollMemory();
     bindPaymentChannelDependencies();
+    bindDashboardPanelCards();
+    if (hasValidationErrors) {
+        if (oldWeightContext) {
+            setActiveDashboardPanel('fitness');
+        } else if (openExpenseCreateOnError || openIncomeCreateOnError) {
+            setActiveDashboardPanel('money');
+        } else {
+            setActiveDashboardPanel('goal');
+        }
+    }
     if (openExpenseCreateOnError) {
         openModalById('expenseCreateModal');
     } else if (openIncomeCreateOnError) {
@@ -2670,11 +2751,6 @@
     if (shouldSyncMigratedTodos) {
         saveTodos();
     }
-    renderPieChart();
-    renderDailyFlowHologramChart();
-    renderNetWorthCharts();
-    renderWeightProgressChart();
-    renderDailyCaloriesChart();
 
     openModalButtons.forEach((button) => {
         button.addEventListener('click', () => {
