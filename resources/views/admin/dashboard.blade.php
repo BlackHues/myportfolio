@@ -988,21 +988,21 @@
         </div>
         <div class="grid md:grid-cols-3 gap-4">
             <article class="side-showcase-card">
-                <img src="{{ route('admin.dashboard.image', 'finance-growth') }}" alt="Finance growth savings" class="side-showcase-image">
+                <img src="{{ asset('images/dashboard/finance-growth.png') }}" alt="Finance growth savings" class="side-showcase-image">
                 <div class="side-showcase-body">
                     <p class="side-showcase-title">Money Discipline</p>
                     <p class="side-showcase-subtitle">Track and grow daily savings with clarity.</p>
                 </div>
             </article>
             <article class="side-showcase-card">
-                <img src="{{ route('admin.dashboard.image', 'fitness-focus') }}" alt="Gym focus and workout" class="side-showcase-image">
+                <img src="{{ asset('images/dashboard/fitness-focus.png') }}" alt="Gym focus and workout" class="side-showcase-image">
                 <div class="side-showcase-body">
                     <p class="side-showcase-title">Fitness Routine</p>
                     <p class="side-showcase-subtitle">Stay consistent with weight and calorie logs.</p>
                 </div>
             </article>
             <article class="side-showcase-card">
-                <img src="{{ route('admin.dashboard.image', 'target-goal') }}" alt="Goal target concept" class="side-showcase-image">
+                <img src="{{ asset('images/dashboard/target-goal.png') }}" alt="Goal target concept" class="side-showcase-image">
                 <div class="side-showcase-body">
                     <p class="side-showcase-title">Goal Targeting</p>
                     <p class="side-showcase-subtitle">Keep every metric aligned to your next milestone.</p>
