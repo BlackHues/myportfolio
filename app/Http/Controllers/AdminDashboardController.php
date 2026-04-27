@@ -45,6 +45,28 @@ class AdminDashboardController extends Controller
             ->groupBy('expense_categories.id', 'expense_categories.name')
             ->orderByDesc('total_amount')
             ->get();
+        $periodDates = collect();
+        $cursorDate = $startDate->copy()->startOfDay();
+        while ($cursorDate->lte($endDate)) {
+            $periodDates->push($cursorDate->copy());
+            $cursorDate->addDay();
+        }
+        $incomeByDate = Income::query()
+            ->whereBetween('received_on', [$startDate->toDateString(), $endDate->toDateString()])
+            ->selectRaw('received_on as day_key, SUM(amount) as total_amount')
+            ->groupBy('received_on')
+            ->pluck('total_amount', 'day_key');
+        $expenseByDate = Expense::query()
+            ->whereBetween('spent_on', [$startDate->toDateString(), $endDate->toDateString()])
+            ->where('is_emi', false)
+            ->selectRaw('spent_on as day_key, SUM(amount) as total_amount')
+            ->groupBy('spent_on')
+            ->pluck('total_amount', 'day_key');
+        $dailyFlowTrend = [
+            'labels' => $periodDates->map(static fn (Carbon $day): string => $day->format('d M'))->values(),
+            'income' => $periodDates->map(static fn (Carbon $day): float => (float) ($incomeByDate[$day->toDateString()] ?? 0))->values(),
+            'expense' => $periodDates->map(static fn (Carbon $day): float => (float) ($expenseByDate[$day->toDateString()] ?? 0))->values(),
+        ];
 
         $totalExpense = (clone $nonEmiExpenseQuery)->sum('amount');
         $totalEmiExpense = (clone $expenseQuery)->where('is_emi', true)->sum('amount');
@@ -166,6 +188,7 @@ class AdminDashboardController extends Controller
             'expenses' => $expenses,
             'categoryTotals' => $categoryTotals,
             'totalExpense' => (float) $totalExpense,
+            'dailyFlowTrend' => $dailyFlowTrend,
             'totalIncome' => (float) $totalIncome,
             'totalEmiExpense' => (float) $totalEmiExpense,
             'totalCreditUsed' => (float) $totalCreditUsed,
@@ -719,7 +742,6 @@ class AdminDashboardController extends Controller
         $data['carbs_g'] = $this->resolveMacroIntake($data, 'carbs_g');
         $data['protein_g'] = $this->resolveMacroIntake($data, 'protein_g');
         $data['fat_g'] = $this->resolveMacroIntake($data, 'fat_g');
-        $this->clearMealNutritionFields($data);
 
         WeightLog::query()->create($data);
 
@@ -764,7 +786,6 @@ class AdminDashboardController extends Controller
         $data['carbs_g'] = $this->resolveMacroIntake($data, 'carbs_g');
         $data['protein_g'] = $this->resolveMacroIntake($data, 'protein_g');
         $data['fat_g'] = $this->resolveMacroIntake($data, 'fat_g');
-        $this->clearMealNutritionFields($data);
 
         $weightLog->update($data);
 
@@ -1279,17 +1300,4 @@ class AdminDashboardController extends Controller
         return null;
     }
 
-    private function clearMealNutritionFields(array &$data): void
-    {
-        $fields = [
-            'breakfast_calories', 'lunch_calories', 'dinner_calories', 'snacks_calories',
-            'breakfast_carbs_g', 'lunch_carbs_g', 'dinner_carbs_g', 'snacks_carbs_g',
-            'breakfast_protein_g', 'lunch_protein_g', 'dinner_protein_g', 'snacks_protein_g',
-            'breakfast_fat_g', 'lunch_fat_g', 'dinner_fat_g', 'snacks_fat_g',
-        ];
-
-        foreach ($fields as $field) {
-            unset($data[$field]);
-        }
-    }
 }

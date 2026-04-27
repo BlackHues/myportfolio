@@ -939,6 +939,17 @@
                     <div id="pieLegend" class="mt-4 w-full space-y-2 max-h-40 overflow-auto pr-1"></div>
                 </div>
             </div>
+            <div class="mt-5 rounded-xl border border-cyan-100 bg-gradient-to-br from-slate-900 via-indigo-950 to-sky-950 p-4 shadow-lg">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                    <div>
+                        <p class="text-xs uppercase tracking-wide text-cyan-200">Hologram Flow</p>
+                        <p class="text-sm text-cyan-100">Day to day income vs expense ({{ ucfirst($period) }})</p>
+                    </div>
+                </div>
+                <div class="h-[260px]">
+                    <canvas id="dailyFlowHologramChart"></canvas>
+                </div>
+            </div>
 
         </section>
     </div>
@@ -1709,22 +1720,22 @@
         </label>
         <input type="number" name="walk_km" step="0.01" min="0" max="100" placeholder="Walked KM (optional)" class="soft-input rounded-lg px-3 py-2 text-sm">
         <p class="text-xs font-semibold uppercase text-slate-500 md:col-span-2 mt-1">Meal wise nutrition</p>
-        <input type="number" name="breakfast_calories" min="0" max="5000" placeholder="Breakfast calories" class="meal-calorie-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="breakfast_carbs_g" step="0.01" min="0" max="1000" placeholder="Breakfast carbs (g)" class="meal-carb-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="breakfast_protein_g" step="0.01" min="0" max="1000" placeholder="Breakfast protein (g)" class="meal-protein-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="breakfast_fat_g" step="0.01" min="0" max="1000" placeholder="Breakfast fats (g)" class="meal-fat-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="lunch_calories" min="0" max="5000" placeholder="Lunch calories" class="meal-calorie-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="lunch_carbs_g" step="0.01" min="0" max="1000" placeholder="Lunch carbs (g)" class="meal-carb-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="lunch_protein_g" step="0.01" min="0" max="1000" placeholder="Lunch protein (g)" class="meal-protein-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="lunch_fat_g" step="0.01" min="0" max="1000" placeholder="Lunch fats (g)" class="meal-fat-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="dinner_calories" min="0" max="5000" placeholder="Dinner calories" class="meal-calorie-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="dinner_carbs_g" step="0.01" min="0" max="1000" placeholder="Dinner carbs (g)" class="meal-carb-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="dinner_protein_g" step="0.01" min="0" max="1000" placeholder="Dinner protein (g)" class="meal-protein-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="dinner_fat_g" step="0.01" min="0" max="1000" placeholder="Dinner fats (g)" class="meal-fat-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="snacks_calories" min="0" max="5000" placeholder="Snacks calories" class="meal-calorie-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="snacks_carbs_g" step="0.01" min="0" max="1000" placeholder="Snacks carbs (g)" class="meal-carb-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="snacks_protein_g" step="0.01" min="0" max="1000" placeholder="Snacks protein (g)" class="meal-protein-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="snacks_fat_g" step="0.01" min="0" max="1000" placeholder="Snacks fats (g)" class="meal-fat-input soft-input rounded-lg px-3 py-2 text-sm">
+        <input type="number" name="breakfast_calories" min="0" max="5000" placeholder="Breakfast calories" class="meal-calorie-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ old('breakfast_calories') }}">
+        <input type="number" name="breakfast_carbs_g" step="0.01" min="0" max="1000" placeholder="Breakfast carbs (g)" class="meal-carb-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ old('breakfast_carbs_g') }}">
+        <input type="number" name="breakfast_protein_g" step="0.01" min="0" max="1000" placeholder="Breakfast protein (g)" class="meal-protein-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ old('breakfast_protein_g') }}">
+        <input type="number" name="breakfast_fat_g" step="0.01" min="0" max="1000" placeholder="Breakfast fats (g)" class="meal-fat-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ old('breakfast_fat_g') }}">
+        <input type="number" name="lunch_calories" min="0" max="5000" placeholder="Lunch calories" class="meal-calorie-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ old('lunch_calories') }}">
+        <input type="number" name="lunch_carbs_g" step="0.01" min="0" max="1000" placeholder="Lunch carbs (g)" class="meal-carb-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ old('lunch_carbs_g') }}">
+        <input type="number" name="lunch_protein_g" step="0.01" min="0" max="1000" placeholder="Lunch protein (g)" class="meal-protein-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ old('lunch_protein_g') }}">
+        <input type="number" name="lunch_fat_g" step="0.01" min="0" max="1000" placeholder="Lunch fats (g)" class="meal-fat-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ old('lunch_fat_g') }}">
+        <input type="number" name="dinner_calories" min="0" max="5000" placeholder="Dinner calories" class="meal-calorie-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ old('dinner_calories') }}">
+        <input type="number" name="dinner_carbs_g" step="0.01" min="0" max="1000" placeholder="Dinner carbs (g)" class="meal-carb-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ old('dinner_carbs_g') }}">
+        <input type="number" name="dinner_protein_g" step="0.01" min="0" max="1000" placeholder="Dinner protein (g)" class="meal-protein-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ old('dinner_protein_g') }}">
+        <input type="number" name="dinner_fat_g" step="0.01" min="0" max="1000" placeholder="Dinner fats (g)" class="meal-fat-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ old('dinner_fat_g') }}">
+        <input type="number" name="snacks_calories" min="0" max="5000" placeholder="Snacks calories" class="meal-calorie-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ old('snacks_calories') }}">
+        <input type="number" name="snacks_carbs_g" step="0.01" min="0" max="1000" placeholder="Snacks carbs (g)" class="meal-carb-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ old('snacks_carbs_g') }}">
+        <input type="number" name="snacks_protein_g" step="0.01" min="0" max="1000" placeholder="Snacks protein (g)" class="meal-protein-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ old('snacks_protein_g') }}">
+        <input type="number" name="snacks_fat_g" step="0.01" min="0" max="1000" placeholder="Snacks fats (g)" class="meal-fat-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ old('snacks_fat_g') }}">
         <p class="text-xs font-semibold uppercase text-slate-500 md:col-span-2 mt-1">Auto totals</p>
         <input type="number" name="calories_intake" min="0" max="15000" placeholder="Total calories" readonly class="meal-calorie-total soft-input rounded-lg px-3 py-2 text-sm bg-slate-100">
         <input type="number" name="carbs_g" step="0.01" min="0" max="2000" placeholder="Total carbs (g)" readonly class="meal-carb-total soft-input rounded-lg px-3 py-2 text-sm bg-slate-100">
@@ -1751,22 +1762,22 @@
         </label>
         <input type="number" name="walk_km" step="0.01" min="0" max="100" value="{{ $log->walk_km !== null ? (float) $log->walk_km : '' }}" placeholder="Walked KM (optional)" class="soft-input rounded-lg px-3 py-2 text-sm">
         <p class="text-xs font-semibold uppercase text-slate-500 md:col-span-2 mt-1">Meal wise nutrition</p>
-        <input type="number" name="breakfast_calories" min="0" max="5000" placeholder="Breakfast calories" class="meal-calorie-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="breakfast_carbs_g" step="0.01" min="0" max="1000" placeholder="Breakfast carbs (g)" class="meal-carb-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="breakfast_protein_g" step="0.01" min="0" max="1000" placeholder="Breakfast protein (g)" class="meal-protein-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="breakfast_fat_g" step="0.01" min="0" max="1000" placeholder="Breakfast fats (g)" class="meal-fat-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="lunch_calories" min="0" max="5000" placeholder="Lunch calories" class="meal-calorie-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="lunch_carbs_g" step="0.01" min="0" max="1000" placeholder="Lunch carbs (g)" class="meal-carb-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="lunch_protein_g" step="0.01" min="0" max="1000" placeholder="Lunch protein (g)" class="meal-protein-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="lunch_fat_g" step="0.01" min="0" max="1000" placeholder="Lunch fats (g)" class="meal-fat-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="dinner_calories" min="0" max="5000" placeholder="Dinner calories" class="meal-calorie-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="dinner_carbs_g" step="0.01" min="0" max="1000" placeholder="Dinner carbs (g)" class="meal-carb-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="dinner_protein_g" step="0.01" min="0" max="1000" placeholder="Dinner protein (g)" class="meal-protein-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="dinner_fat_g" step="0.01" min="0" max="1000" placeholder="Dinner fats (g)" class="meal-fat-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="snacks_calories" min="0" max="5000" placeholder="Snacks calories" class="meal-calorie-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="snacks_carbs_g" step="0.01" min="0" max="1000" placeholder="Snacks carbs (g)" class="meal-carb-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="snacks_protein_g" step="0.01" min="0" max="1000" placeholder="Snacks protein (g)" class="meal-protein-input soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="number" name="snacks_fat_g" step="0.01" min="0" max="1000" placeholder="Snacks fats (g)" class="meal-fat-input soft-input rounded-lg px-3 py-2 text-sm">
+        <input type="number" name="breakfast_calories" min="0" max="5000" placeholder="Breakfast calories" class="meal-calorie-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ $log->breakfast_calories }}">
+        <input type="number" name="breakfast_carbs_g" step="0.01" min="0" max="1000" placeholder="Breakfast carbs (g)" class="meal-carb-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ $log->breakfast_carbs_g !== null ? (float) $log->breakfast_carbs_g : '' }}">
+        <input type="number" name="breakfast_protein_g" step="0.01" min="0" max="1000" placeholder="Breakfast protein (g)" class="meal-protein-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ $log->breakfast_protein_g !== null ? (float) $log->breakfast_protein_g : '' }}">
+        <input type="number" name="breakfast_fat_g" step="0.01" min="0" max="1000" placeholder="Breakfast fats (g)" class="meal-fat-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ $log->breakfast_fat_g !== null ? (float) $log->breakfast_fat_g : '' }}">
+        <input type="number" name="lunch_calories" min="0" max="5000" placeholder="Lunch calories" class="meal-calorie-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ $log->lunch_calories }}">
+        <input type="number" name="lunch_carbs_g" step="0.01" min="0" max="1000" placeholder="Lunch carbs (g)" class="meal-carb-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ $log->lunch_carbs_g !== null ? (float) $log->lunch_carbs_g : '' }}">
+        <input type="number" name="lunch_protein_g" step="0.01" min="0" max="1000" placeholder="Lunch protein (g)" class="meal-protein-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ $log->lunch_protein_g !== null ? (float) $log->lunch_protein_g : '' }}">
+        <input type="number" name="lunch_fat_g" step="0.01" min="0" max="1000" placeholder="Lunch fats (g)" class="meal-fat-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ $log->lunch_fat_g !== null ? (float) $log->lunch_fat_g : '' }}">
+        <input type="number" name="dinner_calories" min="0" max="5000" placeholder="Dinner calories" class="meal-calorie-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ $log->dinner_calories }}">
+        <input type="number" name="dinner_carbs_g" step="0.01" min="0" max="1000" placeholder="Dinner carbs (g)" class="meal-carb-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ $log->dinner_carbs_g !== null ? (float) $log->dinner_carbs_g : '' }}">
+        <input type="number" name="dinner_protein_g" step="0.01" min="0" max="1000" placeholder="Dinner protein (g)" class="meal-protein-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ $log->dinner_protein_g !== null ? (float) $log->dinner_protein_g : '' }}">
+        <input type="number" name="dinner_fat_g" step="0.01" min="0" max="1000" placeholder="Dinner fats (g)" class="meal-fat-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ $log->dinner_fat_g !== null ? (float) $log->dinner_fat_g : '' }}">
+        <input type="number" name="snacks_calories" min="0" max="5000" placeholder="Snacks calories" class="meal-calorie-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ $log->snacks_calories }}">
+        <input type="number" name="snacks_carbs_g" step="0.01" min="0" max="1000" placeholder="Snacks carbs (g)" class="meal-carb-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ $log->snacks_carbs_g !== null ? (float) $log->snacks_carbs_g : '' }}">
+        <input type="number" name="snacks_protein_g" step="0.01" min="0" max="1000" placeholder="Snacks protein (g)" class="meal-protein-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ $log->snacks_protein_g !== null ? (float) $log->snacks_protein_g : '' }}">
+        <input type="number" name="snacks_fat_g" step="0.01" min="0" max="1000" placeholder="Snacks fats (g)" class="meal-fat-input soft-input rounded-lg px-3 py-2 text-sm" value="{{ $log->snacks_fat_g !== null ? (float) $log->snacks_fat_g : '' }}">
         <p class="text-xs font-semibold uppercase text-slate-500 md:col-span-2 mt-1">Auto totals</p>
         <input type="number" name="calories_intake" min="0" max="15000" value="{{ $log->calories_intake }}" placeholder="Total calories" readonly class="meal-calorie-total soft-input rounded-lg px-3 py-2 text-sm bg-slate-100">
         <input type="number" name="carbs_g" step="0.01" min="0" max="2000" value="{{ $log->carbs_g !== null ? (float) $log->carbs_g : '' }}" placeholder="Total carbs (g)" readonly class="meal-carb-total soft-input rounded-lg px-3 py-2 text-sm bg-slate-100">
@@ -1803,6 +1814,7 @@
     const closeModalButtons = document.querySelectorAll('.close-modal');
     const netWorthMonthlyTrend = @json($netWorthMonthlyTrend);
     const weightTrend = @json($weightTrend);
+    const dailyFlowTrend = @json($dailyFlowTrend ?? ['labels' => [], 'income' => [], 'expense' => []]);
     const weightGoalKg = 75;
     const previousBestWeightKg = 80.5;
     const previousAvgWeightKg = 85;
@@ -2602,6 +2614,7 @@
         saveTodos();
     }
     renderPieChart();
+    renderDailyFlowHologramChart();
     renderNetWorthCharts();
     renderWeightProgressChart();
     renderDailyCaloriesChart();
@@ -2697,6 +2710,14 @@
                     fatTotalInput.value = fat > 0 ? fat.toFixed(2) : '';
                 }
             };
+            const hasAnyMealValue = (inputs) => Array.from(inputs).some((input) => {
+                const raw = String(input.value || '').trim();
+                if (raw === '') {
+                    return false;
+                }
+                const numeric = Number(raw);
+                return !Number.isNaN(numeric) && numeric > 0;
+            });
 
             [
                 ...calorieInputs,
@@ -2707,6 +2728,10 @@
                 input.addEventListener('input', updateTotal);
                 input.addEventListener('change', updateTotal);
             });
+
+            if (hasAnyMealValue(calorieInputs) || hasAnyMealValue(carbInputs) || hasAnyMealValue(proteinInputs) || hasAnyMealValue(fatInputs)) {
+                updateTotal();
+            }
         });
     }
 
@@ -2952,6 +2977,89 @@
                         beginAtZero: true,
                         grid: { color: 'rgba(148,163,184,0.2)' },
                         title: { display: true, text: 'Calories' },
+                    },
+                },
+            },
+        });
+    }
+
+    function renderDailyFlowHologramChart() {
+        const chartEl = document.getElementById('dailyFlowHologramChart');
+        const labels = Array.isArray(dailyFlowTrend?.labels) ? dailyFlowTrend.labels : [];
+        const income = Array.isArray(dailyFlowTrend?.income) ? dailyFlowTrend.income.map((v) => Number(v || 0)) : [];
+        const expense = Array.isArray(dailyFlowTrend?.expense) ? dailyFlowTrend.expense.map((v) => Number(v || 0)) : [];
+        if (!chartEl || labels.length === 0) {
+            return;
+        }
+
+        const ctx = chartEl.getContext('2d');
+        const incomeGradient = ctx.createLinearGradient(0, 0, 0, 260);
+        incomeGradient.addColorStop(0, 'rgba(45, 212, 191, 0.95)');
+        incomeGradient.addColorStop(1, 'rgba(45, 212, 191, 0.15)');
+        const expenseGradient = ctx.createLinearGradient(0, 0, 0, 260);
+        expenseGradient.addColorStop(0, 'rgba(251, 113, 133, 0.95)');
+        expenseGradient.addColorStop(1, 'rgba(251, 113, 133, 0.15)');
+
+        new Chart(chartEl, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [
+                    {
+                        type: 'bar',
+                        label: 'Income',
+                        data: income,
+                        backgroundColor: incomeGradient,
+                        borderColor: '#14b8a6',
+                        borderWidth: 1.2,
+                        borderRadius: 6,
+                    },
+                    {
+                        type: 'bar',
+                        label: 'Expense',
+                        data: expense,
+                        backgroundColor: expenseGradient,
+                        borderColor: '#f43f5e',
+                        borderWidth: 1.2,
+                        borderRadius: 6,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#bae6fd',
+                        },
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label(context) {
+                                const value = Number(context.parsed?.y ?? 0);
+                                return `${context.dataset.label}: Rs ${value.toLocaleString()}`;
+                            },
+                        },
+                    },
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: 'rgba(224, 242, 254, 0.9)',
+                            maxTicksLimit: labels.length > 16 ? 16 : labels.length,
+                        },
+                        grid: { color: 'rgba(148, 163, 184, 0.15)' },
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: 'rgba(224, 242, 254, 0.9)' },
+                        grid: { color: 'rgba(148, 163, 184, 0.15)' },
+                        title: {
+                            display: true,
+                            text: 'Rs per day',
+                            color: 'rgba(186, 230, 253, 0.95)',
+                        },
                     },
                 },
             },
