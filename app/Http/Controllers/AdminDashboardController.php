@@ -19,6 +19,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminDashboardController extends Controller
@@ -283,6 +284,24 @@ class AdminDashboardController extends Controller
         return response()->json([
             'ok' => true,
             'todos' => $freshTodos,
+        ]);
+    }
+
+    public function dashboardImage(string $slug): BinaryFileResponse
+    {
+        $map = [
+            'finance-growth' => base_path('assets/c__Users_user_AppData_Roaming_Cursor_User_workspaceStorage_a9c3ab39ec230f6056340d085c46cf73_images_1054-eab32530-a46b-4a65-b880-3c12daa84511.png'),
+            'fitness-focus' => base_path('assets/c__Users_user_AppData_Roaming_Cursor_User_workspaceStorage_a9c3ab39ec230f6056340d085c46cf73_images_2497-ae9acd94-f41d-4ba4-acd7-f84ebff3e4b8.png'),
+            'target-goal' => base_path('assets/c__Users_user_AppData_Roaming_Cursor_User_workspaceStorage_a9c3ab39ec230f6056340d085c46cf73_images_310506666_48e86963-c128-4662-a9b5-f0a51266e326-e320d8c4-393e-4e67-b914-921909163ab2.png'),
+        ];
+
+        $filePath = $map[$slug] ?? null;
+        if (!$filePath || !is_file($filePath)) {
+            abort(404);
+        }
+
+        return response()->file($filePath, [
+            'Cache-Control' => 'public, max-age=86400',
         ]);
     }
 

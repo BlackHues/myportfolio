@@ -134,6 +134,9 @@ Route::delete('/admin/weight-logs/{weightLog}', [AdminDashboardController::class
 Route::put('/admin/todos/sync', [AdminDashboardController::class, 'syncTodos'])
     ->middleware('admin.auth')
     ->name('admin.todos.sync');
+Route::get('/admin/dashboard-image/{slug}', [AdminDashboardController::class, 'dashboardImage'])
+    ->middleware('admin.auth')
+    ->name('admin.dashboard.image');
 
 Route::get('/admin/visitors', [VisitorLogController::class, 'index'])
     ->middleware('admin.auth')

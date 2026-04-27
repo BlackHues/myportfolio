@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Expense Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ @filemtime(public_path('css/app.css')) }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -744,6 +745,32 @@
         width: 100% !important;
         height: 100% !important;
     }
+    .side-showcase-card {
+        border-radius: 0.95rem;
+        overflow: hidden;
+        border: 1px solid #d9e4f2;
+        background: #ffffff;
+        box-shadow: 0 14px 26px rgba(15, 23, 42, 0.1);
+    }
+    .side-showcase-image {
+        width: 100%;
+        height: 165px;
+        object-fit: cover;
+        display: block;
+    }
+    .side-showcase-body {
+        padding: 0.65rem 0.8rem 0.75rem;
+    }
+    .side-showcase-title {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #1e293b;
+    }
+    .side-showcase-subtitle {
+        font-size: 0.68rem;
+        color: #64748b;
+        margin-top: 0.2rem;
+    }
     @media (max-width: 640px) {
         .expense-pie-wrap {
             width: min(100%, 20rem);
@@ -953,6 +980,36 @@
 
         </section>
     </div>
+
+    <section class="rounded-xl bg-white p-5 mt-6 panel">
+        <div class="flex items-center justify-between gap-3 mb-3">
+            <h2 class="text-lg font-semibold">Focus Sections</h2>
+            <p class="text-xs text-slate-500">Finance, fitness, and targets in one glance.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4">
+            <article class="side-showcase-card">
+                <img src="{{ route('admin.dashboard.image', 'finance-growth') }}" alt="Finance growth savings" class="side-showcase-image">
+                <div class="side-showcase-body">
+                    <p class="side-showcase-title">Money Discipline</p>
+                    <p class="side-showcase-subtitle">Track and grow daily savings with clarity.</p>
+                </div>
+            </article>
+            <article class="side-showcase-card">
+                <img src="{{ route('admin.dashboard.image', 'fitness-focus') }}" alt="Gym focus and workout" class="side-showcase-image">
+                <div class="side-showcase-body">
+                    <p class="side-showcase-title">Fitness Routine</p>
+                    <p class="side-showcase-subtitle">Stay consistent with weight and calorie logs.</p>
+                </div>
+            </article>
+            <article class="side-showcase-card">
+                <img src="{{ route('admin.dashboard.image', 'target-goal') }}" alt="Goal target concept" class="side-showcase-image">
+                <div class="side-showcase-body">
+                    <p class="side-showcase-title">Goal Targeting</p>
+                    <p class="side-showcase-subtitle">Keep every metric aligned to your next milestone.</p>
+                </div>
+            </article>
+        </div>
+    </section>
 
     <section class="rounded-xl bg-white p-5 mt-6 panel">
         <h2 class="text-lg font-semibold">Stock Value</h2>
