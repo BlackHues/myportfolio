@@ -1898,26 +1898,82 @@
     const oldWeightContext = @json($errors->any() && old('weight_kg') !== null);
     const dashboardPanelCards = Array.from(document.querySelectorAll('[data-open-dashboard-panel]'));
     const dashboardPanels = Array.from(document.querySelectorAll('[data-dashboard-panel]'));
+    const dashboardPanelKeys = new Set(['money', 'fitness', 'goal']);
 
-    function restoreDashboardScrollPosition() {
-        if (hasValidationErrors) {
-            window.requestAnimationFrame(() => {
-                window.scrollTo({ top: 0, behavior: 'auto' });
-            });
-            return;
+    function consumeDashboardReturnState() {
+        const raw = sessionStorage.getItem(dashboardScrollKey);
+        if (raw === null) {
+            return null;
         }
-        const storedY = sessionStorage.getItem(dashboardScrollKey);
-        if (storedY === null) {
-            return;
-        }
-        const y = Number(storedY);
         sessionStorage.removeItem(dashboardScrollKey);
-        if (Number.isNaN(y)) {
+        if (hasValidationErrors) {
+            return null;
+        }
+        try {
+            const parsed = JSON.parse(raw);
+            if (parsed && typeof parsed === 'object') {
+                const y = Number(parsed.y);
+                const panel = dashboardPanelKeys.has(parsed.panel) ? parsed.panel : 'money';
+                if (!Number.isNaN(y)) {
+                    return { y, panel };
+                }
+            }
+        } catch (e) {
+            /* legacy plain number */
+        }
+        const legacyY = Number(raw);
+        if (!Number.isNaN(legacyY)) {
+            return { y: legacyY, panel: 'money' };
+        }
+        return null;
+    }
+
+    function getVisibleDashboardPanelKey() {
+        const el = document.querySelector('.dashboard-content-panel.is-visible');
+        return el?.dataset?.dashboardPanel || '';
+    }
+
+    function inferDashboardPanelFromForm(form) {
+        const action = String(form.getAttribute('action') || '');
+        if (action.includes('weight-logs')) {
+            return 'fitness';
+        }
+        if (action.includes('todos')) {
+            return 'goal';
+        }
+        const visible = getVisibleDashboardPanelKey();
+        if (dashboardPanelKeys.has(visible)) {
+            return visible;
+        }
+        const inPanel = form.closest('[data-dashboard-panel]');
+        const fromAncestor = inPanel?.dataset?.dashboardPanel || '';
+        if (dashboardPanelKeys.has(fromAncestor)) {
+            return fromAncestor;
+        }
+        return 'money';
+    }
+
+    function scheduleDashboardScrollRestore(y) {
+        if (typeof y !== 'number' || Number.isNaN(y)) {
             return;
         }
+        function applyScroll() {
+            const doc = document.documentElement;
+            const body = document.body;
+            const scrollHeight = Math.max(
+                doc?.scrollHeight || 0,
+                body?.scrollHeight || 0,
+            );
+            const maxY = Math.max(0, scrollHeight - window.innerHeight);
+            window.scrollTo({ top: Math.min(Math.max(0, y), maxY), behavior: 'auto' });
+        }
+        applyScroll();
         window.requestAnimationFrame(() => {
-            window.scrollTo({ top: y, behavior: 'auto' });
+            applyScroll();
+            window.requestAnimationFrame(applyScroll);
         });
+        window.addEventListener('load', applyScroll, { once: true });
+        [0, 80, 200, 450].forEach((ms) => window.setTimeout(applyScroll, ms));
     }
 
     function bindDashboardCrudScrollMemory() {
@@ -1927,7 +1983,11 @@
                 if (action.includes('logout')) {
                     return;
                 }
-                sessionStorage.setItem(dashboardScrollKey, String(window.scrollY || 0));
+                const payload = {
+                    y: window.scrollY || 0,
+                    panel: inferDashboardPanelFromForm(form),
+                };
+                sessionStorage.setItem(dashboardScrollKey, JSON.stringify(payload));
             });
         });
     }
@@ -2042,11 +2102,15 @@
         });
     }
 
-    restoreDashboardScrollPosition();
+    const dashboardReturnState = consumeDashboardReturnState();
+
     bindDashboardCrudScrollMemory();
     bindPaymentChannelDependencies();
     bindDashboardPanelCards();
     if (hasValidationErrors) {
+        window.requestAnimationFrame(() => {
+            window.scrollTo({ top: 0, behavior: 'auto' });
+        });
         if (oldWeightContext) {
             setActiveDashboardPanel('fitness');
         } else if (openExpenseCreateOnError || openIncomeCreateOnError) {
@@ -2054,6 +2118,10 @@
         } else {
             setActiveDashboardPanel('goal');
         }
+    } else {
+        const panelKey = dashboardReturnState?.panel ?? 'money';
+        setActiveDashboardPanel(panelKey);
+        scheduleDashboardScrollRestore(dashboardReturnState?.y);
     }
     if (openExpenseCreateOnError) {
         openModalById('expenseCreateModal');
