@@ -1864,6 +1864,7 @@
 
 <script>
     const dashboardScrollKey = 'admin_dashboard_scroll_y';
+    const dashboardPanelStorageKey = 'admin_dashboard_active_panel';
     const categoryTotals = @json($categoryTotals);
     const expenseColors = ['#0ea5e9', '#14b8a6', '#f59e0b', '#f43f5e', '#6366f1', '#10b981', '#a855f7'];
     const todoKey = 'admin_todo_items';
@@ -1916,7 +1917,9 @@
             return;
         }
         window.requestAnimationFrame(() => {
-            window.scrollTo({ top: y, behavior: 'auto' });
+            window.requestAnimationFrame(() => {
+                window.scrollTo({ top: y, behavior: 'auto' });
+            });
         });
     }
 
@@ -1928,6 +1931,15 @@
                     return;
                 }
                 sessionStorage.setItem(dashboardScrollKey, String(window.scrollY || 0));
+                const activePanelEl = dashboardPanels.find((p) => p.classList.contains('is-visible'));
+                const panelKey = activePanelEl?.dataset?.dashboardPanel;
+                if (panelKey === 'money' || panelKey === 'fitness' || panelKey === 'goal') {
+                    try {
+                        sessionStorage.setItem(dashboardPanelStorageKey, panelKey);
+                    } catch (e) {
+                        /* ignore */
+                    }
+                }
             });
         });
     }
@@ -2024,6 +2036,11 @@
             card.classList.toggle('is-active', card.dataset.openDashboardPanel === panelKey);
         });
         ensurePanelCharts(panelKey);
+        try {
+            sessionStorage.setItem(dashboardPanelStorageKey, panelKey);
+        } catch (e) {
+            /* ignore quota / private mode */
+        }
     }
 
     function bindDashboardPanelCards() {
@@ -2042,7 +2059,6 @@
         });
     }
 
-    restoreDashboardScrollPosition();
     bindDashboardCrudScrollMemory();
     bindPaymentChannelDependencies();
     bindDashboardPanelCards();
@@ -2054,7 +2070,13 @@
         } else {
             setActiveDashboardPanel('goal');
         }
+    } else {
+        const storedPanel = sessionStorage.getItem(dashboardPanelStorageKey);
+        if (storedPanel === 'money' || storedPanel === 'fitness' || storedPanel === 'goal') {
+            setActiveDashboardPanel(storedPanel);
+        }
     }
+    restoreDashboardScrollPosition();
     if (openExpenseCreateOnError) {
         openModalById('expenseCreateModal');
     } else if (openIncomeCreateOnError) {
