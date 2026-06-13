@@ -9,6 +9,8 @@ use App\Models\CashBalance;
 use App\Models\CreditCard;
 use App\Models\DebitCard;
 use App\Models\AdminTodo;
+use App\Models\AdminDailyNote;
+use App\Models\AdminRoutineItem;
 use App\Models\NetWorthEntry;
 use App\Models\SavingsAdjustment;
 use App\Models\StockHolding;
@@ -182,6 +184,22 @@ class AdminDashboardController extends Controller
             ])
             ->values();
 
+        $userId = (int) $request->user()->id;
+        $routineDate = $this->resolveRoutineDate((string) $request->query('routine_date', now()->toDateString()));
+        $dailyNote = AdminDailyNote::query()
+            ->where('user_id', $userId)
+            ->whereDate('note_date', $routineDate)
+            ->first();
+        $routineItems = AdminRoutineItem::query()
+            ->where('user_id', $userId)
+            ->whereDate('routine_date', $routineDate)
+            ->orderBy('scheduled_time')
+            ->orderBy('order_index')
+            ->orderBy('id')
+            ->get();
+        $routineDoneCount = $routineItems->where('is_done', true)->count();
+        $routineTotalCount = $routineItems->count();
+
         return view('admin.dashboard', [
             'period' => $period,
             'selectedYear' => $selectedYear,
@@ -218,6 +236,11 @@ class AdminDashboardController extends Controller
             'netWorthEntries' => $netWorthEntries,
             'netWorthMonthlyTrend' => $netWorthMonthlyTrend,
             'todoItems' => $todoItems,
+            'routineDate' => $routineDate,
+            'dailyNote' => $dailyNote,
+            'routineItems' => $routineItems,
+            'routineDoneCount' => $routineDoneCount,
+            'routineTotalCount' => $routineTotalCount,
         ]);
     }
 
@@ -822,6 +845,137 @@ class AdminDashboardController extends Controller
         return back()->with('status', 'Weight entry deleted.');
     }
 
+    public function upsertDailyNote(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'note_date' => ['required', 'date'],
+            'journal' => ['nullable', 'string', 'max:10000'],
+            'period' => ['nullable', 'string'],
+            'year' => ['nullable', 'integer'],
+            'month' => ['nullable', 'integer'],
+        ]);
+
+        $userId = (int) $request->user()->id;
+        $noteDate = $this->resolveRoutineDate($data['note_date']);
+
+        AdminDailyNote::query()->updateOrCreate(
+            [
+                'user_id' => $userId,
+                'note_date' => $noteDate,
+            ],
+            [
+                'journal' => $data['journal'] ?? null,
+            ],
+        );
+
+        return redirect($this->dashboardReturnUrl($request, $noteDate))
+            ->with('status', 'Daily notes saved.');
+    }
+
+    public function storeRoutineItem(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'routine_date' => ['required', 'date'],
+            'scheduled_time' => ['required', 'date_format:H:i'],
+            'title' => ['required', 'string', 'max:200'],
+            'details' => ['nullable', 'string', 'max:2000'],
+            'period' => ['nullable', 'string'],
+            'year' => ['nullable', 'integer'],
+            'month' => ['nullable', 'integer'],
+        ]);
+
+        $userId = (int) $request->user()->id;
+        $routineDate = $this->resolveRoutineDate($data['routine_date']);
+        $nextOrder = (int) AdminRoutineItem::query()
+            ->where('user_id', $userId)
+            ->whereDate('routine_date', $routineDate)
+            ->max('order_index') + 1;
+
+        AdminRoutineItem::query()->create([
+            'user_id' => $userId,
+            'routine_date' => $routineDate,
+            'scheduled_time' => $data['scheduled_time'],
+            'title' => $data['title'],
+            'details' => $data['details'] ?? null,
+            'is_done' => false,
+            'order_index' => $nextOrder,
+        ]);
+
+        return redirect($this->dashboardReturnUrl($request, $routineDate))
+            ->with('status', 'Routine block added.');
+    }
+
+    public function updateRoutineItem(Request $request, AdminRoutineItem $routineItem): RedirectResponse
+    {
+        $this->assertRoutineItemOwner($request, $routineItem);
+
+        $data = $request->validate([
+            'routine_date' => ['required', 'date'],
+            'scheduled_time' => ['required', 'date_format:H:i'],
+            'title' => ['required', 'string', 'max:200'],
+            'details' => ['nullable', 'string', 'max:2000'],
+            'is_done' => ['nullable', 'boolean'],
+            'period' => ['nullable', 'string'],
+            'year' => ['nullable', 'integer'],
+            'month' => ['nullable', 'integer'],
+        ]);
+
+        $routineDate = $this->resolveRoutineDate($data['routine_date']);
+        $routineItem->update([
+            'routine_date' => $routineDate,
+            'scheduled_time' => $data['scheduled_time'],
+            'title' => $data['title'],
+            'details' => $data['details'] ?? null,
+            'is_done' => $request->boolean('is_done'),
+        ]);
+
+        return redirect($this->dashboardReturnUrl($request, $routineDate))
+            ->with('status', 'Routine block updated.');
+    }
+
+    public function toggleRoutineItem(Request $request, AdminRoutineItem $routineItem): RedirectResponse
+    {
+        $this->assertRoutineItemOwner($request, $routineItem);
+
+        $data = $request->validate([
+            'routine_date' => ['nullable', 'date'],
+            'period' => ['nullable', 'string'],
+            'year' => ['nullable', 'integer'],
+            'month' => ['nullable', 'integer'],
+        ]);
+
+        $routineItem->update([
+            'is_done' => !$routineItem->is_done,
+        ]);
+
+        $routineDate = $this->resolveRoutineDate(
+            $data['routine_date'] ?? optional($routineItem->routine_date)->toDateString() ?? now()->toDateString()
+        );
+
+        return redirect($this->dashboardReturnUrl($request, $routineDate))
+            ->with('status', 'Routine status updated.');
+    }
+
+    public function deleteRoutineItem(Request $request, AdminRoutineItem $routineItem): RedirectResponse
+    {
+        $this->assertRoutineItemOwner($request, $routineItem);
+
+        $data = $request->validate([
+            'routine_date' => ['nullable', 'date'],
+            'period' => ['nullable', 'string'],
+            'year' => ['nullable', 'integer'],
+            'month' => ['nullable', 'integer'],
+        ]);
+
+        $routineDate = $this->resolveRoutineDate(
+            $data['routine_date'] ?? optional($routineItem->routine_date)->toDateString() ?? now()->toDateString()
+        );
+        $routineItem->delete();
+
+        return redirect($this->dashboardReturnUrl($request, $routineDate))
+            ->with('status', 'Routine block removed.');
+    }
+
     public function updateCashBalance(Request $request): RedirectResponse
     {
         $data = $request->validate([
@@ -840,6 +994,34 @@ class AdminDashboardController extends Controller
         });
 
         return back()->with('status', 'Cash in hand balance updated.');
+    }
+
+    private function resolveRoutineDate(string $value): string
+    {
+        try {
+            return Carbon::parse($value)->toDateString();
+        } catch (\Throwable) {
+            return now()->toDateString();
+        }
+    }
+
+    private function dashboardReturnUrl(Request $request, string $routineDate): string
+    {
+        $query = array_filter([
+            'period' => $request->input('period', $request->query('period')),
+            'year' => $request->input('year', $request->query('year')),
+            'month' => $request->input('month', $request->query('month')),
+            'routine_date' => $routineDate,
+        ], static fn ($value): bool => $value !== null && $value !== '');
+
+        return route('admin.dashboard', $query);
+    }
+
+    private function assertRoutineItemOwner(Request $request, AdminRoutineItem $routineItem): void
+    {
+        if ((int) $routineItem->user_id !== (int) $request->user()->id) {
+            abort(403);
+        }
     }
 
     private function normalizeAccountLinkData(array $data): array

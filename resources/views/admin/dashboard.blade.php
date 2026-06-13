@@ -279,6 +279,106 @@
     .card-editable {
         cursor: pointer;
     }
+    .routine-card {
+        border-radius: 16px;
+        border: 1px solid #dbeafe;
+        background: linear-gradient(160deg, #ffffff 0%, #f8fbff 55%, #eef6ff 100%);
+        box-shadow: 0 14px 28px rgba(59, 130, 246, 0.08);
+    }
+    .routine-date-nav {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.45rem;
+    }
+    .routine-date-chip {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #475569;
+        padding: 0.35rem 0.65rem;
+        border-radius: 999px;
+        background: #ffffff;
+        border: 1px solid #dbeafe;
+    }
+    .routine-progress {
+        height: 0.45rem;
+        border-radius: 999px;
+        background: #e2e8f0;
+        overflow: hidden;
+    }
+    .routine-progress-bar {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #38bdf8, #6366f1);
+        transition: width 0.25s ease;
+    }
+    .routine-timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+    }
+    .routine-item {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 0.65rem;
+        align-items: start;
+        padding: 0.75rem 0.85rem;
+        border-radius: 0.85rem;
+        border: 1px solid #e2e8f0;
+        background: #ffffff;
+    }
+    .routine-item.is-done {
+        background: #f0fdf4;
+        border-color: #bbf7d0;
+    }
+    .routine-time {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #0369a1;
+        min-width: 3.4rem;
+        padding-top: 0.15rem;
+    }
+    .routine-item.is-done .routine-time {
+        color: #15803d;
+    }
+    .routine-title {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #0f172a;
+    }
+    .routine-item.is-done .routine-title {
+        color: #166534;
+        text-decoration: line-through;
+    }
+    .routine-details {
+        font-size: 0.76rem;
+        color: #64748b;
+        margin-top: 0.2rem;
+        white-space: pre-wrap;
+    }
+    .routine-item-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+    .routine-check-btn {
+        width: 1.85rem;
+        height: 1.85rem;
+        border-radius: 999px;
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        color: #64748b;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .routine-check-btn.is-done {
+        border-color: #22c55e;
+        background: #dcfce7;
+        color: #15803d;
+    }
     .card-action-btn {
         border: 1px solid rgba(15, 23, 42, 0.18);
         background: rgba(255, 255, 255, 0.82);
@@ -1113,9 +1213,120 @@
                 <img src="{{ asset('images/dashboard/target-goal.png') }}" alt="Goal target concept" class="side-showcase-image">
                 <div class="side-showcase-body">
                     <p class="side-showcase-title">Todo In Goal</p>
-                    <p class="side-showcase-subtitle">Todo task planning with goal/progress insights.</p>
+                    <p class="side-showcase-subtitle">Todos, daily routine notes, and net worth goals.</p>
                 </div>
             </article>
+        </div>
+    </section>
+
+    <section class="rounded-xl bg-white p-5 mt-6 panel dashboard-content-panel routine-card" data-dashboard-panel="goal">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+                <h2 class="text-lg font-semibold">Daily Routine & Notes</h2>
+                <p class="text-sm text-slate-500 mt-1">Plan your day with time blocks, track completion, and keep focus notes for time management.</p>
+            </div>
+            <form method="get" action="{{ route('admin.dashboard') }}" class="routine-date-nav">
+                <input type="hidden" name="period" value="{{ $period }}">
+                <input type="hidden" name="year" value="{{ $selectedYear }}">
+                <input type="hidden" name="month" value="{{ $selectedMonth }}">
+                @php($prevRoutineDate = \Carbon\Carbon::parse($routineDate)->subDay()->toDateString())
+                @php($nextRoutineDate = \Carbon\Carbon::parse($routineDate)->addDay()->toDateString())
+                <a href="{{ route('admin.dashboard', ['period' => $period, 'year' => $selectedYear, 'month' => $selectedMonth, 'routine_date' => $prevRoutineDate]) }}" class="card-action-btn" title="Previous day" aria-label="Previous day">
+                    <i class="fa-solid fa-chevron-left text-[10px]"></i>
+                </a>
+                <input type="date" name="routine_date" value="{{ $routineDate }}" class="soft-input rounded-lg px-3 py-2 text-sm">
+                <button type="submit" class="primary-btn px-3 py-2 text-xs">Go</button>
+                <a href="{{ route('admin.dashboard', ['period' => $period, 'year' => $selectedYear, 'month' => $selectedMonth, 'routine_date' => now()->toDateString()]) }}" class="routine-date-chip">Today</a>
+                <a href="{{ route('admin.dashboard', ['period' => $period, 'year' => $selectedYear, 'month' => $selectedMonth, 'routine_date' => $nextRoutineDate]) }}" class="card-action-btn" title="Next day" aria-label="Next day">
+                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                </a>
+            </form>
+        </div>
+
+        <div class="mt-4 grid lg:grid-cols-2 gap-4">
+            <div class="rounded-xl border border-slate-200 bg-white p-4">
+                <div class="flex items-center justify-between gap-2 mb-2">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Day notes</p>
+                    <span class="text-xs text-slate-500">{{ \Carbon\Carbon::parse($routineDate)->format('l, d M Y') }}</span>
+                </div>
+                <form method="post" action="{{ route('admin.daily-notes.upsert') }}">
+                    @csrf
+                    @method('put')
+                    <input type="hidden" name="note_date" value="{{ $routineDate }}">
+                    <input type="hidden" name="period" value="{{ $period }}">
+                    <input type="hidden" name="year" value="{{ $selectedYear }}">
+                    <input type="hidden" name="month" value="{{ $selectedMonth }}">
+                    <textarea name="journal" rows="7" placeholder="Today's focus, priorities, reminders, or reflection..." class="soft-input rounded-lg px-3 py-2 text-sm w-full">{{ old('journal', $dailyNote?->journal) }}</textarea>
+                    <button type="submit" class="primary-btn px-4 py-2 text-sm mt-2">Save notes</button>
+                </form>
+            </div>
+
+            <div class="rounded-xl border border-slate-200 bg-white p-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Time blocks</p>
+                    <span class="text-xs font-semibold text-indigo-700">{{ $routineDoneCount }}/{{ $routineTotalCount }} done</span>
+                </div>
+                @php($routineProgress = $routineTotalCount > 0 ? round(($routineDoneCount / $routineTotalCount) * 100) : 0)
+                <div class="routine-progress mb-3">
+                    <span class="routine-progress-bar" style="width: {{ $routineProgress }}%"></span>
+                </div>
+                <form method="post" action="{{ route('admin.routine-items.store') }}" class="grid sm:grid-cols-[auto_1fr_auto] gap-2 mb-4">
+                    @csrf
+                    <input type="hidden" name="routine_date" value="{{ $routineDate }}">
+                    <input type="hidden" name="period" value="{{ $period }}">
+                    <input type="hidden" name="year" value="{{ $selectedYear }}">
+                    <input type="hidden" name="month" value="{{ $selectedMonth }}">
+                    <input type="time" name="scheduled_time" value="09:00" required class="soft-input rounded-lg px-3 py-2 text-sm">
+                    <input type="text" name="title" placeholder="Routine task (e.g. Deep work, Gym, Email)" required class="soft-input rounded-lg px-3 py-2 text-sm">
+                    <button type="submit" class="primary-btn px-3 py-2 text-sm whitespace-nowrap">Add block</button>
+                    <input type="text" name="details" placeholder="Optional details" class="soft-input rounded-lg px-3 py-2 text-sm sm:col-span-3">
+                </form>
+
+                <div class="routine-timeline">
+                    @forelse ($routineItems as $item)
+                        <article class="routine-item {{ $item->is_done ? 'is-done' : '' }}">
+                            <p class="routine-time">{{ substr($item->scheduled_time, 0, 5) }}</p>
+                            <div>
+                                <p class="routine-title">{{ $item->title }}</p>
+                                @if ($item->details)
+                                    <p class="routine-details">{{ $item->details }}</p>
+                                @endif
+                            </div>
+                            <div class="routine-item-actions">
+                                <form method="post" action="{{ route('admin.routine-items.toggle', $item) }}">
+                                    @csrf
+                                    @method('patch')
+                                    <input type="hidden" name="routine_date" value="{{ $routineDate }}">
+                                    <input type="hidden" name="period" value="{{ $period }}">
+                                    <input type="hidden" name="year" value="{{ $selectedYear }}">
+                                    <input type="hidden" name="month" value="{{ $selectedMonth }}">
+                                    <button type="submit" class="routine-check-btn {{ $item->is_done ? 'is-done' : '' }}" title="{{ $item->is_done ? 'Mark incomplete' : 'Mark done' }}" aria-label="{{ $item->is_done ? 'Mark incomplete' : 'Mark done' }}">
+                                        <i class="fa-solid {{ $item->is_done ? 'fa-check' : 'fa-circle' }} text-[10px]"></i>
+                                    </button>
+                                </form>
+                                <button type="button" class="card-action-btn open-modal" data-modal="routineEditModal{{ $item->id }}" title="Edit" aria-label="Edit">
+                                    <i class="fa-solid fa-pen-to-square text-[10px]"></i>
+                                </button>
+                                <form method="post" action="{{ route('admin.routine-items.delete', $item) }}">
+                                    @csrf
+                                    @method('delete')
+                                    <input type="hidden" name="routine_date" value="{{ $routineDate }}">
+                                    <input type="hidden" name="period" value="{{ $period }}">
+                                    <input type="hidden" name="year" value="{{ $selectedYear }}">
+                                    <input type="hidden" name="month" value="{{ $selectedMonth }}">
+                                    <button type="submit" class="card-action-btn card-action-btn-danger" title="Delete" aria-label="Delete">
+                                        <i class="fa-solid fa-trash text-[10px]"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </article>
+                    @empty
+                        <div class="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-sm text-slate-500 text-center">
+                            No routine blocks yet. Add your first time block above — e.g. morning workout, focused work, meals, wind-down.
+                        </div>
+                    @endforelse
+                </div>
+            </div>
         </div>
     </section>
 
@@ -1822,6 +2033,30 @@
 </dialog>
 @endforeach
 
+@foreach ($routineItems as $item)
+<dialog id="routineEditModal{{ $item->id }}" class="app-modal">
+    <div class="flex items-center justify-between mb-3">
+        <h3 class="text-base font-semibold"><span class="icon-chip mr-2"><i class="fa-solid fa-clock text-xs"></i></span>Edit Routine Block</h3>
+        <button type="button" class="action-icon-btn close-modal"><i class="fa-solid fa-xmark text-xs"></i></button>
+    </div>
+    <form method="post" action="{{ route('admin.routine-items.update', $item) }}" class="grid md:grid-cols-2 gap-3">
+        @csrf
+        @method('put')
+        <input type="hidden" name="routine_date" value="{{ $routineDate }}">
+        <input type="hidden" name="period" value="{{ $period }}">
+        <input type="hidden" name="year" value="{{ $selectedYear }}">
+        <input type="hidden" name="month" value="{{ $selectedMonth }}">
+        <input type="time" name="scheduled_time" value="{{ substr($item->scheduled_time, 0, 5) }}" required class="soft-input rounded-lg px-3 py-2 text-sm">
+        <input type="text" name="title" value="{{ $item->title }}" required class="soft-input rounded-lg px-3 py-2 text-sm">
+        <input type="text" name="details" value="{{ $item->details }}" placeholder="Optional details" class="soft-input rounded-lg px-3 py-2 text-sm md:col-span-2">
+        <label class="inline-flex items-center gap-2 text-sm text-slate-700 md:col-span-2">
+            <input type="checkbox" name="is_done" value="1" @checked($item->is_done)> Mark as done
+        </label>
+        <button type="submit" class="primary-btn success-btn px-4 py-2 text-sm md:col-span-2">Update Routine Block</button>
+    </form>
+</dialog>
+@endforeach
+
 @foreach ($stockHoldings as $stock)
 <dialog id="stockEditModal{{ $stock->id }}" class="app-modal">
     <div class="flex items-center justify-between mb-3">
@@ -2043,7 +2278,7 @@
         if (action.includes('weight-logs')) {
             return 'fitness';
         }
-        if (action.includes('todos')) {
+        if (action.includes('todos') || action.includes('routine-items') || action.includes('daily-notes')) {
             return 'goal';
         }
         if (action.includes('/admin/expenses') || action.includes('/admin/incomes') || action.includes('/admin/credit-cards') || action.includes('/admin/debit-cards') || action.includes('/admin/stocks') || action.includes('/admin/savings-adjustments') || action.includes('/admin/categories') || action.includes('/admin/cash-balance')) {

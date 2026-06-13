@@ -134,6 +134,21 @@ Route::delete('/admin/weight-logs/{weightLog}', [AdminDashboardController::class
 Route::put('/admin/todos/sync', [AdminDashboardController::class, 'syncTodos'])
     ->middleware('admin.auth')
     ->name('admin.todos.sync');
+Route::put('/admin/daily-notes', [AdminDashboardController::class, 'upsertDailyNote'])
+    ->middleware('admin.auth')
+    ->name('admin.daily-notes.upsert');
+Route::post('/admin/routine-items', [AdminDashboardController::class, 'storeRoutineItem'])
+    ->middleware('admin.auth')
+    ->name('admin.routine-items.store');
+Route::put('/admin/routine-items/{routineItem}', [AdminDashboardController::class, 'updateRoutineItem'])
+    ->middleware('admin.auth')
+    ->name('admin.routine-items.update');
+Route::patch('/admin/routine-items/{routineItem}/toggle', [AdminDashboardController::class, 'toggleRoutineItem'])
+    ->middleware('admin.auth')
+    ->name('admin.routine-items.toggle');
+Route::delete('/admin/routine-items/{routineItem}', [AdminDashboardController::class, 'deleteRoutineItem'])
+    ->middleware('admin.auth')
+    ->name('admin.routine-items.delete');
 Route::get('/admin/dashboard-image/{slug}', [AdminDashboardController::class, 'dashboardImage'])
     ->middleware('admin.auth')
     ->name('admin.dashboard.image');
