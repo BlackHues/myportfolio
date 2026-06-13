@@ -897,8 +897,8 @@ class AdminDashboardController extends Controller
         AdminRoutineItem::query()->create([
             'user_id' => $userId,
             'routine_date' => $routineDate,
-            'scheduled_time' => $data['scheduled_time'],
-            'end_time' => $data['end_time'],
+            'scheduled_time' => $this->normalizeRoutineClock($data['scheduled_time']),
+            'end_time' => $this->normalizeRoutineClock($data['end_time']),
             'title' => $data['title'],
             'details' => $data['details'] ?? null,
             'is_done' => false,
@@ -929,8 +929,8 @@ class AdminDashboardController extends Controller
         $routineDate = $this->resolveRoutineDate($data['routine_date']);
         $routineItem->update([
             'routine_date' => $routineDate,
-            'scheduled_time' => $data['scheduled_time'],
-            'end_time' => $data['end_time'],
+            'scheduled_time' => $this->normalizeRoutineClock($data['scheduled_time']),
+            'end_time' => $this->normalizeRoutineClock($data['end_time']),
             'title' => $data['title'],
             'details' => $data['details'] ?? null,
             'is_done' => $request->boolean('is_done'),
@@ -1035,9 +1035,14 @@ class AdminDashboardController extends Controller
     {
         if ($endTime <= $startTime) {
             throw ValidationException::withMessages([
-                'end_time' => 'End time must be after start time.',
+                'end_time' => 'Time out must be after time in.',
             ]);
         }
+    }
+
+    private function normalizeRoutineClock(string $value): string
+    {
+        return substr($value, 0, 5);
     }
 
     private function normalizeAccountLinkData(array $data): array

@@ -34,13 +34,28 @@ class AdminRoutineItem extends Model
 
     public function endTimeLabel(): string
     {
-        return $this->formatClockTime($this->end_time ?: $this->scheduled_time);
+        if ($this->hasValidEndTime()) {
+            return $this->formatClockTime($this->end_time);
+        }
+
+        return $this->formatMinutesAsClock($this->clockToMinutes($this->scheduled_time) + 60);
+    }
+
+    public function hasValidEndTime(): bool
+    {
+        if ($this->end_time === null || $this->end_time === '') {
+            return false;
+        }
+
+        return $this->clockToMinutes($this->end_time) > $this->clockToMinutes($this->scheduled_time);
     }
 
     public function durationMinutes(): int
     {
         $start = $this->clockToMinutes($this->scheduled_time);
-        $end = $this->clockToMinutes($this->end_time ?: $this->scheduled_time);
+        $end = $this->hasValidEndTime()
+            ? $this->clockToMinutes($this->end_time)
+            : $start + 60;
 
         if ($end <= $start) {
             return max(0, (24 * 60) - $start + $end);
@@ -88,5 +103,12 @@ class AdminRoutineItem extends Model
         }
 
         return ((int) $matches[1] * 60) + (int) $matches[2];
+    }
+
+    private function formatMinutesAsClock(int $minutes): string
+    {
+        $minutes = (($minutes % (24 * 60)) + (24 * 60)) % (24 * 60);
+
+        return sprintf('%02d:%02d', intdiv($minutes, 60), $minutes % 60);
     }
 }

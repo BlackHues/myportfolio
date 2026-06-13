@@ -321,7 +321,7 @@
     }
     .routine-item {
         display: grid;
-        grid-template-columns: auto 1fr auto;
+        grid-template-columns: minmax(7.5rem, auto) 1fr auto;
         gap: 0.65rem;
         align-items: start;
         padding: 0.75rem 0.85rem;
@@ -334,28 +334,45 @@
         border-color: #bbf7d0;
     }
     .routine-time {
-        min-width: 4.8rem;
+        min-width: 7.5rem;
+        padding: 0.35rem 0.45rem;
+        border-radius: 0.65rem;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
     }
-    .routine-time-range {
-        font-size: 0.78rem;
+    .routine-time-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.35rem;
+        font-size: 0.72rem;
+        line-height: 1.35;
+    }
+    .routine-time-row + .routine-time-row {
+        margin-top: 0.25rem;
+    }
+    .routine-time-value {
         font-weight: 700;
-        color: #0369a1;
-        line-height: 1.2;
+        color: #0f172a;
+        font-variant-numeric: tabular-nums;
     }
-    .routine-item.is-done .routine-time-range {
-        color: #15803d;
+    .routine-item.is-done .routine-time-value {
+        color: #166534;
     }
     .routine-duration {
-        display: inline-flex;
-        margin-top: 0.25rem;
-        padding: 0.12rem 0.4rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 0.4rem;
+        padding: 0.2rem 0.45rem;
         border-radius: 999px;
-        font-size: 0.64rem;
+        font-size: 0.68rem;
         font-weight: 700;
         letter-spacing: 0.02em;
         color: #4338ca;
         background: #eef2ff;
         border: 1px solid #c7d2fe;
+        text-align: center;
     }
     .routine-item.is-done .routine-duration {
         color: #166534;
@@ -370,6 +387,21 @@
         letter-spacing: 0.05em;
         color: #64748b;
         margin-bottom: 0.15rem;
+    }
+    .routine-duration-preview {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #4338ca;
+        padding: 0.45rem 0.65rem;
+        border-radius: 0.55rem;
+        background: #eef2ff;
+        border: 1px solid #c7d2fe;
+    }
+    .routine-block-form {
+        padding: 0.75rem;
+        border-radius: 0.75rem;
+        border: 1px dashed #cbd5e1;
+        background: #f8fafc;
     }
     .routine-title {
         font-size: 0.88rem;
@@ -1298,36 +1330,52 @@
                 <div class="routine-progress mb-3">
                     <span class="routine-progress-bar" style="width: {{ $routineProgress }}%"></span>
                 </div>
-                <form method="post" action="{{ route('admin.routine-items.store') }}" class="grid sm:grid-cols-2 lg:grid-cols-[auto_auto_1fr_auto] gap-2 mb-4">
+                @if ($errors->has('scheduled_time') || $errors->has('end_time') || $errors->has('title'))
+                    <div class="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-800 mb-3">
+                        {{ $errors->first('scheduled_time') ?: ($errors->first('end_time') ?: $errors->first('title')) }}
+                    </div>
+                @endif
+                <form method="post" action="{{ route('admin.routine-items.store') }}" class="routine-block-form grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
                     @csrf
                     <input type="hidden" name="routine_date" value="{{ $routineDate }}">
                     <input type="hidden" name="period" value="{{ $period }}">
                     <input type="hidden" name="year" value="{{ $selectedYear }}">
                     <input type="hidden" name="month" value="{{ $selectedMonth }}">
                     <label class="block">
-                        <span class="routine-time-label">From</span>
-                        <input type="time" name="scheduled_time" value="09:00" required class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+                        <span class="routine-time-label">Time in</span>
+                        <input type="time" name="scheduled_time" value="{{ old('scheduled_time', '09:00') }}" required class="soft-input rounded-lg px-3 py-2 text-sm w-full">
                     </label>
                     <label class="block">
-                        <span class="routine-time-label">To</span>
-                        <input type="time" name="end_time" value="10:00" required class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+                        <span class="routine-time-label">Time out</span>
+                        <input type="time" name="end_time" value="{{ old('end_time', '10:00') }}" required class="soft-input rounded-lg px-3 py-2 text-sm w-full">
                     </label>
-                    <label class="block sm:col-span-2 lg:col-span-1">
+                    <p class="routine-duration-preview sm:col-span-2">Duration: 1h</p>
+                    <label class="block sm:col-span-2">
                         <span class="routine-time-label">Task</span>
-                        <input type="text" name="title" placeholder="Deep work, Gym, Email..." required class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+                        <input type="text" name="title" value="{{ old('title') }}" placeholder="Deep work, Gym, Email..." required class="soft-input rounded-lg px-3 py-2 text-sm w-full">
                     </label>
-                    <div class="flex items-end sm:col-span-2 lg:col-span-1">
-                        <button type="submit" class="primary-btn px-3 py-2 text-sm whitespace-nowrap w-full">Add block</button>
+                    <label class="block sm:col-span-2">
+                        <span class="routine-time-label">Notes (optional)</span>
+                        <input type="text" name="details" value="{{ old('details') }}" placeholder="Extra details for this block" class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+                    </label>
+                    <div class="sm:col-span-2">
+                        <button type="submit" class="primary-btn px-4 py-2 text-sm w-full sm:w-auto">Add time block</button>
                     </div>
-                    <input type="text" name="details" placeholder="Optional details" class="soft-input rounded-lg px-3 py-2 text-sm sm:col-span-2 lg:col-span-4">
                 </form>
 
                 <div class="routine-timeline">
                     @forelse ($routineItems as $item)
                         <article class="routine-item {{ $item->is_done ? 'is-done' : '' }}">
                             <div class="routine-time">
-                                <p class="routine-time-range">{{ $item->startTimeLabel() }} – {{ $item->endTimeLabel() }}</p>
-                                <span class="routine-duration">{{ $item->durationLabel() }}</span>
+                                <div class="routine-time-row">
+                                    <span class="routine-time-label !mb-0">Time in</span>
+                                    <span class="routine-time-value">{{ $item->startTimeLabel() }}</span>
+                                </div>
+                                <div class="routine-time-row">
+                                    <span class="routine-time-label !mb-0">Time out</span>
+                                    <span class="routine-time-value">{{ $item->endTimeLabel() }}</span>
+                                </div>
+                                <span class="routine-duration">Duration · {{ $item->durationLabel() }}</span>
                             </div>
                             <div>
                                 <p class="routine-title">{{ $item->title }}</p>
@@ -2082,7 +2130,7 @@
         <h3 class="text-base font-semibold"><span class="icon-chip mr-2"><i class="fa-solid fa-clock text-xs"></i></span>Edit Routine Block</h3>
         <button type="button" class="action-icon-btn close-modal"><i class="fa-solid fa-xmark text-xs"></i></button>
     </div>
-    <form method="post" action="{{ route('admin.routine-items.update', $item) }}" class="grid md:grid-cols-2 gap-3">
+    <form method="post" action="{{ route('admin.routine-items.update', $item) }}" class="routine-block-form grid md:grid-cols-2 gap-3">
         @csrf
         @method('put')
         <input type="hidden" name="routine_date" value="{{ $routineDate }}">
@@ -2090,16 +2138,22 @@
         <input type="hidden" name="year" value="{{ $selectedYear }}">
         <input type="hidden" name="month" value="{{ $selectedMonth }}">
         <label class="block">
-            <span class="routine-time-label">From</span>
-            <input type="time" name="scheduled_time" value="{{ $item->startTimeLabel() }}" required class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+            <span class="routine-time-label">Time in</span>
+            <input type="time" name="scheduled_time" value="{{ old('scheduled_time', $item->startTimeLabel()) }}" required class="soft-input rounded-lg px-3 py-2 text-sm w-full">
         </label>
         <label class="block">
-            <span class="routine-time-label">To</span>
-            <input type="time" name="end_time" value="{{ $item->endTimeLabel() }}" required class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+            <span class="routine-time-label">Time out</span>
+            <input type="time" name="end_time" value="{{ old('end_time', $item->endTimeLabel()) }}" required class="soft-input rounded-lg px-3 py-2 text-sm w-full">
         </label>
-        <input type="text" name="title" value="{{ $item->title }}" required class="soft-input rounded-lg px-3 py-2 text-sm md:col-span-2">
-        <p class="text-xs text-slate-500 md:col-span-2">Duration: {{ $item->durationLabel() }}</p>
-        <input type="text" name="details" value="{{ $item->details }}" placeholder="Optional details" class="soft-input rounded-lg px-3 py-2 text-sm md:col-span-2">
+        <p class="routine-duration-preview md:col-span-2">Duration: {{ $item->durationLabel() }}</p>
+        <label class="block md:col-span-2">
+            <span class="routine-time-label">Task</span>
+            <input type="text" name="title" value="{{ old('title', $item->title) }}" required class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+        </label>
+        <label class="block md:col-span-2">
+            <span class="routine-time-label">Notes (optional)</span>
+            <input type="text" name="details" value="{{ old('details', $item->details) }}" placeholder="Extra details" class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+        </label>
         <label class="inline-flex items-center gap-2 text-sm text-slate-700 md:col-span-2">
             <input type="checkbox" name="is_done" value="1" @checked($item->is_done)> Mark as done
         </label>
@@ -2589,9 +2643,53 @@
         }
     });
 
+    function bindRoutineDurationPreview() {
+        function formatRoutineDuration(start, end) {
+            if (!start || !end) {
+                return '—';
+            }
+            const [sh, sm] = start.split(':').map((part) => Number(part));
+            const [eh, em] = end.split(':').map((part) => Number(part));
+            if ([sh, sm, eh, em].some((part) => Number.isNaN(part))) {
+                return '—';
+            }
+            let minutes = (eh * 60 + em) - (sh * 60 + sm);
+            if (minutes <= 0) {
+                return 'Time out must be after time in';
+            }
+            const hours = Math.floor(minutes / 60);
+            const remaining = minutes % 60;
+            if (hours === 0) {
+                return `${minutes} min`;
+            }
+            if (remaining === 0) {
+                return `${hours}h`;
+            }
+            return `${hours}h ${remaining}m`;
+        }
+
+        document.querySelectorAll('.routine-block-form').forEach((form) => {
+            const startInput = form.querySelector('[name="scheduled_time"]');
+            const endInput = form.querySelector('[name="end_time"]');
+            const preview = form.querySelector('.routine-duration-preview');
+            if (!startInput || !endInput || !preview) {
+                return;
+            }
+            const updatePreview = () => {
+                preview.textContent = `Duration: ${formatRoutineDuration(startInput.value, endInput.value)}`;
+            };
+            startInput.addEventListener('input', updatePreview);
+            startInput.addEventListener('change', updatePreview);
+            endInput.addEventListener('input', updatePreview);
+            endInput.addEventListener('change', updatePreview);
+            updatePreview();
+        });
+    }
+
     bindDashboardCrudScrollMemory();
     bindPaymentChannelDependencies();
     bindExpensePeriodFilter();
+    bindRoutineDurationPreview();
     bindDashboardPanelCards();
     if (hasValidationErrors) {
         window.requestAnimationFrame(() => {

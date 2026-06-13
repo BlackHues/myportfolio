@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->date('routine_date');
             $table->string('scheduled_time', 5)->default('09:00');
+            $table->string('end_time', 5)->default('10:00');
             $table->string('title', 200);
             $table->text('details')->nullable();
             $table->boolean('is_done')->default(false);
