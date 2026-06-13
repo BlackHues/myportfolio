@@ -259,6 +259,7 @@
         border-radius: 999px;
         opacity: 0.14;
         background: #ffffff;
+        pointer-events: none;
     }
     .credit-visual {
         background: linear-gradient(140deg, #f0cb66 0%, #e9bd50 100%);
@@ -272,6 +273,11 @@
         margin-top: 0.75rem;
         display: flex;
         gap: 0.45rem;
+        position: relative;
+        z-index: 20;
+    }
+    .card-editable {
+        cursor: pointer;
     }
     .card-action-btn {
         border: 1px solid rgba(15, 23, 42, 0.18);
@@ -1183,7 +1189,7 @@
         </div>
         <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
             @forelse ($creditCards as $card)
-                <article class="finance-card credit-visual">
+                <article class="finance-card credit-visual card-editable" data-modal="creditCardEditModal{{ $card->id }}" role="button" tabindex="0" aria-label="Edit {{ $card->name }}">
                     <div class="relative z-10">
                         <div class="flex items-start justify-between gap-3">
                             <div>
@@ -1218,7 +1224,7 @@
             @endforelse
 
             @forelse ($debitCards as $card)
-                <article class="finance-card debit-visual">
+                <article class="finance-card debit-visual card-editable" data-modal="debitCardEditModal{{ $card->id }}" role="button" tabindex="0" aria-label="Edit {{ $card->bank_name ?: $card->name }}">
                     <div class="relative z-10">
                         <div class="flex items-start justify-between gap-3">
                             <div>
@@ -2171,6 +2177,61 @@
         modal.classList.add('modal-backdrop');
     }
 
+    function bindDashboardModals() {
+        document.addEventListener('click', (event) => {
+            if (event.target.closest('.card-action-btn-danger, form[method="post"] button[type="submit"]')) {
+                return;
+            }
+
+            const openTarget = event.target.closest('.open-modal, .card-editable[data-modal]');
+            if (openTarget?.dataset?.modal) {
+                event.preventDefault();
+                event.stopPropagation();
+                openModalById(openTarget.dataset.modal);
+                return;
+            }
+
+            const closeButton = event.target.closest('.close-modal');
+            if (closeButton) {
+                const modal = closeButton.closest('dialog');
+                if (modal) {
+                    if (typeof modal.close === 'function') {
+                        modal.close();
+                    } else {
+                        modal.removeAttribute('open');
+                    }
+                }
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') {
+                return;
+            }
+            const card = event.target.closest('.card-editable[data-modal]');
+            if (!card || event.target.closest('.card-actions')) {
+                return;
+            }
+            event.preventDefault();
+            openModalById(card.dataset.modal);
+        });
+
+        document.querySelectorAll('dialog.app-modal').forEach((modal) => {
+            modal.addEventListener('click', (event) => {
+                if (event.target !== modal) {
+                    return;
+                }
+                if (typeof modal.close === 'function') {
+                    modal.close();
+                } else {
+                    modal.removeAttribute('open');
+                }
+            });
+        });
+    }
+
+    bindDashboardModals();
+
     const renderedPanelCharts = {
         money: false,
         fitness: false,
@@ -2178,21 +2239,25 @@
     };
 
     function ensurePanelCharts(panelKey) {
-        if (panelKey === 'money' && !renderedPanelCharts.money) {
-            renderPieChart();
-            renderDailyFlowHologramChart();
-            renderedPanelCharts.money = true;
-            return;
-        }
-        if (panelKey === 'fitness' && !renderedPanelCharts.fitness) {
-            renderWeightProgressChart();
-            renderDailyCaloriesChart();
-            renderedPanelCharts.fitness = true;
-            return;
-        }
-        if (panelKey === 'goal' && !renderedPanelCharts.goal) {
-            renderNetWorthCharts();
-            renderedPanelCharts.goal = true;
+        try {
+            if (panelKey === 'money' && !renderedPanelCharts.money) {
+                renderPieChart();
+                renderDailyFlowHologramChart();
+                renderedPanelCharts.money = true;
+                return;
+            }
+            if (panelKey === 'fitness' && !renderedPanelCharts.fitness) {
+                renderWeightProgressChart();
+                renderDailyCaloriesChart();
+                renderedPanelCharts.fitness = true;
+                return;
+            }
+            if (panelKey === 'goal' && !renderedPanelCharts.goal) {
+                renderNetWorthCharts();
+                renderedPanelCharts.goal = true;
+            }
+        } catch (error) {
+            console.error('Dashboard chart render failed:', error);
         }
     }
 
@@ -2588,6 +2653,9 @@
     }
 
     function renderTodos() {
+        if (!todoList || !todoCompletedList) {
+            return;
+        }
         todoList.innerHTML = '';
         todoCompletedList.innerHTML = '';
         const sortedTodos = getSortedTodos();
@@ -2638,6 +2706,9 @@
     let expensePieInstance = null;
 
     function renderPieChart() {
+        if (!pieChart || !pieLegend || typeof Chart === 'undefined') {
+            return;
+        }
         const total = categoryTotals.reduce((sum, item) => sum + Number(item.total_amount), 0);
         if (!categoryTotals.length || total <= 0) {
             if (expensePieInstance) {
@@ -2854,26 +2925,28 @@
         `;
     }
 
-    todoForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        const title = todoInput.value.trim();
-        if (!title) {
-            return;
-        }
-        todos.unshift({
-            id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-            title,
-            status: 'incomplete',
-            pinned: false,
-            dueDate: todoDueDate.value || '',
-            createdAt: Date.now(),
-            order: Date.now(),
+    if (todoForm) {
+        todoForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const title = todoInput.value.trim();
+            if (!title) {
+                return;
+            }
+            todos.unshift({
+                id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                title,
+                status: 'incomplete',
+                pinned: false,
+                dueDate: todoDueDate.value || '',
+                createdAt: Date.now(),
+                order: Date.now(),
+            });
+            todoInput.value = '';
+            todoDueDate.value = '';
+            saveTodos();
+            renderTodos();
         });
-        todoInput.value = '';
-        todoDueDate.value = '';
-        saveTodos();
-        renderTodos();
-    });
+    }
 
     function handleTodoListClick(event) {
         const actionEl = event.target.closest('[data-type]');
@@ -2947,8 +3020,68 @@
         }
     }
 
-    todoList.addEventListener('click', handleTodoListClick);
-    todoCompletedList.addEventListener('click', handleTodoListClick);
+    let draggedTodoIndex = null;
+
+    if (todoList) {
+        todoList.addEventListener('click', handleTodoListClick);
+        todoList.addEventListener('dragstart', (event) => {
+            const target = event.target.closest('li[data-index]');
+            if (!target || (todoSortBy?.value || 'manual') !== 'manual') {
+                return;
+            }
+            draggedTodoIndex = Number(target.dataset.index);
+            target.classList.add('dragging');
+            event.dataTransfer.effectAllowed = 'move';
+        });
+        todoList.addEventListener('dragover', (event) => {
+            if ((todoSortBy?.value || 'manual') !== 'manual') {
+                return;
+            }
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'move';
+        });
+        todoList.addEventListener('drop', (event) => {
+            if ((todoSortBy?.value || 'manual') !== 'manual') {
+                return;
+            }
+            event.preventDefault();
+            const dropTarget = event.target.closest('li[data-index]');
+            if (!dropTarget || draggedTodoIndex === null) {
+                return;
+            }
+            const targetIndex = Number(dropTarget.dataset.index);
+            if (Number.isNaN(targetIndex) || targetIndex === draggedTodoIndex || !todos[draggedTodoIndex] || !todos[targetIndex]) {
+                return;
+            }
+            const movingTodo = todos[draggedTodoIndex];
+            const targetTodo = todos[targetIndex];
+            if (Boolean(movingTodo.pinned) !== Boolean(targetTodo.pinned)) {
+                window.alert('Pin status differs. Drag inside pinned group or unpinned group.');
+                return;
+            }
+
+            const sortedManual = getSortedTodos();
+            const draggedPos = sortedManual.findIndex((item) => item.originalIndex === draggedTodoIndex);
+            const targetPos = sortedManual.findIndex((item) => item.originalIndex === targetIndex);
+            if (draggedPos < 0 || targetPos < 0) {
+                return;
+            }
+            const [moved] = sortedManual.splice(draggedPos, 1);
+            sortedManual.splice(targetPos, 0, moved);
+            sortedManual.forEach((item, orderIndex) => {
+                todos[item.originalIndex].order = orderIndex + 1;
+            });
+            saveTodos();
+            renderTodos();
+        });
+        todoList.addEventListener('dragend', () => {
+            draggedTodoIndex = null;
+            todoList.querySelectorAll('.todo-item.dragging').forEach((item) => item.classList.remove('dragging'));
+        });
+    }
+    if (todoCompletedList) {
+        todoCompletedList.addEventListener('click', handleTodoListClick);
+    }
 
     if (todoSortBy) {
         todoSortBy.addEventListener('change', () => {
@@ -2966,7 +3099,8 @@
         });
     }
     if (todoFilterToggle && todoFilterMenu) {
-        todoFilterToggle.addEventListener('click', () => {
+        todoFilterToggle.addEventListener('click', (event) => {
+            event.stopPropagation();
             todoFilterMenu.classList.toggle('open');
         });
         document.addEventListener('click', (event) => {
@@ -2980,104 +3114,10 @@
         });
     }
 
-    let draggedTodoIndex = null;
-    todoList.addEventListener('dragstart', (event) => {
-        const target = event.target.closest('li[data-index]');
-        if (!target || (todoSortBy?.value || 'manual') !== 'manual') {
-            return;
-        }
-        draggedTodoIndex = Number(target.dataset.index);
-        target.classList.add('dragging');
-        event.dataTransfer.effectAllowed = 'move';
-    });
-    todoList.addEventListener('dragover', (event) => {
-        if ((todoSortBy?.value || 'manual') !== 'manual') {
-            return;
-        }
-        event.preventDefault();
-        event.dataTransfer.dropEffect = 'move';
-    });
-    todoList.addEventListener('drop', (event) => {
-        if ((todoSortBy?.value || 'manual') !== 'manual') {
-            return;
-        }
-        event.preventDefault();
-        const dropTarget = event.target.closest('li[data-index]');
-        if (!dropTarget || draggedTodoIndex === null) {
-            return;
-        }
-        const targetIndex = Number(dropTarget.dataset.index);
-        if (Number.isNaN(targetIndex) || targetIndex === draggedTodoIndex || !todos[draggedTodoIndex] || !todos[targetIndex]) {
-            return;
-        }
-        const movingTodo = todos[draggedTodoIndex];
-        const targetTodo = todos[targetIndex];
-        if (Boolean(movingTodo.pinned) !== Boolean(targetTodo.pinned)) {
-            window.alert('Pin status differs. Drag inside pinned group or unpinned group.');
-            return;
-        }
-
-        const sortedManual = getSortedTodos();
-        const draggedPos = sortedManual.findIndex((item) => item.originalIndex === draggedTodoIndex);
-        const targetPos = sortedManual.findIndex((item) => item.originalIndex === targetIndex);
-        if (draggedPos < 0 || targetPos < 0) {
-            return;
-        }
-        const [moved] = sortedManual.splice(draggedPos, 1);
-        sortedManual.splice(targetPos, 0, moved);
-        sortedManual.forEach((item, orderIndex) => {
-            todos[item.originalIndex].order = orderIndex + 1;
-        });
-        saveTodos();
-        renderTodos();
-    });
-    todoList.addEventListener('dragend', () => {
-        draggedTodoIndex = null;
-        todoList.querySelectorAll('.todo-item.dragging').forEach((item) => item.classList.remove('dragging'));
-    });
-
     renderTodos();
     if (shouldSyncMigratedTodos) {
         saveTodos();
     }
-
-    document.addEventListener('click', (event) => {
-        const openButton = event.target.closest('.open-modal');
-        if (openButton?.dataset?.modal) {
-            openModalById(openButton.dataset.modal);
-            return;
-        }
-        const closeButton = event.target.closest('.close-modal');
-        if (closeButton) {
-            const modal = closeButton.closest('dialog');
-            if (modal) {
-                if (typeof modal.close === 'function') {
-                    modal.close();
-                } else {
-                    modal.removeAttribute('open');
-                }
-            }
-        }
-    });
-
-    document.querySelectorAll('dialog').forEach((modal) => {
-        modal.addEventListener('click', (event) => {
-            const dialogDimensions = modal.getBoundingClientRect();
-            const isInDialog =
-                event.clientX >= dialogDimensions.left &&
-                event.clientX <= dialogDimensions.right &&
-                event.clientY >= dialogDimensions.top &&
-                event.clientY <= dialogDimensions.bottom;
-
-            if (!isInDialog) {
-                if (typeof modal.close === 'function') {
-                    modal.close();
-                } else {
-                    modal.removeAttribute('open');
-                }
-            }
-        });
-    });
 
     function bindMealCalorieTotals() {
         document.querySelectorAll('dialog form').forEach((form) => {
