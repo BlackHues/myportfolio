@@ -28,8 +28,9 @@ class AdminDashboardController extends Controller
     {
         $period = (string) $request->query('period', 'month');
         $selectedYear = (int) $request->query('year', now()->year);
+        $selectedMonth = max(1, min(12, (int) $request->query('month', now()->month)));
 
-        [$startDate, $endDate] = $this->resolveDateRange($period, $selectedYear);
+        [$startDate, $endDate] = $this->resolveDateRange($period, $selectedYear, $selectedMonth);
 
         $expenseQuery = $this->filteredExpenseQuery($startDate, $endDate)->with(['category', 'debitCard', 'creditCard']);
         $nonEmiExpenseQuery = (clone $expenseQuery)->where('is_emi', false);
@@ -184,6 +185,7 @@ class AdminDashboardController extends Controller
         return view('admin.dashboard', [
             'period' => $period,
             'selectedYear' => $selectedYear,
+            'selectedMonth' => $selectedMonth,
             'startDate' => $startDate,
             'endDate' => $endDate,
             'expenses' => $expenses,
@@ -309,7 +311,8 @@ class AdminDashboardController extends Controller
     {
         $period = (string) $request->query('period', 'month');
         $selectedYear = (int) $request->query('year', now()->year);
-        [$startDate, $endDate] = $this->resolveDateRange($period, $selectedYear);
+        $selectedMonth = max(1, min(12, (int) $request->query('month', now()->month)));
+        [$startDate, $endDate] = $this->resolveDateRange($period, $selectedYear, $selectedMonth);
 
         $rows = $this->filteredExpenseQuery($startDate, $endDate)
             ->with('category')
@@ -343,7 +346,8 @@ class AdminDashboardController extends Controller
     {
         $period = (string) $request->query('period', 'month');
         $selectedYear = (int) $request->query('year', now()->year);
-        [$startDate, $endDate] = $this->resolveDateRange($period, $selectedYear);
+        $selectedMonth = max(1, min(12, (int) $request->query('month', now()->month)));
+        [$startDate, $endDate] = $this->resolveDateRange($period, $selectedYear, $selectedMonth);
 
         $rows = $this->filteredExpenseQuery($startDate, $endDate)
             ->with('category')
@@ -963,11 +967,16 @@ class AdminDashboardController extends Controller
         $card->save();
     }
 
-    private function resolveDateRange(string $period, int $selectedYear): array
+    private function resolveDateRange(string $period, int $selectedYear, int $selectedMonth): array
     {
         $today = now();
         if ($period === 'week') {
-            return [$today->copy()->startOfWeek(), $today->copy()->endOfWeek()];
+            if ($selectedYear === (int) $today->year && $selectedMonth === (int) $today->month) {
+                return [$today->copy()->startOfWeek(), $today->copy()->endOfWeek()];
+            }
+
+            $weekAnchor = Carbon::create($selectedYear, $selectedMonth, 7);
+            return [$weekAnchor->copy()->startOfWeek(), $weekAnchor->copy()->endOfWeek()];
         }
 
         if ($period === 'year') {
@@ -975,7 +984,9 @@ class AdminDashboardController extends Controller
             return [$yearBase->copy()->startOfYear(), $yearBase->copy()->endOfYear()];
         }
 
-        return [$today->copy()->startOfMonth(), $today->copy()->endOfMonth()];
+        $monthBase = Carbon::create($selectedYear, $selectedMonth, 1);
+
+        return [$monthBase->copy()->startOfMonth(), $monthBase->copy()->endOfMonth()];
     }
 
     private function filteredExpenseQuery(Carbon $startDate, Carbon $endDate)

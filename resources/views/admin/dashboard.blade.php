@@ -745,6 +745,83 @@
         width: 100% !important;
         height: 100% !important;
     }
+    .pie-legend-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding-bottom: 0.55rem;
+        margin-bottom: 0.55rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.82);
+    }
+    .pie-legend-total {
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: none;
+        color: #ffffff;
+    }
+    .pie-legend-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+        max-height: none;
+    }
+    .pie-legend-item {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 0.45rem 0.55rem;
+        padding: 0.35rem 0.45rem;
+        border-radius: 0.55rem;
+        background: rgba(255, 255, 255, 0.08);
+    }
+    .pie-legend-item-main {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        min-width: 0;
+    }
+    .pie-legend-dot {
+        flex-shrink: 0;
+        width: 0.65rem;
+        height: 0.65rem;
+        border-radius: 999px;
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
+    }
+    .pie-legend-name {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #ffffff;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .pie-legend-bar-wrap {
+        grid-column: 2 / -1;
+        height: 0.28rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.14);
+        overflow: hidden;
+    }
+    .pie-legend-bar {
+        display: block;
+        height: 100%;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.92);
+    }
+    .pie-legend-stats {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.92);
+        white-space: nowrap;
+        text-align: right;
+    }
     .side-showcase-card {
         border-radius: 0.95rem;
         overflow: hidden;
@@ -925,18 +1002,27 @@
                 </div>
                 <div class="expense-toolbar flex flex-wrap items-center gap-2">
                     <form method="get" action="{{ route('admin.dashboard') }}" class="expense-filter-form flex flex-wrap items-center gap-2">
-                        <select name="period" class="soft-input rounded-lg px-3 py-2 text-sm">
+                        <select name="period" id="expensePeriodFilter" class="soft-input rounded-lg px-3 py-2 text-sm">
                             <option value="week" @selected($period === 'week')>Week</option>
                             <option value="month" @selected($period === 'month')>Month</option>
                             <option value="year" @selected($period === 'year')>Year</option>
                         </select>
-                        <input type="number" name="year" min="2000" max="2100" value="{{ $selectedYear }}" class="soft-input rounded-lg px-3 py-2 text-sm w-28">
+                        <select name="month" id="expenseMonthFilter" data-filter-month class="soft-input rounded-lg px-3 py-2 text-sm">
+                            @foreach (['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] as $monthIndex => $monthLabel)
+                                <option value="{{ $monthIndex + 1 }}" @selected($selectedMonth === ($monthIndex + 1))>{{ $monthLabel }}</option>
+                            @endforeach
+                        </select>
+                        <select name="year" id="expenseYearFilter" data-filter-year class="soft-input rounded-lg px-3 py-2 text-sm">
+                            @for ($yearOption = now()->year + 1; $yearOption >= now()->year - 10; $yearOption--)
+                                <option value="{{ $yearOption }}" @selected($selectedYear === $yearOption)>{{ $yearOption }}</option>
+                            @endfor
+                        </select>
                         <button class="primary-btn px-4 py-2 text-sm">Apply</button>
                     </form>
-                    <a href="{{ route('admin.expenses.export.csv', ['period' => $period, 'year' => $selectedYear]) }}" class="primary-btn px-3 py-2 text-xs">
+                    <a href="{{ route('admin.expenses.export.csv', ['period' => $period, 'year' => $selectedYear, 'month' => $selectedMonth]) }}" class="primary-btn px-3 py-2 text-xs">
                         <i class="fa-solid fa-file-csv text-xs"></i> CSV
                     </a>
-                    <a href="{{ route('admin.expenses.export.excel', ['period' => $period, 'year' => $selectedYear]) }}" class="primary-btn px-3 py-2 text-xs">
+                    <a href="{{ route('admin.expenses.export.excel', ['period' => $period, 'year' => $selectedYear, 'month' => $selectedMonth]) }}" class="primary-btn px-3 py-2 text-xs">
                         <i class="fa-solid fa-file-excel text-xs"></i> Excel
                     </a>
                 </div>
@@ -979,7 +1065,7 @@
                     <div class="expense-pie-wrap mx-auto">
                         <canvas id="pieChart" class="w-full h-full"></canvas>
                     </div>
-                    <div id="pieLegend" class="mt-4 w-full space-y-2 max-h-40 overflow-auto pr-1"></div>
+                    <div id="pieLegend" class="pie-legend-list mt-4 w-full pr-1"></div>
                 </div>
             </div>
             <div class="mt-5 rounded-xl border border-cyan-100 bg-gradient-to-br from-slate-900 via-indigo-950 to-sky-950 p-4 shadow-lg">
@@ -1296,8 +1382,22 @@
     </section>
 
     <section class="rounded-xl bg-white p-5 mt-6 panel dashboard-content-panel" data-dashboard-panel="goal">
-        <h2 class="text-lg font-semibold">Net worth analysis ({{ $netWorthMonthlyTrend['year'] }})</h2>
-        <p class="text-sm text-slate-500 mt-1">Built only from your income and expense records. Solid bars are closed months (actual). Lighter bars are forecast. The current month blends what you logged so far with a projected finish. The line uses actual history through the last closed month, then extends with those monthly figures. Change the year with the filter above and click Apply.</p>
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <h2 class="text-lg font-semibold">Net worth analysis ({{ $netWorthMonthlyTrend['year'] }})</h2>
+                <p class="text-sm text-slate-500 mt-1">Built only from your income and expense records. Solid bars are closed months (actual). Lighter bars are forecast. The current month blends what you logged so far with a projected finish. The line uses actual history through the last closed month, then extends with those monthly figures.</p>
+            </div>
+            <form method="get" action="{{ route('admin.dashboard') }}" class="expense-filter-form flex flex-wrap items-center gap-2">
+                <input type="hidden" name="period" value="{{ $period }}">
+                <input type="hidden" name="month" value="{{ $selectedMonth }}">
+                <select name="year" class="soft-input rounded-lg px-3 py-2 text-sm">
+                    @for ($yearOption = now()->year + 1; $yearOption >= now()->year - 10; $yearOption--)
+                        <option value="{{ $yearOption }}" @selected($selectedYear === $yearOption)>{{ $yearOption }}</option>
+                    @endfor
+                </select>
+                <button class="primary-btn px-4 py-2 text-sm">Apply</button>
+            </form>
+        </div>
         @php($fc = $netWorthMonthlyTrend['forecast'] ?? [])
         <div class="mt-4 grid gap-3 sm:grid-cols-2 rounded-xl border border-slate-200 bg-slate-50/80 p-4">
             <div>
@@ -1884,8 +1984,6 @@
     const todoFilterMenu = document.getElementById('todoFilterMenu');
     const pieChart = document.getElementById('pieChart');
     const pieLegend = document.getElementById('pieLegend');
-    const openModalButtons = document.querySelectorAll('.open-modal');
-    const closeModalButtons = document.querySelectorAll('.close-modal');
     const netWorthMonthlyTrend = @json($netWorthMonthlyTrend);
     const weightTrend = @json($weightTrend);
     const dailyFlowTrend = @json($dailyFlowTrend ?? ['labels' => [], 'income' => [], 'expense' => []]);
@@ -1899,28 +1997,85 @@
     const oldWeightContext = @json($errors->any() && old('weight_kg') !== null);
     const dashboardPanelCards = Array.from(document.querySelectorAll('[data-open-dashboard-panel]'));
     const dashboardPanels = Array.from(document.querySelectorAll('[data-dashboard-panel]'));
+    const dashboardPanelKeys = new Set(['money', 'fitness', 'goal']);
 
-    function restoreDashboardScrollPosition() {
-        if (hasValidationErrors) {
-            window.requestAnimationFrame(() => {
-                window.scrollTo({ top: 0, behavior: 'auto' });
-            });
-            return;
+    function consumeDashboardReturnState() {
+        const raw = sessionStorage.getItem(dashboardScrollKey);
+        if (raw === null) {
+            return null;
         }
-        const storedY = sessionStorage.getItem(dashboardScrollKey);
-        if (storedY === null) {
-            return;
-        }
-        const y = Number(storedY);
         sessionStorage.removeItem(dashboardScrollKey);
-        if (Number.isNaN(y)) {
+        if (hasValidationErrors) {
+            return null;
+        }
+        try {
+            const parsed = JSON.parse(raw);
+            if (parsed && typeof parsed === 'object') {
+                const y = Number(parsed.y);
+                const panel = dashboardPanelKeys.has(parsed.panel) ? parsed.panel : 'money';
+                if (!Number.isNaN(y)) {
+                    return { y, panel };
+                }
+            }
+        } catch (e) {
+            /* legacy plain number */
+        }
+        const legacyY = Number(raw);
+        if (!Number.isNaN(legacyY)) {
+            return { y: legacyY, panel: 'money' };
+        }
+        return null;
+    }
+
+    function getVisibleDashboardPanelKey() {
+        const el = dashboardPanels.find((panel) => panel.classList.contains('is-visible'));
+        return el?.dataset?.dashboardPanel || '';
+    }
+
+    function inferDashboardPanelFromForm(form) {
+        const action = String(form.getAttribute('action') || '');
+        if (action.includes('weight-logs')) {
+            return 'fitness';
+        }
+        if (action.includes('todos')) {
+            return 'goal';
+        }
+        if (action.includes('/admin/expenses') || action.includes('/admin/incomes') || action.includes('/admin/credit-cards') || action.includes('/admin/debit-cards') || action.includes('/admin/stocks') || action.includes('/admin/savings-adjustments') || action.includes('/admin/categories') || action.includes('/admin/cash-balance')) {
+            return 'money';
+        }
+        const visible = getVisibleDashboardPanelKey();
+        if (dashboardPanelKeys.has(visible)) {
+            return visible;
+        }
+        const inPanel = form.closest('[data-dashboard-panel]');
+        const fromAncestor = inPanel?.dataset?.dashboardPanel || '';
+        if (dashboardPanelKeys.has(fromAncestor)) {
+            return fromAncestor;
+        }
+        return 'money';
+    }
+
+    function scheduleDashboardScrollRestore(y) {
+        if (typeof y !== 'number' || Number.isNaN(y)) {
             return;
         }
+        function applyScroll() {
+            const doc = document.documentElement;
+            const body = document.body;
+            const scrollHeight = Math.max(
+                doc?.scrollHeight || 0,
+                body?.scrollHeight || 0,
+            );
+            const maxY = Math.max(0, scrollHeight - window.innerHeight);
+            window.scrollTo({ top: Math.min(Math.max(0, y), maxY), behavior: 'auto' });
+        }
+        applyScroll();
         window.requestAnimationFrame(() => {
-            window.requestAnimationFrame(() => {
-                window.scrollTo({ top: y, behavior: 'auto' });
-            });
+            applyScroll();
+            window.requestAnimationFrame(applyScroll);
         });
+        window.addEventListener('load', applyScroll, { once: true });
+        [0, 80, 200, 450].forEach((ms) => window.setTimeout(applyScroll, ms));
     }
 
     function bindDashboardCrudScrollMemory() {
@@ -1930,17 +2085,31 @@
                 if (action.includes('logout')) {
                     return;
                 }
-                sessionStorage.setItem(dashboardScrollKey, String(window.scrollY || 0));
-                const activePanelEl = dashboardPanels.find((p) => p.classList.contains('is-visible'));
-                const panelKey = activePanelEl?.dataset?.dashboardPanel;
-                if (panelKey === 'money' || panelKey === 'fitness' || panelKey === 'goal') {
-                    try {
-                        sessionStorage.setItem(dashboardPanelStorageKey, panelKey);
-                    } catch (e) {
-                        /* ignore */
-                    }
-                }
+                const payload = {
+                    y: window.scrollY || 0,
+                    panel: inferDashboardPanelFromForm(form),
+                };
+                sessionStorage.setItem(dashboardScrollKey, JSON.stringify(payload));
             });
+        });
+    }
+
+    function bindExpensePeriodFilter() {
+        document.querySelectorAll('.expense-filter-form select[name="period"]').forEach((periodSelect) => {
+            const form = periodSelect.closest('form');
+            if (!form) {
+                return;
+            }
+            const monthField = form.querySelector('[data-filter-month]');
+            const applyVisibility = () => {
+                const showMonth = periodSelect.value !== 'year';
+                if (monthField) {
+                    monthField.style.display = showMonth ? '' : 'none';
+                    monthField.disabled = !showMonth;
+                }
+            };
+            periodSelect.addEventListener('change', applyVisibility);
+            applyVisibility();
         });
     }
 
@@ -2059,10 +2228,24 @@
         });
     }
 
+    const dashboardReturnState = consumeDashboardReturnState();
+
+    document.querySelectorAll('dialog[open]').forEach((modal) => {
+        if (typeof modal.close === 'function') {
+            modal.close();
+        } else {
+            modal.removeAttribute('open');
+        }
+    });
+
     bindDashboardCrudScrollMemory();
     bindPaymentChannelDependencies();
+    bindExpensePeriodFilter();
     bindDashboardPanelCards();
     if (hasValidationErrors) {
+        window.requestAnimationFrame(() => {
+            window.scrollTo({ top: 0, behavior: 'auto' });
+        });
         if (oldWeightContext) {
             setActiveDashboardPanel('fitness');
         } else if (openExpenseCreateOnError || openIncomeCreateOnError) {
@@ -2070,13 +2253,15 @@
         } else {
             setActiveDashboardPanel('goal');
         }
+    } else if (dashboardReturnState?.panel) {
+        setActiveDashboardPanel(dashboardReturnState.panel);
+        scheduleDashboardScrollRestore(dashboardReturnState.y);
     } else {
         const storedPanel = sessionStorage.getItem(dashboardPanelStorageKey);
         if (storedPanel === 'money' || storedPanel === 'fitness' || storedPanel === 'goal') {
             setActiveDashboardPanel(storedPanel);
         }
     }
-    restoreDashboardScrollPosition();
     if (openExpenseCreateOnError) {
         openModalById('expenseCreateModal');
     } else if (openIncomeCreateOnError) {
@@ -2459,7 +2644,7 @@
                 expensePieInstance.destroy();
                 expensePieInstance = null;
             }
-            pieLegend.innerHTML = '<p class="text-sm text-slate-500 text-center">Add expense data to see chart.</p>';
+            pieLegend.innerHTML = '<p class="text-sm text-white/70 text-center">Add expense data to see chart.</p>';
             return;
         }
 
@@ -2469,6 +2654,72 @@
 
         const ctx = pieChart.getContext('2d');
         const depthColors = ['#075985', '#0f766e', '#b45309', '#be123c', '#4338ca', '#047857', '#7e22ce'];
+        const slicePercents = categoryTotals.map((item) => {
+            const amount = Number(item.total_amount);
+            return total > 0 ? (amount / total) * 100 : 0;
+        });
+
+        const pieLabelPlugin = {
+            id: 'pieCategoryLabels',
+            afterDraw(chart) {
+                const dataset = chart.data.datasets?.[0];
+                const meta = chart.getDatasetMeta(0);
+                if (!dataset || !meta?.data?.length) {
+                    return;
+                }
+
+                const context = chart.ctx;
+                meta.data.forEach((arc, index) => {
+                    const value = Number(dataset.data[index] || 0);
+                    const percent = total > 0 ? (value / total) * 100 : 0;
+                    if (percent < 2.5) {
+                        return;
+                    }
+
+                    const angle = arc.startAngle + (arc.endAngle - arc.startAngle) / 2;
+                    const labelRadius = arc.innerRadius + (arc.outerRadius - arc.innerRadius) * 0.58;
+                    const x = arc.x + Math.cos(angle) * labelRadius;
+                    const y = arc.y + Math.sin(angle) * labelRadius;
+                    const label = percent >= 10 ? `${percent.toFixed(0)}%` : `${percent.toFixed(1)}%`;
+
+                    context.save();
+                    context.fillStyle = '#ffffff';
+                    context.font = '700 11px system-ui, -apple-system, sans-serif';
+                    context.textAlign = 'center';
+                    context.textBaseline = 'middle';
+                    context.shadowColor = 'rgba(15, 23, 42, 0.45)';
+                    context.shadowBlur = 6;
+                    context.fillText(label, x, y);
+                    context.restore();
+                });
+            },
+        };
+
+        const pieCenterPlugin = {
+            id: 'pieCenterTotal',
+            afterDraw(chart) {
+                const meta = chart.getDatasetMeta(0);
+                if (!meta?.data?.length) {
+                    return;
+                }
+
+                const firstArc = meta.data[0];
+                const props = firstArc.getProps(['x', 'y'], true);
+                const context = chart.ctx;
+
+                context.save();
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                context.fillStyle = 'rgba(255, 255, 255, 0.78)';
+                context.font = '600 10px system-ui, -apple-system, sans-serif';
+                context.fillText('Total expense', props.x, props.y - 11);
+                context.fillStyle = '#ffffff';
+                context.font = '700 13px system-ui, -apple-system, sans-serif';
+                context.fillText(`Rs ${total.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, props.x, props.y + 8);
+                context.restore();
+            },
+        };
+
         const shadowPlugin = {
             id: 'pieShadowDepth',
             beforeDraw(chart) {
@@ -2552,39 +2803,55 @@
             options: {
                 maintainAspectRatio: false,
                 radius: '97%',
-                cutout: '44%',
+                cutout: '52%',
                 layout: {
-                    padding: 2,
+                    padding: 8,
                 },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
                         callbacks: {
+                            title(items) {
+                                return items[0]?.label || 'Category';
+                            },
                             label(context) {
                                 const value = Number(context.parsed || 0);
                                 const percent = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
-                                return `${context.label}: Rs ${value.toLocaleString()} (${percent}%)`;
+                                return [
+                                    `Amount: Rs ${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                                    `Share: ${percent}%`,
+                                ];
                             },
                         },
                     },
                 },
             },
-            plugins: [shadowPlugin],
+            plugins: [shadowPlugin, pieLabelPlugin, pieCenterPlugin],
         });
 
-        pieLegend.innerHTML = categoryTotals.map((item, index) => {
-            const amount = Number(item.total_amount);
-            const percent = ((amount / total) * 100).toFixed(1);
-            return `
-                <div class="flex items-center justify-between text-sm">
-                    <div class="flex items-center gap-2">
-                        <span class="inline-block w-3 h-3 rounded-full" style="background:${expenseColors[index % expenseColors.length]}"></span>
-                        <span>${item.name}</span>
+        pieLegend.innerHTML = `
+            <div class="pie-legend-header">
+                <span>All categories</span>
+                <span class="pie-legend-total">Rs ${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+            ${categoryTotals.map((item, index) => {
+                const amount = Number(item.total_amount);
+                const percent = slicePercents[index];
+                const color = expenseColors[index % expenseColors.length];
+                return `
+                    <div class="pie-legend-item" title="${item.name}: Rs ${amount.toLocaleString()} (${percent.toFixed(1)}%)">
+                        <div class="pie-legend-item-main">
+                            <span class="pie-legend-dot" style="background:${color}"></span>
+                            <span class="pie-legend-name">${item.name}</span>
+                        </div>
+                        <span class="pie-legend-stats">Rs ${amount.toLocaleString(undefined, { maximumFractionDigits: 0 })} · ${percent.toFixed(1)}%</span>
+                        <div class="pie-legend-bar-wrap">
+                            <span class="pie-legend-bar" style="width:${Math.max(percent, 1).toFixed(1)}%; background:${color}"></span>
+                        </div>
                     </div>
-                    <span class="text-slate-100">Rs ${amount.toLocaleString()} (${percent}%)</span>
-                </div>
-            `;
-        }).join('');
+                `;
+            }).join('')}
+        `;
     }
 
     todoForm.addEventListener('submit', (event) => {
@@ -2774,25 +3041,15 @@
         saveTodos();
     }
 
-    openModalButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            const modalId = button.dataset.modal;
-            const modal = document.getElementById(modalId);
-            if (!modal) {
-                return;
-            }
-            if (typeof modal.showModal === 'function') {
-                modal.showModal();
-            } else {
-                modal.setAttribute('open', 'open');
-            }
-            modal.classList.add('modal-backdrop');
-        });
-    });
-
-    closeModalButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-            const modal = button.closest('dialog');
+    document.addEventListener('click', (event) => {
+        const openButton = event.target.closest('.open-modal');
+        if (openButton?.dataset?.modal) {
+            openModalById(openButton.dataset.modal);
+            return;
+        }
+        const closeButton = event.target.closest('.close-modal');
+        if (closeButton) {
+            const modal = closeButton.closest('dialog');
             if (modal) {
                 if (typeof modal.close === 'function') {
                     modal.close();
@@ -2800,7 +3057,7 @@
                     modal.removeAttribute('open');
                 }
             }
-        });
+        }
     });
 
     document.querySelectorAll('dialog').forEach((modal) => {
