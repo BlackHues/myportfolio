@@ -21,6 +21,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -877,12 +878,14 @@ class AdminDashboardController extends Controller
         $data = $request->validate([
             'routine_date' => ['required', 'date'],
             'scheduled_time' => ['required', 'date_format:H:i'],
+            'end_time' => ['required', 'date_format:H:i'],
             'title' => ['required', 'string', 'max:200'],
             'details' => ['nullable', 'string', 'max:2000'],
             'period' => ['nullable', 'string'],
             'year' => ['nullable', 'integer'],
             'month' => ['nullable', 'integer'],
         ]);
+        $this->assertRoutineEndAfterStart($data['scheduled_time'], $data['end_time']);
 
         $userId = (int) $request->user()->id;
         $routineDate = $this->resolveRoutineDate($data['routine_date']);
@@ -895,6 +898,7 @@ class AdminDashboardController extends Controller
             'user_id' => $userId,
             'routine_date' => $routineDate,
             'scheduled_time' => $data['scheduled_time'],
+            'end_time' => $data['end_time'],
             'title' => $data['title'],
             'details' => $data['details'] ?? null,
             'is_done' => false,
@@ -912,6 +916,7 @@ class AdminDashboardController extends Controller
         $data = $request->validate([
             'routine_date' => ['required', 'date'],
             'scheduled_time' => ['required', 'date_format:H:i'],
+            'end_time' => ['required', 'date_format:H:i'],
             'title' => ['required', 'string', 'max:200'],
             'details' => ['nullable', 'string', 'max:2000'],
             'is_done' => ['nullable', 'boolean'],
@@ -919,11 +924,13 @@ class AdminDashboardController extends Controller
             'year' => ['nullable', 'integer'],
             'month' => ['nullable', 'integer'],
         ]);
+        $this->assertRoutineEndAfterStart($data['scheduled_time'], $data['end_time']);
 
         $routineDate = $this->resolveRoutineDate($data['routine_date']);
         $routineItem->update([
             'routine_date' => $routineDate,
             'scheduled_time' => $data['scheduled_time'],
+            'end_time' => $data['end_time'],
             'title' => $data['title'],
             'details' => $data['details'] ?? null,
             'is_done' => $request->boolean('is_done'),
@@ -1021,6 +1028,15 @@ class AdminDashboardController extends Controller
     {
         if ((int) $routineItem->user_id !== (int) $request->user()->id) {
             abort(403);
+        }
+    }
+
+    private function assertRoutineEndAfterStart(string $startTime, string $endTime): void
+    {
+        if ($endTime <= $startTime) {
+            throw ValidationException::withMessages([
+                'end_time' => 'End time must be after start time.',
+            ]);
         }
     }
 

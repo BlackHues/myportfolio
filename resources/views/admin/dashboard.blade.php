@@ -334,14 +334,42 @@
         border-color: #bbf7d0;
     }
     .routine-time {
+        min-width: 4.8rem;
+    }
+    .routine-time-range {
         font-size: 0.78rem;
         font-weight: 700;
         color: #0369a1;
-        min-width: 3.4rem;
-        padding-top: 0.15rem;
+        line-height: 1.2;
     }
-    .routine-item.is-done .routine-time {
+    .routine-item.is-done .routine-time-range {
         color: #15803d;
+    }
+    .routine-duration {
+        display: inline-flex;
+        margin-top: 0.25rem;
+        padding: 0.12rem 0.4rem;
+        border-radius: 999px;
+        font-size: 0.64rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        color: #4338ca;
+        background: #eef2ff;
+        border: 1px solid #c7d2fe;
+    }
+    .routine-item.is-done .routine-duration {
+        color: #166534;
+        background: #dcfce7;
+        border-color: #bbf7d0;
+    }
+    .routine-time-label {
+        display: block;
+        font-size: 0.58rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        margin-bottom: 0.15rem;
     }
     .routine-title {
         font-size: 0.88rem;
@@ -1270,22 +1298,37 @@
                 <div class="routine-progress mb-3">
                     <span class="routine-progress-bar" style="width: {{ $routineProgress }}%"></span>
                 </div>
-                <form method="post" action="{{ route('admin.routine-items.store') }}" class="grid sm:grid-cols-[auto_1fr_auto] gap-2 mb-4">
+                <form method="post" action="{{ route('admin.routine-items.store') }}" class="grid sm:grid-cols-2 lg:grid-cols-[auto_auto_1fr_auto] gap-2 mb-4">
                     @csrf
                     <input type="hidden" name="routine_date" value="{{ $routineDate }}">
                     <input type="hidden" name="period" value="{{ $period }}">
                     <input type="hidden" name="year" value="{{ $selectedYear }}">
                     <input type="hidden" name="month" value="{{ $selectedMonth }}">
-                    <input type="time" name="scheduled_time" value="09:00" required class="soft-input rounded-lg px-3 py-2 text-sm">
-                    <input type="text" name="title" placeholder="Routine task (e.g. Deep work, Gym, Email)" required class="soft-input rounded-lg px-3 py-2 text-sm">
-                    <button type="submit" class="primary-btn px-3 py-2 text-sm whitespace-nowrap">Add block</button>
-                    <input type="text" name="details" placeholder="Optional details" class="soft-input rounded-lg px-3 py-2 text-sm sm:col-span-3">
+                    <label class="block">
+                        <span class="routine-time-label">From</span>
+                        <input type="time" name="scheduled_time" value="09:00" required class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+                    </label>
+                    <label class="block">
+                        <span class="routine-time-label">To</span>
+                        <input type="time" name="end_time" value="10:00" required class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+                    </label>
+                    <label class="block sm:col-span-2 lg:col-span-1">
+                        <span class="routine-time-label">Task</span>
+                        <input type="text" name="title" placeholder="Deep work, Gym, Email..." required class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+                    </label>
+                    <div class="flex items-end sm:col-span-2 lg:col-span-1">
+                        <button type="submit" class="primary-btn px-3 py-2 text-sm whitespace-nowrap w-full">Add block</button>
+                    </div>
+                    <input type="text" name="details" placeholder="Optional details" class="soft-input rounded-lg px-3 py-2 text-sm sm:col-span-2 lg:col-span-4">
                 </form>
 
                 <div class="routine-timeline">
                     @forelse ($routineItems as $item)
                         <article class="routine-item {{ $item->is_done ? 'is-done' : '' }}">
-                            <p class="routine-time">{{ substr($item->scheduled_time, 0, 5) }}</p>
+                            <div class="routine-time">
+                                <p class="routine-time-range">{{ $item->startTimeLabel() }} – {{ $item->endTimeLabel() }}</p>
+                                <span class="routine-duration">{{ $item->durationLabel() }}</span>
+                            </div>
                             <div>
                                 <p class="routine-title">{{ $item->title }}</p>
                                 @if ($item->details)
@@ -2046,8 +2089,16 @@
         <input type="hidden" name="period" value="{{ $period }}">
         <input type="hidden" name="year" value="{{ $selectedYear }}">
         <input type="hidden" name="month" value="{{ $selectedMonth }}">
-        <input type="time" name="scheduled_time" value="{{ substr($item->scheduled_time, 0, 5) }}" required class="soft-input rounded-lg px-3 py-2 text-sm">
-        <input type="text" name="title" value="{{ $item->title }}" required class="soft-input rounded-lg px-3 py-2 text-sm">
+        <label class="block">
+            <span class="routine-time-label">From</span>
+            <input type="time" name="scheduled_time" value="{{ $item->startTimeLabel() }}" required class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+        </label>
+        <label class="block">
+            <span class="routine-time-label">To</span>
+            <input type="time" name="end_time" value="{{ $item->endTimeLabel() }}" required class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+        </label>
+        <input type="text" name="title" value="{{ $item->title }}" required class="soft-input rounded-lg px-3 py-2 text-sm md:col-span-2">
+        <p class="text-xs text-slate-500 md:col-span-2">Duration: {{ $item->durationLabel() }}</p>
         <input type="text" name="details" value="{{ $item->details }}" placeholder="Optional details" class="soft-input rounded-lg px-3 py-2 text-sm md:col-span-2">
         <label class="inline-flex items-center gap-2 text-sm text-slate-700 md:col-span-2">
             <input type="checkbox" name="is_done" value="1" @checked($item->is_done)> Mark as done
