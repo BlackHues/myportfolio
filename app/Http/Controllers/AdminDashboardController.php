@@ -885,7 +885,7 @@ class AdminDashboardController extends Controller
             'year' => ['nullable', 'integer'],
             'month' => ['nullable', 'integer'],
         ]);
-        $this->assertRoutineEndAfterStart($data['scheduled_time'], $data['end_time']);
+        $this->assertRoutineTimesValid($data['scheduled_time'], $data['end_time']);
 
         $userId = (int) $request->user()->id;
         $routineDate = $this->resolveRoutineDate($data['routine_date']);
@@ -924,7 +924,7 @@ class AdminDashboardController extends Controller
             'year' => ['nullable', 'integer'],
             'month' => ['nullable', 'integer'],
         ]);
-        $this->assertRoutineEndAfterStart($data['scheduled_time'], $data['end_time']);
+        $this->assertRoutineTimesValid($data['scheduled_time'], $data['end_time']);
 
         $routineDate = $this->resolveRoutineDate($data['routine_date']);
         $routineItem->update([
@@ -1031,11 +1031,14 @@ class AdminDashboardController extends Controller
         }
     }
 
-    private function assertRoutineEndAfterStart(string $startTime, string $endTime): void
+    private function assertRoutineTimesValid(string $startTime, string $endTime): void
     {
-        if ($endTime <= $startTime) {
+        $start = $this->normalizeRoutineClock($startTime);
+        $end = $this->normalizeRoutineClock($endTime);
+
+        if ($start === $end) {
             throw ValidationException::withMessages([
-                'end_time' => 'Time out must be after time in.',
+                'end_time' => 'Time out must be different from time in.',
             ]);
         }
     }

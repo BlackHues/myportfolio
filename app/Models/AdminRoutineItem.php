@@ -34,31 +34,36 @@ class AdminRoutineItem extends Model
 
     public function endTimeLabel(): string
     {
-        if ($this->hasValidEndTime()) {
+        if ($this->end_time !== null && $this->end_time !== '') {
             return $this->formatClockTime($this->end_time);
         }
 
         return $this->formatMinutesAsClock($this->clockToMinutes($this->scheduled_time) + 60);
     }
 
-    public function hasValidEndTime(): bool
+    public function spansMidnight(): bool
     {
         if ($this->end_time === null || $this->end_time === '') {
             return false;
         }
 
-        return $this->clockToMinutes($this->end_time) > $this->clockToMinutes($this->scheduled_time);
+        return $this->clockToMinutes($this->end_time) <= $this->clockToMinutes($this->scheduled_time);
     }
 
     public function durationMinutes(): int
     {
         $start = $this->clockToMinutes($this->scheduled_time);
-        $end = $this->hasValidEndTime()
-            ? $this->clockToMinutes($this->end_time)
-            : $start + 60;
+        if ($this->end_time === null || $this->end_time === '') {
+            return 60;
+        }
 
-        if ($end <= $start) {
-            return max(0, (24 * 60) - $start + $end);
+        $end = $this->clockToMinutes($this->end_time);
+        if ($end === $start) {
+            return 0;
+        }
+
+        if ($end < $start) {
+            return (24 * 60) - $start + $end;
         }
 
         return $end - $start;
@@ -83,6 +88,16 @@ class AdminRoutineItem extends Model
         }
 
         return $hours . 'h ' . $remaining . 'm';
+    }
+
+    public function durationLabelWithOvernightHint(): string
+    {
+        $label = $this->durationLabel();
+        if ($this->spansMidnight()) {
+            return $label . ' (overnight)';
+        }
+
+        return $label;
     }
 
     private function formatClockTime(?string $value): string

@@ -1282,8 +1282,8 @@
     <section class="rounded-xl bg-white p-5 mt-6 panel dashboard-content-panel routine-card" data-dashboard-panel="goal">
         <div class="flex flex-wrap items-start justify-between gap-3">
             <div>
-                <h2 class="text-lg font-semibold">Daily Routine & Notes</h2>
-                <p class="text-sm text-slate-500 mt-1">Plan your day with time blocks, track completion, and keep focus notes for time management.</p>
+                <h2 class="text-lg font-semibold">24-Hour Daily Routine & Notes</h2>
+                <p class="text-sm text-slate-500 mt-1">Plan your full day (00:00–24:00). Time out can be after midnight — e.g. 20:00 to 01:00 counts as 5 hours overnight.</p>
             </div>
             <form method="get" action="{{ route('admin.dashboard') }}" class="routine-date-nav">
                 <input type="hidden" name="period" value="{{ $period }}">
@@ -1348,6 +1348,7 @@
                     <label class="block">
                         <span class="routine-time-label">Time out</span>
                         <input type="time" name="end_time" value="{{ old('end_time', '10:00') }}" required class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+                        <span class="text-[10px] text-slate-500 mt-1 block">Can be next day (after 00:00)</span>
                     </label>
                     <p class="routine-duration-preview sm:col-span-2">Duration: 1h</p>
                     <label class="block sm:col-span-2">
@@ -1373,9 +1374,14 @@
                                 </div>
                                 <div class="routine-time-row">
                                     <span class="routine-time-label !mb-0">Time out</span>
-                                    <span class="routine-time-value">{{ $item->endTimeLabel() }}</span>
+                                    <span class="routine-time-value">
+                                        {{ $item->endTimeLabel() }}
+                                        @if ($item->spansMidnight())
+                                            <span class="text-[10px] font-semibold text-indigo-600">+1 day</span>
+                                        @endif
+                                    </span>
                                 </div>
-                                <span class="routine-duration">Duration · {{ $item->durationLabel() }}</span>
+                                <span class="routine-duration">Duration · {{ $item->durationLabelWithOvernightHint() }}</span>
                             </div>
                             <div>
                                 <p class="routine-title">{{ $item->title }}</p>
@@ -2144,8 +2150,9 @@
         <label class="block">
             <span class="routine-time-label">Time out</span>
             <input type="time" name="end_time" value="{{ old('end_time', $item->endTimeLabel()) }}" required class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+            <span class="text-[10px] text-slate-500 mt-1 block">Can be next day (after 00:00)</span>
         </label>
-        <p class="routine-duration-preview md:col-span-2">Duration: {{ $item->durationLabel() }}</p>
+        <p class="routine-duration-preview md:col-span-2">Duration: {{ $item->durationLabelWithOvernightHint() }}</p>
         <label class="block md:col-span-2">
             <span class="routine-time-label">Task</span>
             <input type="text" name="title" value="{{ old('title', $item->title) }}" required class="soft-input rounded-lg px-3 py-2 text-sm w-full">
@@ -2654,18 +2661,25 @@
                 return '—';
             }
             let minutes = (eh * 60 + em) - (sh * 60 + sm);
+            let overnight = false;
             if (minutes <= 0) {
-                return 'Time out must be after time in';
+                minutes += 24 * 60;
+                overnight = true;
+            }
+            if (minutes === 0) {
+                return 'Time in and time out cannot match';
             }
             const hours = Math.floor(minutes / 60);
             const remaining = minutes % 60;
+            let label = '';
             if (hours === 0) {
-                return `${minutes} min`;
+                label = `${minutes} min`;
+            } else if (remaining === 0) {
+                label = `${hours}h`;
+            } else {
+                label = `${hours}h ${remaining}m`;
             }
-            if (remaining === 0) {
-                return `${hours}h`;
-            }
-            return `${hours}h ${remaining}m`;
+            return overnight ? `${label} (overnight)` : label;
         }
 
         document.querySelectorAll('.routine-block-form').forEach((form) => {

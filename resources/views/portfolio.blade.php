@@ -3,1327 +3,1404 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Hire Arjun Kumar H, a freelance full stack website developer for small businesses and startups. Affordable website development packages from Rs.5,000 with SEO setup, Search Console, and indexing support.">
-    <meta name="keywords" content="hire web developer, freelance website developer, small business website developer, affordable website development, Laravel developer India, Django developer, React developer, SEO for small business website">
+    <meta name="description" content="Arjun Kumar H — Full Stack Developer & MBA graduate. Laravel, React, React Native, and healthcare product builds.">
+    <meta name="keywords" content="Arjun Kumar H, Full Stack Developer, Laravel, React, React Native, MBA, healthcare software">
     <meta name="robots" content="index,follow,max-image-preview:large">
-    <title>Hire Website Developer for Small Business | Arjun Kumar H</title>
+    <title>Arjun Kumar H · Full Stack Developer & MBA</title>
     <link rel="canonical" href="{{ url()->current() }}">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Hire Website Developer for Small Business | Arjun Kumar H">
-    <meta property="og:description" content="Affordable freelance website developer for small-scale companies. Full stack builds, SEO setup, and indexing support starting from Rs.5,000.">
+    <meta property="og:title" content="Arjun Kumar H · Full Stack Developer & MBA">
+    <meta property="og:description" content="Premium full stack builds — Laravel, React, React Native, healthcare products.">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:image" content="{{ url('/images/arjun-hero-cutout.png') }}">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Hire Website Developer for Small Business | Arjun Kumar H">
-    <meta name="twitter:description" content="Affordable full stack website development with SEO setup for startups and small businesses.">
+    <meta name="twitter:title" content="Arjun Kumar H · Full Stack Developer & MBA">
+    <meta name="twitter:description" content="Premium full stack builds — Laravel, React, React Native, healthcare products.">
     <meta name="twitter:image" content="{{ url('/images/arjun-hero-cutout.png') }}">
     <link rel="icon" type="image/svg+xml" href="/ak-favicon.svg?v=1">
     <script type="application/ld+json">
         {
             "@@context": "https://schema.org",
-            "@@type": "ProfessionalService",
+            "@@type": "Person",
             "name": "Arjun Kumar H",
             "url": "{{ url('/') }}",
             "image": "{{ url('/images/arjun-hero-cutout.png') }}",
-            "description": "Freelance full stack website developer helping startups and small businesses build affordable SEO-ready websites.",
-            "areaServed": "India",
-            "priceRange": "Rs.5,000 - Rs.15,000",
-            "serviceType": [
-                "Small business website development",
-                "Laravel and Django web application development",
-                "SEO setup and Google Search Console configuration"
+            "jobTitle": "Full Stack Developer",
+            "description": "Full Stack Developer and MBA graduate building scalable web and mobile products.",
+            "email": "arjunh2194@gmail.com",
+            "telephone": "+919995956770",
+            "address": {
+                "@@type": "PostalAddress",
+                "addressLocality": "Thiruvananthapuram",
+                "addressRegion": "Kerala",
+                "addressCountry": "IN"
+            },
+            "sameAs": [
+                "https://www.linkedin.com/in/arjunkumar21/"
             ]
         }
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ @filemtime(public_path('css/app.css')) }}">
     <style>
         :root {
-            --hero-a: #0f4f4a;
-            --hero-b: #0d3f3b;
-            --hero-c: #0b3330;
-            --sun: #f8b400;
-            --text-main: #122029;
-            --text-soft: #60707d;
-            --line: #e3e8ec;
-            --card: #ffffff;
-            --mint: #0d5b54;
-            --mint-soft: #eaf8f4;
-            --shadow-sm: 0 8px 22px rgba(20, 35, 48, 0.08);
-            --shadow-md: 0 18px 36px rgba(9, 24, 36, 0.16);
+            --bg: #041C1A;
+            --bg-2: #0B2F2B;
+            --green: #16E38A;
+            --gold: #FFC94A;
+            --white: #F8F8F8;
+            --gray: #AAB5B1;
+            --glass: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --glow-green: 0 0 40px rgba(22, 227, 138, 0.35);
+            --glow-gold: 0 0 40px rgba(255, 201, 74, 0.28);
+            --radius: 20px;
+            --nav-w: 88px;
         }
 
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
         body {
+            margin: 0;
             font-family: "Outfit", system-ui, sans-serif;
-            background: #f7fafb;
-            color: var(--text-main);
+            background: var(--bg);
+            color: var(--white);
+            overflow-x: hidden;
+            line-height: 1.55;
+        }
+
+        h1, h2, h3, h4, .display {
+            font-family: "Syne", "Outfit", sans-serif;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
         }
 
         @media (prefers-reduced-motion: reduce) {
-            * {
-                animation: none !important;
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
             }
         }
 
-        @keyframes fade-up {
-            from { opacity: 0; transform: translateY(24px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes float-soft {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        @keyframes pulse-ring {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(248, 180, 0, 0.25); }
-            50% { box-shadow: 0 0 0 14px rgba(248, 180, 0, 0.06); }
-        }
-        @keyframes glow-sweep {
-            0%, 100% { text-shadow: 0 0 0 rgba(255, 226, 154, 0); }
-            50% { text-shadow: 0 0 18px rgba(255, 226, 154, 0.35); }
-        }
-        @keyframes gentle-bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-4px); }
-        }
-        @keyframes spin-soft {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        @keyframes shimmer {
-            0%, 100% { opacity: 0.45; transform: translateX(-8px); }
-            50% { opacity: 0.95; transform: translateX(8px); }
-        }
-
-        .hero-mesh {
-            position: relative;
+        /* —— Atmosphere —— */
+        .site-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
             background:
-                radial-gradient(circle at 20% 30%, rgba(248, 180, 0, 0.14), transparent 28%),
-                radial-gradient(circle at 78% 26%, rgba(255, 255, 255, 0.07), transparent 35%),
-                linear-gradient(135deg, var(--hero-a) 0%, var(--hero-b) 55%, var(--hero-c) 100%);
-            border-bottom-left-radius: 2.25rem;
-            border-bottom-right-radius: 2.25rem;
-            overflow: hidden;
-            min-height: 100svh;
-            display: flex;
-            align-items: center;
+                radial-gradient(ellipse 70% 50% at 15% 10%, rgba(22, 227, 138, 0.14), transparent 55%),
+                radial-gradient(ellipse 55% 45% at 85% 20%, rgba(255, 201, 74, 0.1), transparent 50%),
+                radial-gradient(ellipse 60% 40% at 50% 90%, rgba(22, 227, 138, 0.08), transparent 55%),
+                linear-gradient(180deg, #041C1A 0%, #062420 40%, #041C1A 100%);
         }
-        .hero-mesh::after {
-            content: "";
+        .aurora {
             position: absolute;
-            left: -5%;
-            right: -5%;
-            bottom: -36px;
-            height: 88px;
-            border-radius: 0 0 999px 999px;
-            background: #f7fafb;
-            box-shadow: 0 -14px 30px rgba(5, 18, 25, 0.2);
+            inset: -20% -10%;
+            background:
+                radial-gradient(ellipse at 20% 30%, rgba(22, 227, 138, 0.22), transparent 42%),
+                radial-gradient(ellipse at 80% 20%, rgba(255, 201, 74, 0.12), transparent 40%),
+                radial-gradient(ellipse at 60% 70%, rgba(11, 47, 43, 0.8), transparent 45%);
+            filter: blur(60px);
+            animation: aurora-drift 18s ease-in-out infinite alternate;
+            opacity: 0.85;
         }
-        .float-orb {
-            background: rgba(248, 180, 0, 0.18) !important;
-            animation: float-soft 7s ease-in-out infinite;
+        @keyframes aurora-drift {
+            from { transform: translate3d(-2%, 0, 0) scale(1); }
+            to { transform: translate3d(3%, 2%, 0) scale(1.05); }
         }
-        .orb-drift {
-            background: rgba(255, 255, 255, 0.12) !important;
-            animation: float-soft 10s ease-in-out infinite reverse;
+        #particle-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.55;
         }
 
-        .hero-reveal > * { opacity: 0; animation: fade-up 0.74s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-        .hero-reveal > *:nth-child(1) { animation-delay: 0.06s; }
-        .hero-reveal > *:nth-child(2) { animation-delay: 0.13s; }
-        .hero-reveal > *:nth-child(3) { animation-delay: 0.2s; }
-        .hero-reveal > *:nth-child(4) { animation-delay: 0.27s; }
-        .hero-reveal > *:nth-child(5) { animation-delay: 0.34s; }
-        .hero-reveal > *:nth-child(6) { animation-delay: 0.41s; }
-
-        .reveal {
-            opacity: 0;
-            transform: translateY(22px);
-            transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1), transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        .reveal.is-visible { opacity: 1; transform: translateY(0); }
-        .reveal-delay-1 { transition-delay: 0.09s; }
-        .reveal-delay-2 { transition-delay: 0.18s; }
-        .reveal-delay-3 { transition-delay: 0.27s; }
-        .reveal-delay-4 { transition-delay: 0.34s; }
-
-        .card-lift {
-            transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
-        }
-        .card-lift:hover {
-            transform: translateY(-6px);
-            box-shadow: var(--shadow-md) !important;
-            border-color: rgba(13, 91, 84, 0.35) !important;
-        }
-        .photo-pop { opacity: 0; animation: fade-up 0.86s cubic-bezier(0.22, 1, 0.36, 1) 0.32s forwards; }
-        .hero-title-glow { animation: glow-sweep 4.8s ease-in-out infinite; }
-        .hero-cta-pop {
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-            animation: gentle-bounce 3.6s ease-in-out infinite;
-        }
-        .hero-cta-pop:hover {
-            animation-play-state: paused;
-            transform: translateY(-2px) scale(1.03);
-        }
-        .hero-copy {
-            font-size: clamp(0.84rem, 2.5vw, 1rem);
-            line-height: 1.55;
-        }
-        .hero-model-wrap {
-            width: min(100%, 410px);
+        .shell {
             position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            padding-left: var(--nav-w);
+        }
+        @media (max-width: 900px) {
+            .shell { padding-left: 0; padding-bottom: 72px; }
+        }
+
+        /* —— Vertical nav —— */
+        .side-nav {
+            position: fixed;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 50;
+            width: 64px;
+            padding: 14px 10px;
+            border-radius: 24px;
+            background: rgba(8, 36, 33, 0.72);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .side-nav .brand {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
             display: grid;
             place-items: center;
-            isolation: isolate;
+            font-family: "Syne", sans-serif;
+            font-weight: 800;
+            font-size: 0.72rem;
+            color: var(--bg);
+            background: linear-gradient(145deg, var(--green), #0fb872);
+            box-shadow: var(--glow-green);
+            margin-bottom: 6px;
+            text-decoration: none;
         }
-        .hero-model-glow {
-            position: absolute;
-            inset: 14% 12% 10% 12%;
-            border-radius: 999px;
-            background: radial-gradient(circle, rgba(255, 215, 120, 0.25) 0%, rgba(16, 110, 103, 0.28) 35%, rgba(9, 40, 37, 0) 78%);
-            filter: blur(12px);
-            z-index: 0;
-        }
-        .hero-model-ring {
-            position: absolute;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 999px;
-            z-index: 1;
-        }
-        .hero-model-ring.ring-a {
-            width: 90%;
-            height: 90%;
-            animation: spin-soft 24s linear infinite;
-        }
-        .hero-model-ring.ring-b {
-            width: 75%;
-            height: 75%;
-            border-style: dashed;
-            border-color: rgba(248, 180, 0, 0.35);
-            animation: spin-soft 18s linear infinite reverse;
-        }
-        .hero-model-pattern {
-            position: absolute;
-            inset: 20% 8% 8% 8%;
-            border-radius: 1.75rem;
-            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.2) 1.2px, transparent 1.2px);
-            background-size: 14px 14px;
-            opacity: 0.24;
-            z-index: 1;
-            animation: shimmer 4.2s ease-in-out infinite;
-        }
-        .hero-model-card {
+        .side-nav a.nav-ico {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            color: var(--gray);
+            text-decoration: none;
+            transition: color 0.25s ease, background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
             position: relative;
-            z-index: 2;
-            width: min(84%, 340px);
         }
-        .hero-model-mobile-row {
-            position: relative;
-            z-index: 2;
-        }
-        .hero-model-meta {
-            margin-top: 1rem;
-            text-align: center;
-        }
-        .hero-model-cutout {
-            display: block;
-            width: 100%;
-            height: auto;
-            object-fit: contain;
-            object-position: center top;
-            max-height: min(72vh, 520px);
-            mix-blend-mode: screen;
-            filter: drop-shadow(0 18px 24px rgba(1, 8, 8, 0.36));
-        }
-
-        @media (max-width: 1023px) {
-            .hero-mesh {
-                min-height: auto;
-                padding-top: 0.5rem;
-                padding-bottom: 0.5rem;
-            }
-        }
-        @media (max-width: 640px) {
-            .hero-mesh::after {
-                height: 62px;
-                bottom: -28px;
-            }
-            .hero-model-wrap {
-                width: min(100%, 360px);
-            }
-            .hero-model-mobile-row {
-                display: flex;
-                align-items: flex-end;
-                justify-content: center;
-                gap: 0.75rem;
-            }
-            .hero-model-card {
-                width: min(58vw, 210px);
-            }
-            .hero-model-meta {
-                margin-top: 0;
-                max-width: 140px;
-                text-align: left;
-            }
-        }
-
-        .min-h-screen.flex.flex-col.bg-gradient-to-b {
-            background: linear-gradient(180deg, #edf4f4 0%, #f7fafb 100%) !important;
-        }
-        header.sticky {
-            background: rgba(12, 61, 56, 0.92) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 8px 20px rgba(6, 23, 21, 0.35) !important;
-        }
-        .site-header {
-            height: 76px;
-        }
-        .site-header-bar {
-            height: 100%;
-            padding-top: 0;
-            padding-bottom: 0;
-        }
-        header.sticky p,
-        header.sticky a,
-        header.sticky span,
-        header.sticky i { color: #eaf4f3 !important; }
-        header.sticky .bg-amber-500 {
-            background: var(--sun) !important;
-            color: #10232a !important;
-            box-shadow: 0 8px 18px rgba(248, 180, 0, 0.3) !important;
-        }
-
-        nav a {
-            position: relative;
-            opacity: 0.9;
-            transition: opacity 0.25s ease, transform 0.25s ease;
-        }
-        nav a:hover {
-            opacity: 1;
+        .side-nav a.nav-ico:hover,
+        .side-nav a.nav-ico.is-active {
+            color: var(--white);
+            background: rgba(22, 227, 138, 0.12);
+            box-shadow: inset 0 0 0 1px rgba(22, 227, 138, 0.35);
             transform: translateY(-1px);
         }
-        nav a::after {
-            content: "";
+        .side-nav a.nav-ico[data-tip]::after {
+            content: attr(data-tip);
             position: absolute;
-            left: 0;
-            bottom: -7px;
-            width: 100%;
-            height: 2px;
-            border-radius: 999px;
-            background: var(--sun);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.24s ease;
+            left: calc(100% + 12px);
+            top: 50%;
+            transform: translateY(-50%) translateX(-4px);
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            white-space: nowrap;
+            background: rgba(11, 47, 43, 0.95);
+            border: 1px solid var(--glass-border);
+            color: var(--white);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
         }
-        nav a:hover::after { transform: scaleX(1); }
-        .mobile-menu-btn {
-            width: 2.6rem;
-            height: 2.6rem;
-            border-radius: 0.8rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.12);
+        .side-nav a.nav-ico:hover::after {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+        }
+        .side-nav .socials {
+            margin-top: 8px;
+            padding-top: 10px;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .side-nav .socials a {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            color: var(--gray);
+            text-decoration: none;
+            transition: color 0.2s ease, background 0.2s ease;
+        }
+        .side-nav .socials a:hover { color: var(--green); background: rgba(22,227,138,0.1); }
+
+        .mobile-bar {
+            display: none;
+            position: fixed;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            z-index: 50;
+            height: 58px;
+            border-radius: 18px;
+            background: rgba(8, 36, 33, 0.88);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(16px);
+            padding: 0 8px;
+            align-items: center;
+            justify-content: space-around;
+        }
+        .mobile-bar a {
+            color: var(--gray);
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            text-decoration: none;
+        }
+        .mobile-bar a.is-active,
+        .mobile-bar a:hover { color: var(--green); background: rgba(22,227,138,0.12); }
+        @media (max-width: 900px) {
+            .side-nav { display: none; }
+            .mobile-bar { display: flex; }
+        }
+
+        /* —— Shared —— */
+        .wrap {
+            width: min(1180px, calc(100% - 2.5rem));
+            margin: 0 auto;
+        }
+        @media (max-width: 640px) {
+            .wrap { width: min(100%, calc(100% - 1.5rem)); }
+        }
+
+        .glass {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--radius);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255,255,255,0.06);
+        }
+
+        .section {
+            padding: 5.5rem 0;
+            position: relative;
+        }
+        .section-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--green);
+            margin-bottom: 0.85rem;
+        }
+        .section-kicker::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--green);
+            box-shadow: 0 0 12px var(--green);
+        }
+        .section-title {
+            font-size: clamp(1.85rem, 4vw, 2.75rem);
+            font-weight: 700;
+            color: var(--white);
+            max-width: 18ch;
+        }
+        .section-lead {
+            margin-top: 0.85rem;
+            color: var(--gray);
+            font-size: 1rem;
+            max-width: 42ch;
+        }
+
+        .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s ease, transform 0.2s ease;
-        }
-        .mobile-menu-btn:hover { background: rgba(255, 255, 255, 0.2); }
-        .mobile-menu-btn:active { transform: scale(0.97); }
-        .mobile-menu-lines {
-            position: relative;
-            width: 1.1rem;
-            height: 0.78rem;
-        }
-        .mobile-menu-lines span {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            height: 2px;
+            gap: 0.55rem;
             border-radius: 999px;
-            background: #f3fbfa;
-            transition: transform 0.24s ease, opacity 0.2s ease, top 0.24s ease;
+            padding: 0.85rem 1.45rem;
+            font-size: 0.88rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: 1px solid transparent;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+            cursor: pointer;
         }
-        .mobile-menu-lines span:nth-child(1) { top: 0; }
-        .mobile-menu-lines span:nth-child(2) { top: 0.39rem; }
-        .mobile-menu-lines span:nth-child(3) { top: 0.78rem; }
-        .mobile-menu-btn.is-open .mobile-menu-lines span:nth-child(1) {
-            top: 0.39rem;
-            transform: rotate(45deg);
+        .btn:hover { transform: translateY(-2px); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--green), #0fbf72);
+            color: #04221e;
+            box-shadow: var(--glow-green);
         }
-        .mobile-menu-btn.is-open .mobile-menu-lines span:nth-child(2) {
+        .btn-primary:hover { box-shadow: 0 0 50px rgba(22, 227, 138, 0.5); }
+        .btn-ghost {
+            background: rgba(255,255,255,0.05);
+            border-color: var(--glass-border);
+            color: var(--white);
+            backdrop-filter: blur(10px);
+        }
+        .btn-ghost:hover {
+            border-color: rgba(22, 227, 138, 0.45);
+            box-shadow: 0 0 24px rgba(22, 227, 138, 0.15);
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: #d7f8ea;
+            background: rgba(22, 227, 138, 0.1);
+            border: 1px solid rgba(22, 227, 138, 0.22);
+        }
+
+        .reveal {
             opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
         }
-        .mobile-menu-btn.is-open .mobile-menu-lines span:nth-child(3) {
-            top: 0.39rem;
-            transform: rotate(-45deg);
-        }
-        .mobile-nav-panel {
-            opacity: 0;
-            transform: translateY(-8px) scale(0.98);
-            pointer-events: none;
-            transition: opacity 0.22s ease, transform 0.22s ease;
-        }
-        .mobile-nav-panel.is-open {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            pointer-events: auto;
-        }
-        @media (min-width: 768px) {
-            .mobile-menu-btn,
-            .mobile-nav-panel {
-                display: none !important;
-            }
-        }
+        .reveal.is-visible { opacity: 1; transform: translateY(0); }
+        .d1 { transition-delay: 0.08s; }
+        .d2 { transition-delay: 0.16s; }
+        .d3 { transition-delay: 0.24s; }
+        .d4 { transition-delay: 0.32s; }
 
-        .soft-divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(13, 91, 84, 0.5), transparent);
-        }
-        main > section + section {
-            margin-top: clamp(1rem, 2.2vw, 1.9rem);
-        }
-
-        .package-card.is-selected {
-            border-color: rgba(13, 91, 84, 0.52) !important;
-            box-shadow: 0 20px 40px -18px rgba(13, 91, 84, 0.44) !important;
-            background: linear-gradient(180deg, #ffffff 0%, #f2fcf9 100%) !important;
-        }
-
-        #about .text-white, #about .text-slate-100, #about .text-slate-50 { color: #ffffff !important; }
-        #about .text-slate-300, #about .text-slate-400 { color: #c9d7d7 !important; }
-        #about .text-emerald-300 { color: #ffe29a !important; }
-        #about .bg-white\/10 {
-            background: rgba(255, 255, 255, 0.12) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(8px);
-        }
-        #about .from-slate-800.to-slate-900,
-        #about .bg-slate-900 {
-            background: linear-gradient(160deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.06) 100%) !important;
-            border: 1px solid rgba(255, 255, 255, 0.24);
-        }
-        #about .text-slate-950 { color: #15343b !important; }
-
-        #about .bg-emerald-500,
-        #about .bg-amber-500 {
-            background: var(--sun) !important;
-            color: #11272e !important;
-            box-shadow: 0 12px 24px rgba(248, 180, 0, 0.28) !important;
-        }
-        #about .bg-white\/10.px-6.py-2,
-        #about a.bg-white\/10 {
-            background: rgba(255, 255, 255, 0.16) !important;
-            color: #f7fffe !important;
-            border: 1px solid rgba(255, 255, 255, 0.28);
-        }
-        #about a.bg-white\/10:hover { background: rgba(255, 255, 255, 0.22) !important; }
-
-        #education, #experience, #skills, #projects, #packages, #contact {
-            background-image: none !important;
-            background-color: transparent !important;
-        }
-
-        #education article,
-        #experience article,
-        #projects article,
-        #packages article,
-        #contact .rounded-3xl.bg-white\/95,
-        #skills .rounded-3xl {
+        /* —— Hero —— */
+        .hero {
+            min-height: 100svh;
+            display: grid;
+            align-items: center;
+            padding: 4rem 0 3rem;
             position: relative;
-            background: var(--card) !important;
-            border: 1px solid var(--line);
-            box-shadow: var(--shadow-sm) !important;
+        }
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 2.5rem;
+            align-items: center;
+        }
+        @media (max-width: 980px) {
+            .hero-grid { grid-template-columns: 1fr; gap: 2rem; }
+        }
+        .availability {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 0.4rem 0.85rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--green);
+            background: rgba(22, 227, 138, 0.08);
+            border: 1px solid rgba(22, 227, 138, 0.25);
+        }
+        .availability .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: var(--green);
+            box-shadow: 0 0 10px var(--green);
+            animation: pulse-dot 1.8s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.55; transform: scale(0.85); }
+        }
+        .hero h1 {
+            margin: 1.1rem 0 0;
+            font-size: clamp(2.4rem, 6vw, 4.2rem);
+            font-weight: 800;
+        }
+        .hero h1 span.accent {
+            background: linear-gradient(120deg, var(--green), #8af5c4 45%, var(--gold));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hero-roles {
+            margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+        }
+        .hero-bio {
+            margin-top: 1.25rem;
+            color: var(--gray);
+            font-size: 1.02rem;
+            max-width: 38ch;
+        }
+        .hero-ctas {
+            margin-top: 1.75rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
         }
 
-        /* Card frame corners similar to reference */
-        #education article::before,
-        #experience article::before,
-        #projects article::before,
-        #packages article::before {
+        .hero-stage {
+            position: relative;
+            display: grid;
+            place-items: center;
+            min-height: 420px;
+        }
+        .hero-ring {
+            position: absolute;
+            width: min(92%, 420px);
+            aspect-ratio: 1;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 201, 74, 0.35);
+            box-shadow: 0 0 0 1px rgba(22, 227, 138, 0.12), var(--glow-gold);
+            animation: spin-slow 28s linear infinite;
+        }
+        .hero-ring::before {
             content: "";
             position: absolute;
-            inset: 10px;
-            border-radius: 1rem;
-            border: 1px dashed rgba(13, 91, 84, 0.17);
-            pointer-events: none;
+            inset: 18px;
+            border-radius: inherit;
+            border: 1px dashed rgba(22, 227, 138, 0.35);
+            animation: spin-slow 18s linear infinite reverse;
         }
-
-        #skills .from-slate-800,
-        #skills .to-slate-900,
-        #skills .via-slate-900,
-        #skills .to-emerald-950\/80 {
-            background-image: linear-gradient(155deg, #124741 0%, #0d3431 100%) !important;
-            border: none !important;
+        .hero-ring::after {
+            content: "";
+            position: absolute;
+            inset: -30px;
+            border-radius: inherit;
+            background: radial-gradient(circle, rgba(255, 201, 74, 0.18), transparent 62%);
+            filter: blur(18px);
+            z-index: -1;
         }
-        #skills .text-white,
-        #skills .text-amber-100,
-        #skills .text-emerald-50 { color: #ecf7f6 !important; }
-        #skills li.rounded-full {
-            background: rgba(255, 255, 255, 0.12) !important;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            color: #f7fffe !important;
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
-
-        #projects .from-emerald-600.to-teal-600,
-        #projects .from-violet-600.to-fuchsia-600,
-        #packages .from-indigo-600.to-violet-600,
-        #contact .from-indigo-600.to-violet-600 {
-            background-image: linear-gradient(90deg, #0e5f58 0%, #0f7770 100%) !important;
-            box-shadow: 0 12px 24px rgba(13, 91, 84, 0.25) !important;
+        .hero-portrait {
+            position: relative;
+            z-index: 2;
+            width: min(78%, 340px);
+            filter: grayscale(1) contrast(1.08) drop-shadow(0 30px 40px rgba(0,0,0,0.45));
+            mix-blend-mode: screen;
+            animation: float-y 6s ease-in-out infinite;
         }
-
-        #projects .rounded-full.bg-gradient-to-r,
-        #projects .bg-gradient-to-r.from-emerald-500\/15.to-teal-500\/20,
-        #projects .bg-gradient-to-r.from-violet-500\/15.to-fuchsia-500\/20 {
-            background: #f0f7f6 !important;
-            color: #1a4944 !important;
-            border: 1px solid #d8ebe7;
+        @keyframes float-y {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
-
-        #journey {
-            background: linear-gradient(180deg, #ffffff 0%, #f2f6f7 100%) !important;
-            border-top: 1px solid #dde7eb;
-            border-bottom: 1px solid #dde7eb;
-            border-radius: 1.25rem;
+        .float-card {
+            position: absolute;
+            z-index: 3;
+            padding: 0.85rem 1rem;
+            max-width: 200px;
+            animation: float-y 7s ease-in-out infinite;
         }
-        #journey .text-slate-100 { color: #17333a !important; }
-        #journey .text-slate-300\/85, #journey .text-slate-300, #journey .text-cyan-300\/90 { color: #69828e !important; }
-        #journey .journey-kicker {
-            font-size: 0.75rem;
-            letter-spacing: 0.18em;
+        .float-card.right {
+            right: 0;
+            top: 28%;
+            animation-delay: 0.6s;
         }
-        #journey .journey-heading {
-            font-size: clamp(1.8rem, 3.8vw, 2.5rem);
-            line-height: 1.15;
-            margin-top: 0.45rem;
+        .float-card.left {
+            left: 0;
+            bottom: 14%;
+            animation-delay: 1.2s;
         }
-        #journey .journey-lead {
-            font-size: clamp(0.95rem, 1.8vw, 1.05rem);
-            max-width: 52ch;
+        .float-card .ico {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            background: rgba(22, 227, 138, 0.15);
+            color: var(--green);
+            margin-bottom: 0.45rem;
         }
-        #journey .journey-grid article {
-            background: #ffffff !important;
-            border: 1px solid #d9e7eb;
-            box-shadow: var(--shadow-sm);
-            border-radius: 1.25rem;
-            padding: 1.2rem 1.25rem;
-            height: 100%;
+        .float-card p {
+            margin: 0;
+            font-size: 0.78rem;
+            color: var(--gray);
         }
-        #journey .journey-year-badge {
-            background: linear-gradient(120deg, #0d5b54 0%, #117a71 100%);
-            color: #fff;
-            border: 1px solid rgba(13, 91, 84, 0.35);
-        }
-        #journey .journey-dot {
-            background: var(--sun);
-            box-shadow: 0 0 0 4px rgba(248, 180, 0, 0.18);
-            animation: pulse-ring 2.4s ease-in-out infinite;
-        }
-
-        .fixed[aria-label="Direct contact shortcuts"] a {
-            border: 1px solid rgba(255, 255, 255, 0.36);
-            box-shadow: 0 12px 24px rgba(10, 34, 33, 0.3) !important;
-        }
-        .fixed[aria-label="Direct contact shortcuts"] a:hover {
-            transform: translateY(-4px) scale(1.05);
-        }
-
-        footer {
-            background: linear-gradient(90deg, #0f4f4a 0%, #0c3e3a 60%, #0b3330 100%) !important;
-            border-top: 1px solid rgba(255, 255, 255, 0.14);
-        }
-        footer .text-slate-400, footer .text-slate-300 { color: #c7dedd !important; }
-        footer .text-emerald-400\/80 { color: #ffe29a !important; }
-
-        .contact-shell {
-            background: linear-gradient(135deg, #ffffff 0%, #f7f9ff 100%);
-            border: 1px solid #dde6f8;
-            box-shadow: 0 20px 50px rgba(68, 86, 130, 0.14);
-        }
-        .contact-panel {
-            background: linear-gradient(145deg, #0e4f65 0%, #173b7a 52%, #4a2d82 100%);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-        }
-        .contact-chip {
-            border: 1px solid rgba(255, 255, 255, 0.24);
-            background: rgba(255, 255, 255, 0.1);
-        }
-        .contact-form-wrap {
-            border: 1px solid #e6ebf7;
-            background: #ffffff;
-        }
-        .contact-input {
-            border: 1px solid #dbe3f4;
-            background: #f8faff;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-        }
-        .contact-input:focus {
-            border-color: rgba(79, 70, 229, 0.5);
-            background: #ffffff;
-            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
-            outline: none;
-        }
-        .site-footer {
-            margin-top: clamp(1rem, 3vw, 2rem);
-            border-top: 1px solid rgba(255, 255, 255, 0.16);
-            background: radial-gradient(circle at top left, rgba(248, 180, 0, 0.14), transparent 36%),
-                        linear-gradient(92deg, #0b3532 0%, #0e4f4a 44%, #092c2a 100%);
-        }
-        .site-footer-link {
-            border: 1px solid rgba(255, 255, 255, 0.22);
-            background: rgba(255, 255, 255, 0.08);
-            transition: transform 0.2s ease, background 0.2s ease;
-        }
-        .site-footer-link:hover {
-            transform: translateY(-2px);
-            background: rgba(255, 255, 255, 0.16);
-        }
-
-        .content-section {
-            padding-block: clamp(2.5rem, 5vw, 4.75rem);
-        }
-        .section-card {
-            width: min(100% - 2rem, 1120px);
-            margin-inline: auto;
-            border-radius: 1.5rem;
-            border: 1px solid #dce6eb;
-            background: linear-gradient(180deg, #ffffff 0%, #f9fcfd 100%);
-            box-shadow: 0 16px 40px rgba(14, 38, 52, 0.08);
-            padding: clamp(1.1rem, 2.6vw, 2rem);
-        }
-        #education,
-        #experience,
-        #skills,
-        #projects,
-        #packages,
-        #contact,
-        #journey {
-            background: transparent !important;
-            border: 0 !important;
-        }
-        #journey .section-card {
-            background: linear-gradient(180deg, #ffffff 0%, #f5f9fb 100%);
+        .float-card strong {
+            display: block;
+            color: var(--white);
+            font-size: 0.82rem;
+            margin-bottom: 0.2rem;
         }
         @media (max-width: 640px) {
-            .section-card {
-                width: calc(100% - 1.25rem);
-                border-radius: 1.1rem;
-                padding: 0.95rem;
-            }
+            .float-card { display: none; }
+            .hero-stage { min-height: 340px; }
+        }
+
+        /* —— Stats —— */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.85rem;
+            margin-top: -1rem;
+            margin-bottom: 1rem;
+        }
+        @media (max-width: 980px) { .stats { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 560px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+        .stat-card {
+            padding: 1.15rem 1rem;
+            text-align: left;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(22, 227, 138, 0.35);
+            box-shadow: 0 16px 36px rgba(0,0,0,0.3), 0 0 24px rgba(22,227,138,0.12);
+        }
+        .stat-card .ico {
+            width: 34px;
+            height: 34px;
+            border-radius: 11px;
+            display: grid;
+            place-items: center;
+            background: rgba(22, 227, 138, 0.12);
+            color: var(--green);
+            margin-bottom: 0.75rem;
+        }
+        .stat-card .num {
+            font-family: "Syne", sans-serif;
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+        .stat-card .lbl {
+            margin-top: 0.25rem;
+            font-size: 0.78rem;
+            color: var(--gray);
+        }
+
+        /* —— Skills bento —— */
+        .bento {
+            margin-top: 2.25rem;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.9rem;
+        }
+        @media (max-width: 980px) { .bento { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 560px) { .bento { grid-template-columns: 1fr; } }
+        .bento-card {
+            padding: 1.25rem;
+            min-height: 160px;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .bento-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(22, 227, 138, 0.4);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 30px rgba(22,227,138,0.1);
+        }
+        .bento-card.wide { grid-column: span 2; }
+        @media (max-width: 560px) { .bento-card.wide { grid-column: span 1; } }
+        .bento-card h3 {
+            margin: 0 0 0.85rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .bento-card h3 i { color: var(--green); }
+        .bento-card .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        /* —— Projects —— */
+        .project-rail {
+            margin-top: 2.25rem;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        @media (max-width: 800px) { .project-rail { grid-template-columns: 1fr; } }
+        .project-card {
+            position: relative;
+            overflow: hidden;
+            padding: 0;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(22, 227, 138, 0.4);
+            box-shadow: 0 24px 50px rgba(0,0,0,0.35), 0 0 40px rgba(22,227,138,0.12);
+        }
+        .project-visual {
+            height: 150px;
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(22,227,138,0.35), transparent 45%),
+                radial-gradient(circle at 80% 40%, rgba(255,201,74,0.22), transparent 40%),
+                linear-gradient(145deg, #0B2F2B, #051f1c);
+        }
+        .project-visual .mock {
+            position: absolute;
+            inset: 24px 20px 0;
+            border-radius: 14px 14px 0 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04));
+            border: 1px solid rgba(255,255,255,0.15);
+            border-bottom: 0;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.25);
+        }
+        .project-visual .mock::before {
+            content: "";
+            position: absolute;
+            top: 12px;
+            left: 14px;
+            right: 14px;
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(22, 227, 138, 0.35);
+        }
+        .project-visual .mock::after {
+            content: "";
+            position: absolute;
+            top: 32px;
+            left: 14px;
+            width: 42%;
+            height: 48px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.08);
+            box-shadow: 56px 0 0 rgba(255,201,74,0.12), 0 58px 0 rgba(255,255,255,0.05);
+        }
+        .live-badge {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.3rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #04221e;
+            background: var(--green);
+            box-shadow: var(--glow-green);
+        }
+        .live-badge .pulse {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: #04221e;
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+        .project-body {
+            padding: 1.15rem 1.2rem 1.3rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .project-body h3 {
+            margin: 0;
+            font-size: 1.15rem;
+        }
+        .project-body h3 a {
+            color: var(--white);
+            text-decoration: none;
+        }
+        .project-body h3 a:hover { color: var(--green); }
+        .project-body .desc {
+            margin: 0.55rem 0 0.9rem;
+            color: var(--gray);
+            font-size: 0.88rem;
+            flex: 1;
+        }
+        .project-body .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-bottom: 0.9rem;
+        }
+        .project-body .cta {
+            align-self: flex-start;
+            font-size: 0.8rem;
+            color: var(--green);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* —— Certs —— */
+        .cert-grid {
+            margin-top: 2.25rem;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.85rem;
+        }
+        @media (max-width: 980px) { .cert-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 560px) { .cert-grid { grid-template-columns: repeat(2, 1fr); } }
+        .cert-card {
+            padding: 1.2rem 1rem;
+            text-align: center;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        .cert-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 201, 74, 0.4);
+        }
+        .cert-card .logo {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 0.75rem;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: rgba(255,255,255,0.06);
+            color: var(--gold);
+            font-size: 1.2rem;
+        }
+        .cert-card h3 {
+            margin: 0;
+            font-size: 0.88rem;
+        }
+        .cert-card p {
+            margin: 0.35rem 0 0;
+            font-size: 0.72rem;
+            color: var(--gray);
+        }
+        .cert-card .check {
+            margin-top: 0.65rem;
+            color: var(--green);
+            font-size: 0.85rem;
+        }
+
+        /* —— Journey —— */
+        .journey-list {
+            margin-top: 2.25rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        .journey-list::before {
+            content: "";
+            position: absolute;
+            left: 5px;
+            top: 8px;
+            bottom: 8px;
+            width: 2px;
+            background: linear-gradient(180deg, var(--green), rgba(255,201,74,0.5), transparent);
+            box-shadow: 0 0 12px rgba(22,227,138,0.35);
+        }
+        .journey-item {
+            position: relative;
+            padding: 0 0 1.5rem 1.25rem;
+        }
+        .journey-item::before {
+            content: "";
+            position: absolute;
+            left: -1.5rem;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 999px;
+            background: var(--bg);
+            border: 2px solid var(--green);
+            box-shadow: 0 0 12px rgba(22,227,138,0.55);
+        }
+        .journey-item .year {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--gold);
+        }
+        .journey-item h3 {
+            margin: 0.25rem 0 0;
+            font-size: 1.05rem;
+        }
+        .journey-item p {
+            margin: 0.35rem 0 0;
+            color: var(--gray);
+            font-size: 0.9rem;
+            max-width: 58ch;
+        }
+
+        /* —— Contact —— */
+        .contact-grid {
+            margin-top: 2.25rem;
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+            gap: 1rem;
+        }
+        @media (max-width: 900px) { .contact-grid { grid-template-columns: 1fr; } }
+        .contact-info {
+            padding: 1.75rem;
+        }
+        .contact-info h3 {
+            margin: 0.5rem 0 0;
+            font-size: 1.6rem;
+        }
+        .contact-info .sig {
+            margin-top: 1.25rem;
+            font-family: "Syne", sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(120deg, var(--green), var(--gold));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .contact-links {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+        .contact-links a {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.85rem 1rem;
+            border-radius: 14px;
+            text-decoration: none;
+            color: var(--white);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--glass-border);
+            transition: border-color 0.25s ease, background 0.25s ease;
+        }
+        .contact-links a:hover {
+            border-color: rgba(22, 227, 138, 0.4);
+            background: rgba(22, 227, 138, 0.08);
+        }
+        .contact-links a span.left {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            font-size: 0.88rem;
+        }
+        .contact-links a span.left i { color: var(--green); }
+        .contact-links a span.right {
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
+        .contact-form {
+            padding: 1.75rem;
+        }
+        .contact-form label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--gray);
+            margin-bottom: 0.4rem;
+        }
+        .contact-form .field { margin-bottom: 1rem; }
+        .contact-two {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        @media (max-width: 560px) {
+            .contact-two { grid-template-columns: 1fr; }
+        }
+        .contact-form input,
+        .contact-form select,
+        .contact-form textarea {
+            width: 100%;
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.25);
+            color: var(--white);
+            padding: 0.85rem 1rem;
+            font: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .contact-form input::placeholder,
+        .contact-form textarea::placeholder { color: rgba(170, 181, 177, 0.55); }
+        .contact-form input:focus,
+        .contact-form select:focus,
+        .contact-form textarea:focus {
+            border-color: rgba(22, 227, 138, 0.55);
+            box-shadow: 0 0 0 3px rgba(22, 227, 138, 0.12);
+        }
+        .contact-form select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2316E38A' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.4rem;
+        }
+        .contact-form select option { background: #0B2F2B; color: #F8F8F8; }
+        .alert {
+            border-radius: 14px;
+            padding: 0.9rem 1rem;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        .alert-ok {
+            background: rgba(22, 227, 138, 0.12);
+            border: 1px solid rgba(22, 227, 138, 0.35);
+            color: #b8f7d8;
+        }
+        .alert-err {
+            background: rgba(255, 100, 100, 0.1);
+            border: 1px solid rgba(255, 120, 120, 0.35);
+            color: #ffc9c9;
+        }
+
+        .site-footer {
+            border-top: 1px solid var(--glass-border);
+            padding: 2rem 0 3rem;
+            margin-top: 2rem;
+        }
+        .site-footer .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .site-footer p { margin: 0; color: var(--gray); font-size: 0.82rem; }
+        .site-footer strong { color: var(--white); }
+        .site-footer .links { display: flex; gap: 0.5rem; }
+        .site-footer .links a {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            color: var(--gray);
+            text-decoration: none;
+            border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.04);
+            transition: color 0.2s ease, border-color 0.2s ease;
+        }
+        .site-footer .links a:hover {
+            color: var(--green);
+            border-color: rgba(22, 227, 138, 0.4);
         }
     </style>
 </head>
-<body class="min-h-screen bg-white text-slate-900 antialiased overflow-x-hidden">
-<div class="relative min-h-screen flex flex-col bg-gradient-to-b from-slate-50 via-white to-violet-50/30">
-    <header class="site-header sticky top-0 z-20 bg-white/75 backdrop-blur-md shadow-sm shadow-slate-200/50">
-        <div class="site-header-bar mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-            <a href="#top" class="flex items-center gap-2">
-                <div class="h-9 w-9 rounded-xl bg-amber-500 flex items-center justify-center text-slate-950 font-semibold shadow-md shadow-amber-500/30">
-                    AK
+<body>
+<div class="site-bg" aria-hidden="true">
+    <div class="aurora"></div>
+    <canvas id="particle-canvas"></canvas>
+</div>
+
+<aside class="side-nav" aria-label="Primary">
+    <a href="#top" class="brand" title="Arjun Kumar H">AK</a>
+    <a href="#top" class="nav-ico is-active" data-tip="Home" data-section="top"><i class="fa-solid fa-house"></i></a>
+    <a href="#about" class="nav-ico" data-tip="About" data-section="about"><i class="fa-solid fa-user"></i></a>
+    <a href="#skills" class="nav-ico" data-tip="Skills" data-section="skills"><i class="fa-solid fa-code"></i></a>
+    <a href="#projects" class="nav-ico" data-tip="Projects" data-section="projects"><i class="fa-solid fa-diagram-project"></i></a>
+    <a href="#journey" class="nav-ico" data-tip="Journey" data-section="journey"><i class="fa-solid fa-route"></i></a>
+    <a href="#certs" class="nav-ico" data-tip="Certifications" data-section="certs"><i class="fa-solid fa-certificate"></i></a>
+    <a href="#contact" class="nav-ico" data-tip="Contact" data-section="contact"><i class="fa-solid fa-envelope"></i></a>
+    <div class="socials">
+        <a href="https://www.linkedin.com/in/arjunkumar21/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a href="https://wa.me/919995956770" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+        <a href="mailto:arjunh2194@gmail.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+    </div>
+</aside>
+
+<nav class="mobile-bar" aria-label="Mobile">
+    <a href="#top" class="is-active" data-section="top"><i class="fa-solid fa-house"></i></a>
+    <a href="#skills" data-section="skills"><i class="fa-solid fa-code"></i></a>
+    <a href="#projects" data-section="projects"><i class="fa-solid fa-diagram-project"></i></a>
+    <a href="#journey" data-section="journey"><i class="fa-solid fa-route"></i></a>
+    <a href="#contact" data-section="contact"><i class="fa-solid fa-envelope"></i></a>
+</nav>
+
+<div class="shell" id="top">
+    {{-- HERO --}}
+    <header class="hero wrap" id="about">
+        <div class="hero-grid">
+            <div class="hero-copy">
+                <div class="availability reveal"><span class="dot"></span> Available for new opportunities</div>
+                <h1 class="reveal d1">Hello, I'm <span class="accent">Arjun</span> Kumar H</h1>
+                <div class="hero-roles reveal d2">
+                    <span class="pill">Full Stack Developer</span>
+                    <span class="pill">Laravel</span>
+                    <span class="pill">React & React Native</span>
+                    <span class="pill">Healthcare Products</span>
+                    <span class="pill">MBA Graduate</span>
                 </div>
-                <div class="hidden sm:block">
-                    <p class="text-sm font-semibold">Arjun Kumar H</p>
-                    <p class="text-xs text-slate-400">Full Stack Developer</p>
+                <p class="hero-bio reveal d3">
+                    I design and ship scalable, user-friendly web and mobile products — from healthcare platforms to polished business sites — with clean architecture, sharp UI, and search-ready delivery.
+                </p>
+                <div class="hero-ctas reveal d4">
+                    <a class="btn btn-primary" href="#contact"><i class="fa-solid fa-paper-plane"></i> Let's Connect</a>
+                    <a class="btn btn-ghost" href="#projects"><i class="fa-solid fa-arrow-down"></i> View Work</a>
+                    <a class="btn btn-ghost" href="mailto:arjunh2194@gmail.com?subject=Resume%20Request"><i class="fa-solid fa-file-arrow-down"></i> Resume</a>
                 </div>
-            </a>
-            <nav class="hidden md:flex items-center gap-6 text-sm">
-                <a href="#about" class="text-slate-600 hover:text-amber-600 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-1"><i class="fa-solid fa-user text-amber-500"></i><span>About</span></a>
-                <a href="#education" class="text-slate-600 hover:text-amber-600 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-1"><i class="fa-solid fa-graduation-cap text-amber-500"></i><span>Education</span></a>
-                <a href="#experience" class="text-slate-600 hover:text-amber-600 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-1"><i class="fa-solid fa-briefcase text-amber-500"></i><span>Experience</span></a>
-                <a href="#skills" class="text-slate-600 hover:text-amber-600 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-1"><i class="fa-solid fa-code text-amber-500"></i><span>Skills</span></a>
-                <a href="#projects" class="text-slate-600 hover:text-amber-600 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-1"><i class="fa-solid fa-diagram-project text-amber-500"></i><span>Projects</span></a>
-                <a href="#packages" class="text-slate-600 hover:text-amber-600 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-1"><i class="fa-solid fa-layer-group text-amber-500"></i><span>Packages</span></a>
-                <a href="#contact" class="text-slate-600 hover:text-amber-600 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-1"><i class="fa-solid fa-envelope text-amber-500"></i><span>Contact</span></a>
-            </nav>
-            <a href="#contact" class="hidden sm:inline-flex items-center gap-2 rounded-full bg-amber-500 px-4 py-1.5 text-xs font-semibold text-black shadow-lg shadow-amber-600/35 hover:bg-amber-400 hover:shadow-amber-500/40 transition">
-                Available for opportunities
-            </a>
-            <button
-                type="button"
-                class="mobile-menu-btn md:hidden"
-                id="mobile-menu-button"
-                aria-label="Toggle navigation menu"
-                aria-controls="mobile-nav-panel"
-                aria-expanded="false"
-            >
-                <span class="mobile-menu-lines" aria-hidden="true">
-                    <span></span><span></span><span></span>
-                </span>
-            </button>
-        </div>
-        <div
-            id="mobile-nav-panel"
-            class="mobile-nav-panel md:hidden border-t border-white/15 bg-[#0f4f4a]/95 px-4 pb-4 pt-3 shadow-xl shadow-black/25"
-        >
-            <nav class="flex flex-col gap-1.5 text-sm">
-                <a href="#about" class="rounded-xl px-3 py-2 text-slate-100 hover:bg-white/10"><i class="fa-solid fa-user text-amber-300 mr-2"></i>About</a>
-                <a href="#education" class="rounded-xl px-3 py-2 text-slate-100 hover:bg-white/10"><i class="fa-solid fa-graduation-cap text-amber-300 mr-2"></i>Education</a>
-                <a href="#experience" class="rounded-xl px-3 py-2 text-slate-100 hover:bg-white/10"><i class="fa-solid fa-briefcase text-amber-300 mr-2"></i>Experience</a>
-                <a href="#skills" class="rounded-xl px-3 py-2 text-slate-100 hover:bg-white/10"><i class="fa-solid fa-code text-amber-300 mr-2"></i>Skills</a>
-                <a href="#projects" class="rounded-xl px-3 py-2 text-slate-100 hover:bg-white/10"><i class="fa-solid fa-diagram-project text-amber-300 mr-2"></i>Projects</a>
-                <a href="#packages" class="rounded-xl px-3 py-2 text-slate-100 hover:bg-white/10"><i class="fa-solid fa-layer-group text-amber-300 mr-2"></i>Packages</a>
-                <a href="#contact" class="rounded-xl px-3 py-2 text-slate-100 hover:bg-white/10"><i class="fa-solid fa-envelope text-amber-300 mr-2"></i>Contact</a>
-            </nav>
-            <a href="#contact" class="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-xs font-semibold text-black shadow-md shadow-amber-700/30">
-                Available for opportunities
-            </a>
+            </div>
+            <div class="hero-stage reveal d2">
+                <div class="hero-ring" aria-hidden="true"></div>
+                <img class="hero-portrait" src="{{ asset('images/arjun-hero-cutout.png') }}" alt="Arjun Kumar H" width="420" height="520" loading="eager">
+                <div class="float-card glass right">
+                    <div class="ico"><i class="fa-solid fa-code"></i></div>
+                    <strong>Product mindset</strong>
+                    <p>Turning ideas into products with clean code and great UI.</p>
+                </div>
+                <div class="float-card glass left">
+                    <div class="ico"><i class="fa-solid fa-heart-pulse"></i></div>
+                    <strong>Healthcare builder</strong>
+                    <p>Staffing, clinic, and commerce systems that scale.</p>
+                </div>
+            </div>
         </div>
     </header>
 
-    <main id="top" class="flex-1">
-        {{-- Hero --}}
-        <section id="about" class="relative hero-mesh overflow-hidden">
-            <div class="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-emerald-500/20 blur-3xl float-orb"></div>
-            <div class="pointer-events-none absolute -bottom-16 -left-20 h-64 w-64 rounded-full bg-cyan-500/15 blur-3xl orb-drift"></div>
-            <div class="mx-auto w-full max-w-[1320px] px-4 sm:px-6 lg:px-10 py-10 sm:py-12 lg:py-10 flex flex-col lg:flex-row items-center justify-center gap-6 sm:gap-8 lg:gap-12 relative">
-                {{-- Photo --}}
-                <div class="relative flex w-full lg:w-[38%] min-w-[220px] justify-center lg:justify-start">
-                    <div class="hero-model-wrap photo-pop lg:mr-auto">
-                        <span class="hero-model-glow" aria-hidden="true"></span>
-                        <span class="hero-model-ring ring-a" aria-hidden="true"></span>
-                        <span class="hero-model-ring ring-b" aria-hidden="true"></span>
-                        <span class="hero-model-pattern" aria-hidden="true"></span>
-                        <div class="hero-model-mobile-row">
-                            <div class="hero-model-card card-lift">
-                                <img
-                                    src="/images/arjun-hero-cutout.png?v={{ @filemtime(public_path('images/arjun-hero-cutout.png')) }}"
-                                    alt="Arjun Kumar H portrait"
-                                    class="hero-model-cutout"
-                                    loading="eager"
-                                    decoding="async"
-                                />
-                            </div>
+    {{-- STATS --}}
+    <section class="wrap" aria-label="Highlights">
+        <div class="stats">
+            <article class="stat-card glass reveal">
+                <div class="ico"><i class="fa-solid fa-briefcase"></i></div>
+                <div class="num">4+</div>
+                <div class="lbl">Years Experience</div>
+            </article>
+            <article class="stat-card glass reveal d1">
+                <div class="ico"><i class="fa-solid fa-rocket"></i></div>
+                <div class="num">30+</div>
+                <div class="lbl">Projects Completed</div>
+            </article>
+            <article class="stat-card glass reveal d2">
+                <div class="ico"><i class="fa-solid fa-layer-group"></i></div>
+                <div class="num">20+</div>
+                <div class="lbl">Technologies</div>
+            </article>
+            <article class="stat-card glass reveal d3">
+                <div class="ico"><i class="fa-solid fa-hospital"></i></div>
+                <div class="num">Health</div>
+                <div class="lbl">Care Products</div>
+            </article>
+            <article class="stat-card glass reveal d4">
+                <div class="ico"><i class="fa-solid fa-graduation-cap"></i></div>
+                <div class="num">MBA</div>
+                <div class="lbl">Graduate · CET</div>
+            </article>
+        </div>
+    </section>
+
+    {{-- SKILLS --}}
+    <section class="section" id="skills">
+        <div class="wrap">
+            <p class="section-kicker reveal">Capabilities</p>
+            <h2 class="section-title reveal d1">Skills & technologies</h2>
+            <p class="section-lead reveal d2">A stacked toolkit across product, platform, and growth — arranged for how I actually ship.</p>
+            <div class="bento">
+                <article class="bento-card glass reveal">
+                    <h3><i class="fa-solid fa-desktop"></i> Frontend</h3>
+                    <div class="tags">
+                        <span class="pill">React.js</span><span class="pill">Next.js</span><span class="pill">HTML5</span>
+                        <span class="pill">CSS3</span><span class="pill">Tailwind</span><span class="pill">JavaScript</span>
+                    </div>
+                </article>
+                <article class="bento-card glass reveal d1">
+                    <h3><i class="fa-solid fa-server"></i> Backend</h3>
+                    <div class="tags">
+                        <span class="pill">Laravel</span><span class="pill">Yii2</span><span class="pill">Django</span>
+                        <span class="pill">REST APIs</span><span class="pill">PHP</span><span class="pill">Python</span>
+                    </div>
+                </article>
+                <article class="bento-card glass reveal d2">
+                    <h3><i class="fa-solid fa-mobile-screen"></i> Mobile</h3>
+                    <div class="tags">
+                        <span class="pill">React Native</span><span class="pill">Expo</span><span class="pill">Android</span>
+                        <span class="pill">iOS</span><span class="pill">Firebase</span><span class="pill">FCM</span>
+                    </div>
+                </article>
+                <article class="bento-card glass reveal d3">
+                    <h3><i class="fa-solid fa-cloud"></i> Cloud</h3>
+                    <div class="tags">
+                        <span class="pill">AWS</span><span class="pill">Linux</span><span class="pill">VPS</span>
+                        <span class="pill">CI/CD</span>
+                    </div>
+                </article>
+                <article class="bento-card glass reveal">
+                    <h3><i class="fa-solid fa-database"></i> Database</h3>
+                    <div class="tags">
+                        <span class="pill">MySQL</span><span class="pill">PostgreSQL</span><span class="pill">Redis</span>
+                    </div>
+                </article>
+                <article class="bento-card glass reveal d1">
+                    <h3><i class="fa-solid fa-bullhorn"></i> Marketing</h3>
+                    <div class="tags">
+                        <span class="pill">SEO</span><span class="pill">Google Ads</span><span class="pill">Analytics</span>
+                        <span class="pill">Search Console</span>
+                    </div>
+                </article>
+                <article class="bento-card glass reveal d2">
+                    <h3><i class="fa-solid fa-gears"></i> DevOps</h3>
+                    <div class="tags">
+                        <span class="pill">Git</span><span class="pill">Docker</span><span class="pill">Nginx</span>
+                        <span class="pill">Linux</span>
+                    </div>
+                </article>
+                <article class="bento-card glass reveal d3">
+                    <h3><i class="fa-solid fa-robot"></i> AI Tools</h3>
+                    <div class="tags">
+                        <span class="pill">Cursor</span><span class="pill">ChatGPT</span><span class="pill">Copilot</span>
+                        <span class="pill">Prompting</span>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    {{-- PROJECTS --}}
+    <section class="section" id="projects">
+        <div class="wrap">
+            <p class="section-kicker reveal">Featured work</p>
+            <h2 class="section-title reveal d1">Products & platforms</h2>
+            <p class="section-lead reveal d2">Healthcare systems, commerce, and brand sites — shipped with polish and performance.</p>
+            <div class="project-rail">
+                @foreach (config('projects.featured', []) as $i => $project)
+                    <article class="project-card glass reveal {{ $i > 0 ? 'd' . min($i, 3) : '' }}">
+                        <div class="project-visual">
+                            <span class="live-badge"><span class="pulse"></span> Live</span>
+                            <div class="mock" aria-hidden="true"></div>
                         </div>
-                    </div>
-                </div>
-
-                <div class="w-full lg:w-[62%] max-w-2xl space-y-5 hero-reveal text-center lg:text-left">
-                    <p class="text-xs font-medium uppercase tracking-[0.25em] text-emerald-400 lg:pl-1">
-                        Hello, I'm
-                    </p>
-                    <h1 class="text-[1.65rem] leading-tight sm:text-4xl lg:text-5xl font-semibold tracking-tight text-white hero-title-glow">
-                        <span class="block">Arjun Kumar H</span>
-                        <span class="mt-2 block text-base sm:text-xl text-emerald-300">
-                            Full Stack Web Developer
-                        </span>
-                    </h1>
-                    <p class="hero-copy text-slate-300 max-w-xl leading-relaxed">
-                        Need to <strong class="font-semibold text-white">hire a website developer</strong> for your startup or small business?
-                        I build affordable, responsive websites and web apps with Laravel, Django, and React. I also set up
-                        <strong class="font-semibold text-white">SEO fundamentals</strong>, <strong class="font-semibold text-white">Google Search Console</strong>,
-                        and proper <strong class="font-semibold text-white">indexing</strong> (sitemaps, coverage, discoverability).
-                    </p>
-                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-1 sm:pt-2">
-                        <a href="#contact" class="hero-cta-pop inline-flex items-center justify-center rounded-full bg-emerald-500 px-5 sm:px-6 py-2 text-xs sm:text-sm font-semibold text-slate-950 shadow-lg shadow-emerald-500/40 hover:bg-emerald-400 active:scale-[0.98] transition-all duration-300">
-                            <i class="fa-solid fa-comments mr-2"></i>Let’s Talk
-                        </a>
-                        <a href="#projects" class="inline-flex items-center justify-center rounded-full bg-white/10 px-5 sm:px-6 py-2 text-xs sm:text-sm font-medium text-slate-100 shadow-lg shadow-black/20 hover:bg-white/15 hover:text-emerald-200 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300">
-                            <i class="fa-solid fa-briefcase mr-2"></i>View My Work
-                        </a>
-                    </div>
-                    <div class="flex flex-wrap items-stretch justify-center lg:justify-start gap-2.5 pt-2 sm:pt-4 pb-4 sm:pb-0 text-[11px] sm:text-xs text-slate-300">
-                        <span class="inline-flex min-h-[34px] items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 backdrop-blur-sm shadow-lg shadow-emerald-900/20">
-                            <i class="fa-solid fa-circle-check text-emerald-400"></i>
-                            Open to freelance projects
-                        </span>
-                        <span class="inline-flex min-h-[34px] items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 backdrop-blur-sm shadow-lg shadow-amber-900/15">
-                            <i class="fa-solid fa-indian-rupee-sign text-amber-300"></i>
-                            Small business websites from ₹5,000 – ₹15,000
-                        </span>
-                        <span class="inline-flex min-h-[34px] items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 backdrop-blur-sm shadow-lg shadow-cyan-900/15">
-                            <i class="fa-brands fa-google text-cyan-300"></i>
-                            SEO · Search Console · indexing
-                        </span>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        {{-- Education --}}
-        <section id="education" class="content-section">
-            <div class="section-card">
-            <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-                <h2 class="reveal text-xl sm:text-2xl font-semibold tracking-tight text-slate-900 flex items-center gap-2">
-                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white shadow-lg shadow-violet-400/40">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                    </span>
-                    Education
-                </h2>
-                <div class="mt-8 grid gap-6 md:grid-cols-2">
-                    <article class="reveal reveal-delay-1 relative overflow-hidden rounded-3xl bg-white/90 backdrop-blur-sm p-6 shadow-xl shadow-violet-200/50 card-lift">
-                        <p class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
-                            2023 – Present
-                        </p>
-                        <h3 class="mt-2 text-sm font-semibold text-slate-900">Master of Business Administration (MBA)</h3>
-                        <p class="mt-1 text-xs text-amber-700">CET, School of Management</p>
-                        <p class="mt-1 text-xs text-slate-500">Pursuing</p>
-                        <p class="mt-3 text-sm text-slate-700 leading-relaxed">
-                            Building strong foundations in management, strategy, and leadership to complement my technical
-                            skills as a developer. This combination helps me understand both the business and engineering
-                            sides of a product.
-                        </p>
+                        <div class="project-body">
+                            <h3><a href="{{ $project['url'] }}" target="_blank" rel="noopener noreferrer">{{ $project['title'] }}</a></h3>
+                            <p class="desc">{{ $project['description'] }}</p>
+                            <div class="meta">
+                                <span class="pill">{{ $project['region_badge'] ?? 'Web' }}</span>
+                                <span class="pill">Responsive</span>
+                                <span class="pill">SEO</span>
+                            </div>
+                            <a class="cta" href="{{ $project['url'] }}" target="_blank" rel="noopener noreferrer">{{ $project['cta_label'] ?? 'Visit site' }} <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                        </div>
                     </article>
-                    <article class="reveal reveal-delay-2 relative overflow-hidden rounded-3xl bg-white/90 backdrop-blur-sm p-6 shadow-xl shadow-fuchsia-200/40 card-lift">
-                        <p class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
-                            2012 – 2016
-                        </p>
-                        <h3 class="mt-2 text-sm font-semibold text-slate-900">B.Tech in Mechanical Engineering</h3>
-                        <p class="mt-1 text-xs text-amber-700">Younus Institute of Technology, Kannannalloor</p>
-                        <p class="mt-3 text-sm text-slate-700 leading-relaxed">
-                            Developed strong analytical and problem-solving skills, with exposure to core engineering concepts,
-                            systems thinking, and hands-on project work.
-                        </p>
-                    </article>
-                </div>
+                @endforeach
             </div>
-            </div>
-        </section>
+        </div>
+    </section>
 
-        {{-- Experience --}}
-        <section id="experience" class="content-section">
-            <div class="section-card">
-            <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-                <div class="reveal flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-                    <h2 class="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900 flex items-center gap-2">
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 text-white shadow-lg shadow-sky-400/40">
-                            <i class="fa-solid fa-briefcase"></i>
-                        </span>
-                        Work Experience
-                    </h2>
-                    <p class="text-xs text-slate-500 max-w-lg leading-relaxed">
-                        Full stack delivery — backend (Laravel, Django, Yii2), frontend &amp; mobile (React.js, React Native),
-                        plus <span class="text-slate-700 font-medium">SEO hygiene</span>, <span class="text-slate-700 font-medium">Google Search Console</span>,
-                        and <span class="text-slate-700 font-medium">indexing</span> (sitemaps, URL inspection, coverage) so sites don’t just ship — they can be found.
-                    </p>
+    {{-- CERTS --}}
+    <section class="section" id="certs">
+        <div class="wrap">
+            <p class="section-kicker reveal">Credentials</p>
+            <h2 class="section-title reveal d1">Certifications & achievements</h2>
+            <div class="cert-grid">
+                <article class="cert-card glass reveal">
+                    <div class="logo"><i class="fa-brands fa-google"></i></div>
+                    <h3>Google Ads</h3>
+                    <p>Certification · 2022</p>
+                    <div class="check"><i class="fa-solid fa-circle-check"></i></div>
+                </article>
+                <article class="cert-card glass reveal d1">
+                    <div class="logo"><i class="fa-brands fa-meta"></i></div>
+                    <h3>Meta Blueprint</h3>
+                    <p>Certification · 2022</p>
+                    <div class="check"><i class="fa-solid fa-circle-check"></i></div>
+                </article>
+                <article class="cert-card glass reveal d2">
+                    <div class="logo"><i class="fa-brands fa-react"></i></div>
+                    <h3>React</h3>
+                    <p>Complete Guide · Udemy</p>
+                    <div class="check"><i class="fa-solid fa-circle-check"></i></div>
+                </article>
+                <article class="cert-card glass reveal d3">
+                    <div class="logo"><i class="fa-brands fa-laravel"></i></div>
+                    <h3>Laravel</h3>
+                    <p>Full stack mastery</p>
+                    <div class="check"><i class="fa-solid fa-circle-check"></i></div>
+                </article>
+                <article class="cert-card glass reveal d4">
+                    <div class="logo"><i class="fa-solid fa-graduation-cap"></i></div>
+                    <h3>MBA</h3>
+                    <p>CET · Trivandrum</p>
+                    <div class="check"><i class="fa-solid fa-circle-check"></i></div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    {{-- JOURNEY --}}
+    @php
+        $journeyZigzag = [
+            ['year' => 'Present', 'title' => 'Web Developer', 'text' => 'Alverstone Healthcare Pvt Ltd — full stack delivery with SEO, APIs, and maintainable code.'],
+            ['year' => '2023', 'title' => 'MBA (CET)', 'text' => 'School of Management — business sense alongside engineering.'],
+            ['year' => '2023', 'title' => 'Web Developer', 'text' => 'Sairaworld Pvt Ltd — web products and client-facing builds.'],
+            ['year' => '2022', 'title' => 'Python Developer', 'text' => 'Futuro IT Solutions — backend scripting, APIs, and automation.'],
+            ['year' => '2019', 'title' => 'Technician — I', 'text' => 'IFB Home Appliances — field service and customer-facing work.'],
+            ['year' => '2016', 'title' => 'B.Tech Mechanical', 'text' => 'Younus Institute of Technology — analytical foundation before tech.'],
+        ];
+    @endphp
+    <section class="section" id="journey">
+        <div class="wrap">
+            <p class="section-kicker reveal">Growth</p>
+            <h2 class="section-title reveal d1">My journey</h2>
+            <p class="section-lead reveal d2">From engineering roots to shipping healthcare products — every chapter compounds.</p>
+            <div class="journey-list">
+                @foreach ($journeyZigzag as $i => $step)
+                    <article class="journey-item reveal {{ $i % 2 === 0 ? 'd1' : 'd2' }}">
+                        <div class="year">{{ $step['year'] }}</div>
+                        <h3>{{ $step['title'] }}</h3>
+                        <p>{{ $step['text'] }}</p>
+                    </article>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    {{-- CONTACT --}}
+    <section class="section" id="contact">
+        <div class="wrap">
+            <p class="section-kicker reveal">Contact</p>
+            <h2 class="section-title reveal d1">Let's build something amazing</h2>
+            <p class="section-lead reveal d2">Share a brief — I'll reply the same day on WhatsApp or call.</p>
+            <div class="contact-grid">
+                <div class="contact-info glass reveal">
+                    <p class="section-kicker" style="margin-bottom:0.4rem;">Get in touch</p>
+                    <h3>Prefer a direct line?</h3>
+                    <p style="margin:0.75rem 0 0; color:var(--gray); font-size:0.92rem;">Thiruvananthapuram, Kerala, India</p>
+                    <div class="sig">Arjun Kumar H</div>
+                    <div class="contact-links">
+                        <a href="https://wa.me/919995956770" target="_blank" rel="noopener noreferrer">
+                            <span class="left"><i class="fa-brands fa-whatsapp"></i> WhatsApp</span>
+                            <span class="right">+91 99959 56770</span>
+                        </a>
+                        <a href="tel:+919995956770">
+                            <span class="left"><i class="fa-solid fa-phone"></i> Call</span>
+                            <span class="right">Mon–Sat</span>
+                        </a>
+                        <a href="mailto:arjunh2194@gmail.com">
+                            <span class="left"><i class="fa-solid fa-envelope"></i> Email</span>
+                            <span class="right">arjunh2194@gmail.com</span>
+                        </a>
+                        <a href="https://www.linkedin.com/in/arjunkumar21/" target="_blank" rel="noopener noreferrer">
+                            <span class="left"><i class="fa-brands fa-linkedin-in"></i> LinkedIn</span>
+                            <span class="right">Profile</span>
+                        </a>
+                    </div>
                 </div>
-                <div class="mt-8 space-y-5">
-                    <article class="reveal reveal-delay-1 relative overflow-hidden rounded-3xl bg-white/90 backdrop-blur-sm p-6 shadow-xl shadow-cyan-200/45 card-lift">
-                        <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="contact-form glass reveal d2">
+                    @if (session('contact_success'))
+                        <div class="alert alert-ok" role="status"><strong>Inquiry sent.</strong> I’ll get back on the number you shared.</div>
+                    @endif
+                    @if (session('contact_error'))
+                        <div class="alert alert-err" role="alert">{{ session('contact_error') }}</div>
+                    @endif
+                    @if ($errors->any())
+                        <div class="alert alert-err" role="alert">
+                            <strong>Please fix:</strong>
+                            <ul style="margin:0.4rem 0 0; padding-left:1.1rem;">
+                                @foreach ($errors->all() as $err)
+                                    <li>{{ $err }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <form action="{{ route('contact.store') }}" method="post">
+                        @csrf
+                        <div class="absolute -left-[9999px] w-px h-px overflow-hidden opacity-0" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;opacity:0;">
+                            <label for="contact_hp">Leave empty</label>
+                            <input type="text" name="contact_hp" id="contact_hp" tabindex="-1" autocomplete="off" value="">
+                        </div>
+                        <div class="field">
+                            <label for="project_type">What are you building?</label>
+                            <select name="project_type" id="project_type" required>
+                                <option value="" disabled {{ old('project_type') ? '' : 'selected' }}>Select category…</option>
+                                @foreach (config('contact.project_types', []) as $value => $label)
+                                    <option value="{{ $value }}" {{ old('project_type') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="field contact-two">
                             <div>
-                                <h3 class="text-sm font-semibold text-slate-900">Web Developer</h3>
-                                <p class="mt-1 text-xs text-amber-700">PHP · Laravel · Python · Django · React.js · React Native · Yii2</p>
+                                <label for="name">Name</label>
+                                <input id="name" name="name" type="text" value="{{ old('name') }}" required autocomplete="name" placeholder="Your name">
                             </div>
-                            <p class="text-xs text-slate-500">
-                                Alverstone Healthcare Pvt Ltd · July - Present
-                            </p>
+                            <div>
+                                <label for="phone">Mobile</label>
+                                <input id="phone" name="phone" type="tel" value="{{ old('phone') }}" required autocomplete="tel" inputmode="tel" placeholder="+91 98765 43210">
+                            </div>
                         </div>
-                        <ul class="mt-4 space-y-2 text-sm text-slate-700">
-                            <li class="flex gap-2">
-                                <span class="mt-1 h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-                                <span>Built and maintained end-to-end web applications using Laravel and Django with RESTful APIs and modular architectures.</span>
-                            </li>
-                            <li class="flex gap-2">
-                                <span class="mt-1 h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-                                <span>Developed interactive user interfaces with React.js and cross-platform mobile apps with React Native.</span>
-                            </li>
-                            <li class="flex gap-2">
-                                <span class="mt-1 h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-                                <span>Worked with relational databases, authentication, role-based access, and deployment best practices.</span>
-                            </li>
-                            <li class="flex gap-2">
-                                <span class="mt-1 h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-                                <span>Applied on-page SEO, structured metadata, Search Console monitoring, and indexing best practices so releases stay discoverable in Google.</span>
-                            </li>
-                        </ul>
-                    </article>
-                </div>
-            </div>
-            </div>
-        </section>
-
-        {{-- Skills --}}
-        <section id="skills" class="content-section">
-            <div class="section-card">
-            <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-                <div class="reveal flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-                    <h2 class="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900 flex items-center gap-2">
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-400/45">
-                            <i class="fa-solid fa-code"></i>
-                        </span>
-                        My Skills
-                    </h2>
-                    <p class="text-xs text-slate-500 max-w-md">Code, delivery, and <span class="text-slate-700 font-medium">search visibility</span> — including how Google crawls and indexes what we ship.</p>
-                </div>
-                <div class="mt-8 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-                    <div class="reveal reveal-delay-1 rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 p-5 shadow-xl shadow-amber-200/30 card-lift">
-                        <h3 class="text-sm font-semibold text-white">Backend</h3>
-                        <ul class="mt-4 flex flex-wrap gap-2 text-xs">
-                            <li class="rounded-full bg-white/12 px-3 py-1 text-amber-100 shadow-sm shadow-black/30">PHP</li>
-                            <li class="rounded-full bg-white/12 px-3 py-1 text-amber-100 shadow-sm shadow-black/30">Laravel</li>
-                            <li class="rounded-full bg-white/12 px-3 py-1 text-amber-100 shadow-sm shadow-black/30">Python</li>
-                            <li class="rounded-full bg-white/12 px-3 py-1 text-amber-100 shadow-sm shadow-black/30">Django</li>
-                            <li class="rounded-full bg-white/12 px-3 py-1 text-amber-100 shadow-sm shadow-black/30">Yii2</li>
-                        </ul>
-                    </div>
-                    <div class="reveal reveal-delay-2 rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 p-5 shadow-xl shadow-orange-200/25 card-lift">
-                        <h3 class="text-sm font-semibold text-white">Frontend & Mobile</h3>
-                        <ul class="mt-4 flex flex-wrap gap-2 text-xs">
-                            <li class="rounded-full bg-white/12 px-3 py-1 text-amber-100 shadow-sm shadow-black/30">React.js</li>
-                            <li class="rounded-full bg-white/12 px-3 py-1 text-amber-100 shadow-sm shadow-black/30">React Native</li>
-                            <li class="rounded-full bg-white/12 px-3 py-1 text-amber-100 shadow-sm shadow-black/30">HTML5</li>
-                            <li class="rounded-full bg-white/12 px-3 py-1 text-amber-100 shadow-sm shadow-black/30">CSS3</li>
-                            <li class="rounded-full bg-white/12 px-3 py-1 text-amber-100 shadow-sm shadow-black/30">Tailwind CSS</li>
-                        </ul>
-                    </div>
-                    <div class="reveal reveal-delay-3 rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 p-5 shadow-xl shadow-rose-200/25 card-lift">
-                        <h3 class="text-sm font-semibold text-white">Tools & Other</h3>
-                        <ul class="mt-4 flex flex-wrap gap-2 text-xs">
-                            <li class="rounded-full bg-white/12 px-3 py-1 text-amber-100 shadow-sm shadow-black/30">MySQL / PostgreSQL</li>
-                            <li class="rounded-full bg-white/12 px-3 py-1 text-amber-100 shadow-sm shadow-black/30">REST APIs</li>
-                            <li class="rounded-full bg-white/12 px-3 py-1 text-amber-100 shadow-sm shadow-black/30">Git & GitHub</li>
-                            <li class="rounded-full bg-white/12 px-3 py-1 text-amber-100 shadow-sm shadow-black/30">Linux basics</li>
-                        </ul>
-                    </div>
-                    <div class="reveal reveal-delay-4 rounded-3xl bg-gradient-to-br from-slate-800 via-slate-900 to-emerald-950/80 p-5 shadow-xl shadow-emerald-400/25 card-lift sm:col-span-2 xl:col-span-1">
-                        <h3 class="text-sm font-semibold text-white flex items-center gap-2">
-                            <i class="fa-brands fa-google text-emerald-400 text-base"></i>
-                            SEO &amp; indexing
-                        </h3>
-                        <ul class="mt-4 flex flex-wrap gap-2 text-xs">
-                            <li class="rounded-full bg-emerald-500/20 px-3 py-1 text-emerald-50 shadow-sm shadow-emerald-950/40">Technical SEO basics</li>
-                            <li class="rounded-full bg-emerald-500/20 px-3 py-1 text-emerald-50 shadow-sm shadow-emerald-950/40">On-page meta &amp; structure</li>
-                            <li class="rounded-full bg-emerald-500/20 px-3 py-1 text-emerald-50 shadow-sm shadow-emerald-950/40">Google Search Console</li>
-                            <li class="rounded-full bg-emerald-500/20 px-3 py-1 text-emerald-50 shadow-sm shadow-emerald-950/40">Sitemaps &amp; indexing</li>
-                            <li class="rounded-full bg-emerald-500/20 px-3 py-1 text-emerald-50 shadow-sm shadow-emerald-950/40">URL inspection &amp; coverage</li>
-                            <li class="rounded-full bg-emerald-500/20 px-3 py-1 text-emerald-50 shadow-sm shadow-emerald-950/40">Core Web Vitals awareness</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            </div>
-        </section>
-
-        {{-- Projects --}}
-        <section id="projects" class="relative content-section overflow-hidden">
-            <div class="pointer-events-none absolute top-0 right-0 h-64 w-64 rounded-full bg-teal-400/20 blur-3xl"></div>
-            <div class="pointer-events-none absolute bottom-0 left-0 h-48 w-48 rounded-full bg-emerald-400/15 blur-3xl"></div>
-            <div class="section-card relative z-[1]">
-            <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 relative">
-                <div class="reveal flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-                    <h2 class="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900 flex items-center gap-2">
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-400/45">
-                            <i class="fa-solid fa-diagram-project"></i>
-                        </span>
-                        Featured Projects
-                    </h2>
-                    <p class="text-xs text-slate-600 max-w-md leading-relaxed">
-                        Live builds with responsive layouts, clear IA, and <span class="text-slate-800 font-medium">SEO-friendly structure</span> so pages stay crawlable and indexable.
-                    </p>
-                </div>
-                <div class="mt-8 grid gap-6 md:grid-cols-2">
-                    @foreach (config('projects.featured', []) as $project)
-                        @php
-                            $accent = $project['accent'] ?? 'emerald';
-                            $palette = ($sitePalettes ?? [])[$loop->index] ?? [];
-                            $ui = array_merge($project['ui'] ?? [], $palette);
-                            $isEmerald = $accent === 'emerald';
-                            $delayClass = $loop->iteration === 1 ? 'reveal-delay-1' : 'reveal-delay-2';
-                            $cardShadow = $isEmerald ? 'shadow-teal-200/50' : 'shadow-cyan-200/45';
-                            $titleHover = $isEmerald ? 'group-hover:text-emerald-700' : 'group-hover:text-violet-800';
-                            $iconHover = $isEmerald ? 'group-hover:text-emerald-500' : 'group-hover:text-violet-500';
-                            $badgeRing = $isEmerald
-                                ? 'from-emerald-500/15 to-teal-500/20 text-emerald-800 shadow-sm shadow-emerald-900/10'
-                                : 'from-violet-500/15 to-fuchsia-500/20 text-violet-900 shadow-sm shadow-violet-900/10';
-                            $dotGrad = $isEmerald
-                                ? 'from-emerald-400 to-teal-500 shadow-emerald-400/50'
-                                : 'from-violet-400 to-fuchsia-500 shadow-violet-400/50';
-                            $btnGrad = $isEmerald
-                                ? 'from-emerald-600 to-teal-600 shadow-emerald-500/35 hover:from-emerald-500 hover:to-teal-500 hover:shadow-emerald-500/50'
-                                : 'from-violet-600 to-fuchsia-600 shadow-violet-500/35 hover:from-violet-500 hover:to-fuchsia-500 hover:shadow-violet-500/45';
-                        @endphp
-                        <article class="reveal {{ $delayClass }} group relative overflow-hidden rounded-3xl bg-white/90 backdrop-blur-sm p-6 shadow-xl {{ $cardShadow }} card-lift">
-                            <div class="flex flex-wrap items-center justify-between gap-2">
-                                <h3 class="text-sm font-semibold text-slate-900 {{ $titleHover }} transition-colors">
-                                    <a href="{{ $project['url'] }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2">
-                                        {{ $project['title'] }}
-                                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-400 {{ $iconHover }}"></i>
-                                    </a>
-                                </h3>
-                                <span class="rounded-full bg-gradient-to-r {{ $badgeRing }} px-3 py-1 text-[10px] font-medium">
-                                    {{ $project['region_badge'] }}
-                                </span>
-                            </div>
-                            <p class="mt-3 text-sm text-slate-700 leading-relaxed">
-                                {{ $project['description'] }}
-                            </p>
-
-                            @if (!empty($ui['primary_hex']) || !empty($ui['font_heading']))
-                                <div class="mt-4 rounded-2xl bg-gradient-to-br from-slate-100/80 to-white p-4 shadow-inner shadow-slate-200/60">
-                                    <p class="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">Design &amp; UI</p>
-                                    <p class="mt-1 text-[10px] text-slate-400 leading-snug">Primary and secondary colors are read from the project URL (same host CSS), cached for a day.</p>
-                                    <div class="mt-3 flex flex-wrap items-end gap-5 gap-y-3">
-                                        @if (!empty($ui['primary_hex']))
-                                            <div class="flex flex-col gap-1.5">
-                                                <span class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Primary</span>
-                                                <span
-                                                    class="inline-block h-9 w-16 shrink-0 rounded-xl shadow-md shadow-slate-400/50"
-                                                    style="background-color: {{ $ui['primary_hex'] }}"
-                                                    role="img"
-                                                    aria-label="Primary brand color"
-                                                ></span>
-                                            </div>
-                                        @endif
-                                        @if (!empty($ui['secondary_hex']))
-                                            <div class="flex flex-col gap-1.5">
-                                                <span class="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Secondary</span>
-                                                <span
-                                                    class="inline-block h-9 w-16 shrink-0 rounded-xl shadow-md shadow-slate-400/50"
-                                                    style="background-color: {{ $ui['secondary_hex'] }}"
-                                                    role="img"
-                                                    aria-label="Secondary brand color"
-                                                ></span>
-                                            </div>
-                                        @endif
-                                    </div>
-                                    @if (!empty($ui['font_heading']) || !empty($ui['font_body']))
-                                        <p class="mt-3 text-xs leading-relaxed text-slate-600">
-                                            <span class="font-semibold text-slate-800">Typography</span>
-                                            @if (!empty($ui['font_heading']))
-                                                <span class="block sm:inline"><span class="text-slate-500">Headings</span> {{ $ui['font_heading'] }}</span>
-                                            @endif
-                                            @if (!empty($ui['font_heading']) && !empty($ui['font_body']))
-                                                <span class="hidden sm:inline text-slate-400"> · </span>
-                                            @endif
-                                            @if (!empty($ui['font_body']))
-                                                <span class="block sm:inline"><span class="text-slate-500">Body</span> {{ $ui['font_body'] }}</span>
-                                            @endif
-                                        </p>
-                                    @endif
-                                    @if (!empty($ui['features']) && is_array($ui['features']))
-                                        <div class="mt-3 flex flex-wrap gap-1.5">
-                                            @foreach ($ui['features'] as $feat)
-                                                <span class="rounded-full bg-white px-2.5 py-1 text-[10px] font-medium text-slate-600 shadow-sm shadow-slate-300/50">{{ $feat }}</span>
-                                            @endforeach
-                                        </div>
-                                    @endif
-                                </div>
-                            @endif
-
-                            <ul class="mt-4 space-y-2.5 text-sm text-slate-700">
-                                @foreach ($project['highlights'] ?? [] as $line)
-                                    <li class="flex gap-3">
-                                        <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-br {{ $dotGrad }} shadow-sm"></span>
-                                        <span>{{ $line }}</span>
-                                    </li>
-                                @endforeach
-                            </ul>
-                            <a href="{{ $project['url'] }}" target="_blank" rel="noopener noreferrer" class="mt-5 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r {{ $btnGrad }} px-4 py-2 text-xs font-semibold text-white shadow-lg transition">
-                                {{ $project['cta_label'] }} <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                            </a>
-                        </article>
-                    @endforeach
-                </div>
-            </div>
-            </div>
-        </section>
-
-        {{-- Packages (choose a plan) --}}
-        <section id="packages" class="relative content-section">
-            <div class="soft-divider absolute bottom-0 left-0 right-0" aria-hidden="true"></div>
-            <div class="section-card relative z-[1]">
-            <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-                <div class="text-center max-w-2xl mx-auto reveal">
-                    <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900 flex flex-wrap items-center justify-center gap-2">
-                        <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-400/40">
-                            <i class="fa-solid fa-layer-group"></i>
-                        </span>
-                        <span>Packages &amp; pricing</span>
-                    </h2>
-                    <p class="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed">
-                        Starting points for freelance builds — pick what fits, then send details in the contact form below. Final quote after a quick scope chat.
-                    </p>
-                </div>
-
-                <div class="mt-10 lg:mt-12 grid gap-6 md:grid-cols-3 items-stretch">
-                    @foreach (config('contact.packages', []) as $key => $pkg)
-                        <article
-                            data-package-card="{{ $key }}"
-                            class="package-card reveal flex flex-col rounded-3xl bg-white/95 p-6 sm:p-7 shadow-lg shadow-indigo-100/50 transition-all duration-300 card-lift"
-                        >
-                            <div class="flex items-start justify-between gap-2">
-                                <p class="text-xs font-bold uppercase tracking-wide text-indigo-600">{{ $pkg['label'] }}</p>
-                                @if ($key === 'growth')
-                                    <span class="shrink-0 rounded-full bg-indigo-100 px-2.5 py-0.5 text-[10px] font-semibold text-indigo-800">Popular</span>
-                                @endif
-                            </div>
-                            <p class="mt-2 text-2xl font-bold text-slate-900 tabular-nums">{{ $pkg['price'] }}</p>
-                            <ul class="mt-5 flex-1 space-y-2.5 text-sm text-slate-600 leading-snug">
-                                @foreach ($pkg['bullets'] as $b)
-                                    <li class="flex gap-2"><span class="text-emerald-500 shrink-0 mt-0.5"><i class="fa-solid fa-check text-[11px]"></i></span><span>{{ $b }}</span></li>
-                                @endforeach
-                            </ul>
-                            <button
-                                type="button"
-                                data-package-select="{{ $key }}"
-                                class="mt-8 w-full inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-indigo-400/30 hover:from-indigo-500 hover:to-violet-500 transition"
-                            >
-                                Choose {{ $pkg['label'] }}
-                                <i class="fa-solid fa-arrow-down text-xs opacity-90"></i>
-                            </button>
-                        </article>
-                    @endforeach
-                </div>
-            </div>
-            </div>
-        </section>
-
-        {{-- Contact form --}}
-        <section id="contact" class="content-section">
-            <div class="section-card">
-            <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-                <div class="text-center max-w-2xl mx-auto reveal">
-                    <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900 flex flex-wrap items-center justify-center gap-2">
-                        <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-400/40">
-                            <i class="fa-solid fa-paper-plane"></i>
-                        </span>
-                        <span>Request a Quote</span>
-                    </h2>
-                    <p class="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed">
-                        Tell me what you’re building and your budget range. I’ll reply by call or WhatsApp with the best plan for your requirement.
-                    </p>
-                </div>
-
-                <div class="contact-shell reveal reveal-delay-1 mt-10 grid gap-0 overflow-hidden rounded-3xl lg:grid-cols-[1fr,1.35fr]">
-                    <div class="contact-panel px-6 py-7 sm:px-7 sm:py-8 text-slate-100">
-                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-amber-200">Fast response</p>
-                        <h3 class="mt-2 text-2xl font-semibold leading-tight text-white">Prefer direct contact first?</h3>
-                        <p class="mt-3 text-sm leading-relaxed text-slate-200/90">
-                            Share a quick overview on WhatsApp or phone, then submit the form for full project details. I usually reply the same day.
-                        </p>
-                        <div class="mt-6 space-y-3">
-                            <a href="https://wa.me/919995956770" target="_blank" rel="noreferrer" class="contact-chip inline-flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-white hover:bg-white/20 transition">
-                                <span class="inline-flex items-center gap-2"><i class="fa-brands fa-whatsapp text-base text-emerald-300"></i> WhatsApp</span>
-                                <span class="text-xs text-slate-200">+91 99959 56770</span>
-                            </a>
-                            <a href="tel:+919995956770" class="contact-chip inline-flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-white hover:bg-white/20 transition">
-                                <span class="inline-flex items-center gap-2"><i class="fa-solid fa-phone text-sm text-amber-300"></i> Call</span>
-                                <span class="text-xs text-slate-200">Mon-Sat</span>
-                            </a>
-                            <a href="mailto:arjunh2194@gmail.com" class="contact-chip inline-flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3 text-sm font-medium text-white hover:bg-white/20 transition">
-                                <span class="inline-flex items-center gap-2"><i class="fa-solid fa-envelope text-sm text-sky-300"></i> Email</span>
-                                <span class="text-xs text-slate-200">Portfolio inquiry</span>
-                            </a>
+                        <div class="field">
+                            <label for="message">Project details <span style="font-weight:400; opacity:0.7;">(optional)</span></label>
+                            <textarea id="message" name="message" rows="4" placeholder="Timeline, scope, references…">{{ old('message') }}</textarea>
                         </div>
-                    </div>
-                    <div class="contact-form-wrap p-6 sm:p-8">
-                            @if (session('contact_success'))
-                                <div class="mb-6 rounded-2xl bg-emerald-50/95 px-4 py-4 text-sm text-emerald-900 shadow-sm shadow-emerald-900/10" role="status">
-                                    <p class="font-semibold flex items-center gap-2"><i class="fa-solid fa-circle-check"></i> Inquiry sent</p>
-                                    <p class="mt-1 text-emerald-800/90">Thanks — I’ll get back to you on the mobile number you shared.</p>
-                                </div>
-                            @endif
-                            @if (session('contact_error'))
-                                <div class="mb-6 rounded-2xl bg-rose-50/95 px-4 py-4 text-sm text-rose-900 shadow-sm shadow-rose-900/10" role="alert">
-                                    <p>{{ session('contact_error') }}</p>
-                                </div>
-                            @endif
-                            @if ($errors->any())
-                                <div class="mb-6 rounded-2xl bg-amber-50/95 px-4 py-4 text-sm text-amber-950 shadow-sm shadow-amber-900/10" role="alert">
-                                    <p class="font-semibold">Please fix the following:</p>
-                                    <ul class="mt-2 list-disc list-inside space-y-0.5">
-                                        @foreach ($errors->all() as $err)
-                                            <li>{{ $err }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-
-                            <form action="{{ route('contact.store') }}" method="post" class="relative space-y-6">
-                                @csrf
-                                <div class="absolute -left-[9999px] w-px h-px overflow-hidden opacity-0" aria-hidden="true">
-                                    <label for="contact_hp">Leave empty</label>
-                                    <input type="text" name="contact_hp" id="contact_hp" tabindex="-1" autocomplete="off" value="">
-                                </div>
-
-                                <div>
-                                    <label for="project_type" class="block text-sm font-semibold text-slate-800 mb-2">What are you building?</label>
-                                    <div class="relative">
-                                        <select name="project_type" id="project_type" required class="contact-input w-full appearance-none rounded-xl px-4 py-3 pr-10 text-sm text-slate-900">
-                                            <option value="" disabled {{ old('project_type') ? '' : 'selected' }}>Select category…</option>
-                                            @foreach (config('contact.project_types', []) as $value => $label)
-                                                <option value="{{ $value }}" {{ old('project_type') === $value ? 'selected' : '' }}>{{ $label }}</option>
-                                            @endforeach
-                                        </select>
-                                        <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"><i class="fa-solid fa-chevron-down text-xs"></i></span>
-                                    </div>
-                                </div>
-
-                                <div class="grid gap-4 sm:grid-cols-2">
-                                    <div>
-                                        <label for="name" class="block text-sm font-semibold text-slate-800 mb-2">Name</label>
-                                        <input id="name" name="name" type="text" value="{{ old('name') }}" required autocomplete="name" placeholder="Your name" class="contact-input w-full rounded-xl px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400">
-                                    </div>
-                                    <div>
-                                        <label for="phone" class="block text-sm font-semibold text-slate-800 mb-2">Mobile number</label>
-                                        <input id="phone" name="phone" type="tel" value="{{ old('phone') }}" required autocomplete="tel" inputmode="tel" placeholder="+91 98765 43210" class="contact-input w-full rounded-xl px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400">
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label for="message" class="block text-sm font-semibold text-slate-800 mb-2">Project details <span class="font-normal text-slate-500">(optional)</span></label>
-                                    <textarea id="message" name="message" rows="4" placeholder="Timeline, pages, references, tech preferences…" class="contact-input w-full rounded-xl px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400">{{ old('message') }}</textarea>
-                                </div>
-
-                                <button type="submit" class="w-full sm:w-auto sm:min-w-[220px] inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/35 hover:from-indigo-500 hover:to-violet-500 hover:shadow-indigo-500/45 transition-all duration-300">
-                                    <i class="fa-solid fa-paper-plane"></i>
-                                    Send inquiry
-                                </button>
-                            </form>
-                    </div>
+                        <button type="submit" class="btn btn-primary" style="width:100%; border:0;">
+                            <i class="fa-solid fa-paper-plane"></i> Send Message
+                        </button>
+                    </form>
                 </div>
             </div>
-            </div>
-        </section>
+        </div>
+    </section>
 
-        {{-- Journey: own section so it doesn’t sit flush / overlap contact --}}
-        @php
-            $journeyZigzag = [
-                ['year' => 'Present', 'title' => 'Web Developer', 'text' => 'Alverstone Healthcare Pvt Ltd · July — Present. Full stack delivery with SEO, APIs, and maintainable code.'],
-                ['year' => '2023', 'title' => 'MBA (pursuing)', 'text' => 'CET, School of Management — building business sense alongside engineering.'],
-                ['year' => '2023', 'title' => 'Web Developer', 'text' => 'Sairaworld Pvt Ltd — web products and client-facing builds.'],
-                ['year' => '2022', 'title' => 'Python Developer', 'text' => 'Futuro IT Solutions — backend scripting, APIs, and automation.'],
-                ['year' => '2019', 'title' => 'Technician — I', 'text' => 'IFB Home Appliances & Services — field service, diagnostics, and customer-facing work.'],
-                ['year' => '2018', 'title' => 'NDT Engineer', 'text' => 'L.G. Inspection & Services — inspection workflows and technical reporting.'],
-                ['year' => '2017', 'title' => 'Branch Relationship Executive', 'text' => 'SBI credit card sales — targets, documentation, and client relationships.'],
-                ['year' => '2016', 'title' => 'B.Tech — Mechanical Engineering', 'text' => 'Younus Institute of Technology, Kannannalloor — analytical foundation before moving into tech.'],
-                ['year' => '2012', 'title' => 'Higher secondary', 'text' => '12th pass — science stream.'],
-                ['year' => '2010', 'title' => 'SSLC', 'text' => 'Schooling milestone — start of the longer climb.'],
-            ];
-        @endphp
-        <section id="journey" class="scroll-mt-20 content-section">
-            <div class="section-card">
-            <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 relative">
-                <div class="pointer-events-none absolute inset-y-0 right-0 hidden w-24 border-l border-white/10 bg-[radial-gradient(circle,rgba(148,163,184,0.35)_1px,transparent_1px)] bg-[length:10px_10px] sm:block" aria-hidden="true"></div>
-                <div class="reveal reveal-delay-2">
-                    <div class="max-w-3xl mx-auto text-center sm:text-left">
-                        <p class="journey-kicker font-semibold uppercase text-cyan-300/90">Growth Timeline</p>
-                        <h3 class="journey-heading font-semibold tracking-tight text-slate-100">My Journey</h3>
-                        <p class="journey-lead mt-3 text-slate-300/85 leading-relaxed">
-                            A quick timeline of key milestones from schooling to current development work.
-                        </p>
-                    </div>
-
-                    <div class="journey-grid mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-                        @foreach ($journeyZigzag as $step)
-                            <article class="reveal reveal-delay-1 card-lift">
-                                <div class="flex items-start justify-between gap-3">
-                                    <p class="journey-year-badge inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] tabular-nums">
-                                        {{ $step['year'] }}
-                                    </p>
-                                    <span class="journey-dot mt-1 inline-flex h-2.5 w-2.5 shrink-0 rounded-full" aria-hidden="true"></span>
-                                </div>
-                                <p class="mt-3 text-base font-semibold leading-tight text-slate-900 sm:text-lg">{{ $step['title'] }}</p>
-                                <p class="mt-2 text-sm leading-relaxed text-slate-600">{{ $step['text'] }}</p>
-                            </article>
-                        @endforeach
-                    </div>
-                </div>
+    <footer class="site-footer">
+        <div class="wrap row">
+            <div>
+                <p><strong>Arjun Kumar H</strong></p>
+                <p style="margin-top:0.25rem;">Full Stack Developer · Laravel · React · MBA</p>
             </div>
+            <div class="links">
+                <a href="https://www.linkedin.com/in/arjunkumar21/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                <a href="mailto:arjunh2194@gmail.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+                <a href="https://wa.me/919995956770" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
             </div>
-        </section>
-    </main>
-
-    {{-- Floating direct contact (email, WhatsApp, LinkedIn) --}}
-    <div
-        class="fixed bottom-5 right-4 z-50 flex flex-col gap-2.5 sm:bottom-8 sm:right-6"
-        role="navigation"
-        aria-label="Direct contact shortcuts"
-    >
-        <a
-            href="https://mail.google.com/mail/?view=cm&fs=1&to=arjunh2194@gmail.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="group flex h-12 w-12 items-center justify-center rounded-full bg-white text-indigo-600 shadow-lg shadow-slate-400/40 transition hover:scale-105 hover:text-indigo-700 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
-            title="Email — arjunh2194@gmail.com"
-            aria-label="Email arjunh2194@gmail.com"
-        >
-            <i class="fa-solid fa-envelope text-lg" aria-hidden="true"></i>
-        </a>
-        <a
-            href="https://wa.me/919995956770"
-            target="_blank"
-            rel="noreferrer"
-            class="group flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-emerald-600/40 transition hover:scale-105 hover:bg-[#20bd5a] hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2"
-            title="WhatsApp — +91 99959 56770"
-            aria-label="WhatsApp +91 99959 56770"
-        >
-            <i class="fa-brands fa-whatsapp text-xl" aria-hidden="true"></i>
-        </a>
-        <a
-            href="https://www.linkedin.com/in/arjunkumar21/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="group flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#0A66C2] shadow-lg shadow-slate-400/40 transition hover:scale-105 hover:text-[#004182] hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2"
-            title="LinkedIn profile"
-            aria-label="LinkedIn profile"
-        >
-            <i class="fa-brands fa-linkedin-in text-lg" aria-hidden="true"></i>
-        </a>
-    </div>
-
-    <footer class="site-footer text-slate-100">
-        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 sm:py-9">
-            <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <p class="text-sm font-semibold text-white">Arjun Kumar H</p>
-                    <p class="mt-1 text-xs text-slate-200/85">Full Stack Developer · Laravel · Django · React</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <a href="https://www.linkedin.com/in/arjunkumar21/" target="_blank" rel="noopener noreferrer" class="site-footer-link inline-flex h-10 w-10 items-center justify-center rounded-full text-slate-200 hover:text-white" aria-label="Open LinkedIn profile" title="Open LinkedIn profile">
-                        <i class="fa-brands fa-linkedin text-base"></i>
-                    </a>
-                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=arjunh2194@gmail.com&su=Portfolio%20Inquiry" target="_blank" rel="noopener noreferrer" class="site-footer-link inline-flex h-10 w-10 items-center justify-center rounded-full text-slate-200 hover:text-white" aria-label="Send email to arjunh2194@gmail.com" title="Send email">
-                        <i class="fa-solid fa-envelope text-sm"></i>
-                    </a>
-                    <a href="https://wa.me/919995956770" target="_blank" rel="noopener noreferrer" class="site-footer-link inline-flex h-10 w-10 items-center justify-center rounded-full text-slate-200 hover:text-white" aria-label="Open WhatsApp chat" title="Open WhatsApp chat">
-                        <i class="fa-brands fa-whatsapp text-base"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="mt-6 flex flex-col gap-2 border-t border-white/15 pt-4 text-xs text-slate-200/85 sm:flex-row sm:items-center sm:justify-between">
-                <p>© {{ date('Y') }} Arjun Kumar H. All rights reserved.</p>
-                <p class="text-amber-200">Built with Laravel & Tailwind CSS</p>
-            </div>
+        </div>
+        <div class="wrap row" style="margin-top:1.25rem; padding-top:1rem; border-top:1px solid var(--glass-border);">
+            <p>© {{ date('Y') }} Arjun Kumar H. All rights reserved.</p>
+            <p style="color:var(--gold);">Crafted with Laravel · dark emerald UI</p>
         </div>
     </footer>
 </div>
+
 <script>
 (function () {
-    var menuBtn = document.getElementById('mobile-menu-button');
-    var menuPanel = document.getElementById('mobile-nav-panel');
-    if (!menuBtn || !menuPanel) return;
+    var canvas = document.getElementById('particle-canvas');
+    if (!canvas || !canvas.getContext) return;
+    var ctx = canvas.getContext('2d');
+    var particles = [];
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    function setMenu(open) {
-        menuBtn.classList.toggle('is-open', open);
-        menuPanel.classList.toggle('is-open', open);
-        menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
     }
-
-    menuBtn.addEventListener('click', function () {
-        var shouldOpen = !menuPanel.classList.contains('is-open');
-        setMenu(shouldOpen);
-    });
-
-    menuPanel.querySelectorAll('a[href^="#"]').forEach(function (link) {
-        link.addEventListener('click', function () {
-            setMenu(false);
+    function spawn() {
+        particles = [];
+        var count = Math.min(70, Math.floor((canvas.width * canvas.height) / 28000));
+        for (var i = 0; i < count; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                r: Math.random() * 1.8 + 0.4,
+                vx: (Math.random() - 0.5) * 0.25,
+                vy: (Math.random() - 0.5) * 0.25,
+                a: Math.random() * 0.45 + 0.15
+            });
+        }
+    }
+    function frame() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(function (p) {
+            if (!reduced) {
+                p.x += p.vx;
+                p.y += p.vy;
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+            }
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(22, 227, 138,' + p.a + ')';
+            ctx.fill();
         });
-    });
-
-    document.addEventListener('click', function (event) {
-        if (!menuPanel.classList.contains('is-open')) return;
-        var insideMenu = menuPanel.contains(event.target) || menuBtn.contains(event.target);
-        if (!insideMenu) setMenu(false);
-    });
-
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') setMenu(false);
-    });
+        if (!reduced) requestAnimationFrame(frame);
+    }
+    resize();
+    spawn();
+    frame();
+    window.addEventListener('resize', function () { resize(); spawn(); });
 })();
+
 (function () {
     var nodes = document.querySelectorAll('.reveal');
     if (!nodes.length) return;
@@ -1339,27 +1416,36 @@
                 io.unobserve(entry.target);
             }
         });
-    }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
     nodes.forEach(function (el) { io.observe(el); });
 })();
+
 (function () {
-    function syncPackageCards(key) {
-        document.querySelectorAll('[data-package-card]').forEach(function (el) {
-            var active = el.getAttribute('data-package-card') === key;
-            el.classList.toggle('is-selected', active);
-            el.classList.toggle('bg-indigo-50/50', active);
-        });
-    }
-    document.querySelectorAll('[data-package-select]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            syncPackageCards(btn.getAttribute('data-package-select'));
-            var c = document.getElementById('contact');
-            if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
+    var links = document.querySelectorAll('[data-section]');
+    var map = {};
+    links.forEach(function (a) {
+        var id = a.getAttribute('data-section');
+        if (!map[id]) map[id] = [];
+        map[id].push(a);
     });
-    syncPackageCards('starter');
+    var ids = Object.keys(map);
+    function setActive(id) {
+        links.forEach(function (a) { a.classList.remove('is-active'); });
+        (map[id] || []).forEach(function (a) { a.classList.add('is-active'); });
+    }
+    if (!window.IntersectionObserver) return;
+    var sections = ids.map(function (id) {
+        return id === 'top' ? document.getElementById('top') : document.getElementById(id);
+    }).filter(Boolean);
+    var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            var id = entry.target.id || 'top';
+            setActive(id);
+        });
+    }, { threshold: 0.25, rootMargin: '-20% 0px -45% 0px' });
+    sections.forEach(function (s) { io.observe(s); });
 })();
 </script>
 </body>
 </html>
-
