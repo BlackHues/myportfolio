@@ -42,7 +42,7 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ @filemtime(public_path('css/app.css')) }}">
     <style>
@@ -75,9 +75,10 @@
         }
 
         h1, h2, h3, h4, .display {
-            font-family: "Syne", "Outfit", sans-serif;
-            letter-spacing: -0.03em;
-            line-height: 1.1;
+            font-family: "Bricolage Grotesque", "Outfit", sans-serif;
+            font-optical-sizing: auto;
+            letter-spacing: -0.02em;
+            line-height: 1.08;
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -159,7 +160,7 @@
             border-radius: 14px;
             display: grid;
             place-items: center;
-            font-family: "Syne", sans-serif;
+            font-family: "Bricolage Grotesque", sans-serif;
             font-weight: 800;
             font-size: 0.72rem;
             color: var(--bg);
@@ -415,7 +416,8 @@
         .hero h1 {
             margin: 1.1rem 0 0;
             font-size: clamp(2.4rem, 6vw, 4.2rem);
-            font-weight: 800;
+            font-weight: 700;
+            letter-spacing: -0.035em;
         }
         .hero h1 span.accent {
             background: linear-gradient(120deg, var(--green), #8af5c4 45%, var(--gold));
@@ -564,7 +566,7 @@
             margin-bottom: 0.75rem;
         }
         .stat-card .num {
-            font-family: "Syne", sans-serif;
+            font-family: "Bricolage Grotesque", sans-serif;
             font-size: 1.45rem;
             font-weight: 700;
             color: var(--white);
@@ -842,7 +844,7 @@
         }
         .contact-info .sig {
             margin-top: 1.25rem;
-            font-family: "Syne", sans-serif;
+            font-family: "Bricolage Grotesque", sans-serif;
             font-size: 1.4rem;
             font-weight: 700;
             background: linear-gradient(120deg, var(--green), var(--gold));
