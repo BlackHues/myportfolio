@@ -477,17 +477,22 @@
         align-items: center;
     }
     .work-report-task-num {
-        width: 1.7rem;
-        height: 1.7rem;
-        border-radius: 999px;
+        width: 1.85rem;
+        height: 1.85rem;
+        border-radius: 0.55rem;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.72rem;
+        font-size: 0.78rem;
         font-weight: 700;
         color: var(--green);
-        background: rgba(22, 227, 138, 0.14);
+        background: rgba(22, 227, 138, 0.12);
         border: 1px solid rgba(22, 227, 138, 0.32);
+        box-shadow: inset 0 0 12px rgba(22, 227, 138, 0.08);
+        flex-shrink: 0;
+    }
+    .work-report-task-num i {
+        line-height: 1;
     }
     .work-report-preview {
         white-space: pre-wrap;
@@ -1534,13 +1539,13 @@
                         Clear
                     </button>
                 </div>
-                <p class="text-[11px] text-slate-500 mt-2">Type each task in its own line. Numbers are added automatically for WhatsApp.</p>
+                <p class="text-[11px] text-slate-500 mt-2">Type each task in its own line. Coder-style bullets are added automatically for WhatsApp.</p>
             </div>
 
             <div class="rounded-xl border border-emerald-100 bg-white p-4">
                 <div class="flex items-center justify-between gap-2 mb-2">
                     <p class="routine-time-label !mb-0">WhatsApp preview</p>
-                    <span class="text-[11px] text-slate-500">Neat numbered list</span>
+                    <span class="text-[11px] text-slate-500">Terminal-style bullets</span>
                 </div>
                 <pre id="workReportPreview" class="work-report-preview" aria-live="polite"></pre>
                 <div class="mt-3 flex flex-wrap gap-2">
@@ -2999,6 +3004,17 @@
 
         const officeWhatsApp = '918606012194';
         let reportType = 'plan';
+        const coderIcons = [
+            'fa-solid fa-terminal',
+            'fa-solid fa-code',
+            'fa-solid fa-brackets-curly',
+            'fa-solid fa-laptop-code',
+            'fa-solid fa-bug',
+            'fa-brands fa-git-alt',
+            'fa-solid fa-microchip',
+            'fa-solid fa-file-code',
+        ];
+        const coderBullets = ['▸', '▹', '◆', '◇', '›', '→', '●', '○'];
 
         function formatDisplayDate(value) {
             if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
@@ -3031,10 +3047,11 @@
             ];
             const tasks = getTasks();
             if (!tasks.length) {
-                lines.push('1. ');
+                lines.push(`${coderBullets[0]} `);
             } else {
                 tasks.forEach((task, index) => {
-                    lines.push(`${index + 1}. ${task}`);
+                    const bullet = coderBullets[index % coderBullets.length];
+                    lines.push(`${bullet} ${task}`);
                 });
             }
             return lines.join('\n');
@@ -3044,14 +3061,16 @@
             const message = buildMessage();
             preview.textContent = message;
             whatsappLink.href = `https://wa.me/${officeWhatsApp}?text=${encodeURIComponent(message)}`;
-            renumberTasks();
+            restyleTaskBullets();
         }
 
-        function renumberTasks() {
+        function restyleTaskBullets() {
             taskList.querySelectorAll('.work-report-task-row').forEach((row, index) => {
                 const badge = row.querySelector('.work-report-task-num');
                 if (badge) {
-                    badge.textContent = String(index + 1);
+                    const icon = coderIcons[index % coderIcons.length];
+                    badge.innerHTML = `<i class="${icon}" aria-hidden="true"></i>`;
+                    badge.title = `Task ${index + 1}`;
                 }
             });
         }
@@ -3060,7 +3079,7 @@
             const row = document.createElement('div');
             row.className = 'work-report-task-row';
             row.innerHTML = `
-                <span class="work-report-task-num">1</span>
+                <span class="work-report-task-num" aria-hidden="true"><i class="fa-solid fa-terminal"></i></span>
                 <input type="text" data-work-report-task class="soft-input rounded-lg px-3 py-2 text-sm" placeholder="Describe the task..." value="">
                 <button type="button" class="card-action-btn card-action-btn-danger" data-remove-task title="Remove" aria-label="Remove">
                     <i class="fa-solid fa-trash text-[10px]"></i>
