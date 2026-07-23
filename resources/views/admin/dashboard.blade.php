@@ -5,45 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Expense Dashboard</title>
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ @filemtime(public_path('css/app.css')) }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            --bg: #041C1A;
+            --bg-2: #0B2F2B;
+            --bg-3: #08332d;
+            --green: #16E38A;
+            --gold: #FFC94A;
+            --white: #F8F8F8;
+            --gray: #AAB5B1;
+            --glass: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --glow-green: 0 0 28px rgba(22, 227, 138, 0.28);
+        }
         .panel {
-            border: 1px solid #dbe3ef;
-            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+            border: 1px solid var(--glass-border);
+            background: rgba(8, 40, 36, 0.72);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            color: var(--white);
         }
         .soft-input {
-            border: 1px solid #cfd9e8;
-            background: #f8fbff;
+            border: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.28);
+            color: var(--white);
+        }
+        .soft-input::placeholder {
+            color: rgba(170, 181, 177, 0.55);
         }
         .soft-input:focus {
             outline: none;
-            border-color: #64748b;
-            box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.15);
-            background: #ffffff;
+            border-color: rgba(22, 227, 138, 0.55);
+            box-shadow: 0 0 0 3px rgba(22, 227, 138, 0.14);
+            background: rgba(0, 0, 0, 0.38);
         }
         .primary-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 0.45rem;
-            border-radius: 0.6rem;
-            background: linear-gradient(120deg, #0f172a 0%, #1e293b 100%);
-            color: #ffffff;
-            font-weight: 600;
-            border: 1px solid #0f172a;
-            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.2);
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--green), #0fbf72);
+            color: #04221e;
+            font-weight: 700;
+            border: 1px solid transparent;
+            box-shadow: var(--glow-green);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         .primary-btn:hover {
             transform: translateY(-1px);
-            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.24);
+            box-shadow: 0 0 36px rgba(22, 227, 138, 0.45);
         }
         .success-btn {
-            background: linear-gradient(120deg, #047857 0%, #059669 100%);
-            border-color: #047857;
-            box-shadow: 0 8px 18px rgba(5, 150, 105, 0.22);
+            background: linear-gradient(135deg, var(--green), #0fbf72);
+            border-color: transparent;
+            color: #04221e;
+            box-shadow: var(--glow-green);
         }
         .action-icon-btn {
             display: inline-flex;
@@ -52,31 +76,32 @@
             width: 1.9rem;
             height: 1.9rem;
             border-radius: 0.5rem;
-            border: 1px solid #dbe1ea;
-            background: #ffffff;
-            color: #334155;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--gray);
             transition: all 0.2s ease;
         }
         .action-icon-btn:hover {
-            background: #f1f5f9;
+            background: rgba(22, 227, 138, 0.12);
+            color: var(--green);
             transform: translateY(-1px);
         }
         .action-icon-btn-danger {
-            border-color: #fecdd3;
-            color: #be123c;
+            border-color: rgba(251, 113, 133, 0.35);
+            color: #fb7185;
         }
         .action-icon-btn-danger:hover {
-            background: #fff1f2;
+            background: rgba(251, 113, 133, 0.12);
         }
         .modal-backdrop {
-            background: rgba(15, 23, 42, 0.45);
+            background: rgba(2, 16, 14, 0.62);
         }
         .app-modal {
-            border: 1px solid #d7dfec;
-            border-radius: 0.9rem;
-            background: #ffffff;
-            color: #0f172a;
-            box-shadow: 0 24px 48px rgba(15, 23, 42, 0.22);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            background: linear-gradient(160deg, #0B2F2B 0%, #062420 100%);
+            color: var(--white);
+            box-shadow: 0 28px 60px rgba(0, 0, 0, 0.45), var(--glow-green);
             width: min(720px, 92vw);
             max-height: 88vh;
             overflow: auto;
@@ -86,18 +111,21 @@
             display: flex;
             align-items: center;
             gap: 0.35rem;
+            color: var(--white);
         }
         .app-modal form {
             gap: 0.75rem;
         }
         .app-modal input,
-        .app-modal select {
-            background: #f8fafc;
-            border: 1px solid #d5dfed;
-            color: #0f172a;
+        .app-modal select,
+        .app-modal textarea {
+            background: rgba(0, 0, 0, 0.28);
+            border: 1px solid var(--glass-border);
+            color: var(--white);
         }
-        .app-modal input::placeholder {
-            color: #7b8797;
+        .app-modal input::placeholder,
+        .app-modal textarea::placeholder {
+            color: rgba(170, 181, 177, 0.55);
         }
         .app-modal button[type="submit"] {
             grid-column: 1 / -1;
@@ -111,9 +139,9 @@
             width: 2rem;
             height: 2rem;
             border-radius: 0.55rem;
-            border: 1px solid #dbe4f1;
-            background: #f8fafc;
-            color: #334155;
+            border: 1px solid rgba(22, 227, 138, 0.28);
+            background: rgba(22, 227, 138, 0.12);
+            color: var(--green);
         }
         .quick-card-btn {
             display: flex;
@@ -122,17 +150,17 @@
             width: 100%;
             padding: 0.75rem;
             border-radius: 0.75rem;
-            border: 1px solid #d9e2ef;
-            background: #ffffff;
-            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
-            color: #0f172a;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.04);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            color: var(--white);
             text-align: left;
             transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
         }
         .quick-card-btn:hover {
             transform: translateY(-1px);
-            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
-            border-color: #c2d2e8;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.28);
+            border-color: rgba(22, 227, 138, 0.4);
         }
         .quick-card-icon {
             display: inline-flex;
@@ -141,15 +169,15 @@
             width: 1.9rem;
             height: 1.9rem;
             border-radius: 0.5rem;
-            background: #eef4ff;
-            color: #1d4ed8;
-            border: 1px solid #d7e3ff;
+            background: rgba(22, 227, 138, 0.12);
+            color: var(--green);
+            border: 1px solid rgba(22, 227, 138, 0.28);
             flex-shrink: 0;
         }
         .quick-card-title {
             font-size: 0.82rem;
             font-weight: 600;
-            color: #1e293b;
+            color: var(--white);
             line-height: 1.2rem;
         }
         dialog.app-modal {
@@ -163,31 +191,45 @@
             display: block;
         }
         dialog.app-modal::backdrop {
-            background: rgba(15, 23, 42, 0.58);
+            background: rgba(2, 16, 14, 0.72);
         }
     </style>
 </head>
-<body class="admin-shell min-h-screen text-slate-900">
+<body class="admin-shell min-h-screen text-slate-100">
 <style>
     .admin-shell {
-        background: #e9edf3;
+        font-family: "Outfit", system-ui, sans-serif;
+        background:
+            radial-gradient(ellipse 70% 50% at 12% 8%, rgba(22, 227, 138, 0.14), transparent 55%),
+            radial-gradient(ellipse 50% 40% at 88% 12%, rgba(255, 201, 74, 0.08), transparent 50%),
+            linear-gradient(180deg, #041C1A 0%, #062420 45%, #041C1A 100%);
+        color: var(--white);
         padding: 0.75rem;
+        min-height: 100vh;
+    }
+    .admin-shell h1,
+    .admin-shell h2,
+    .admin-shell h3 {
+        font-family: "Syne", "Outfit", sans-serif;
+        letter-spacing: -0.02em;
+        color: var(--white);
     }
     .admin-frame {
         width: 100%;
         margin: 0 auto;
-        background: #f8fafd;
-        border: 1px solid #d9e1ef;
+        background: rgba(8, 36, 33, 0.55);
+        border: 1px solid var(--glass-border);
         border-radius: 26px;
-        box-shadow: 0 24px 44px rgba(15, 23, 42, 0.08);
+        box-shadow: 0 28px 50px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
         display: grid;
         grid-template-columns: 78px 1fr;
         min-height: calc(100vh - 3.5rem);
         overflow: hidden;
+        backdrop-filter: blur(10px);
     }
     .admin-sidebar {
-        background: #f2f5fb;
-        border-right: 1px solid #dde5f2;
+        background: rgba(6, 28, 25, 0.85);
+        border-right: 1px solid var(--glass-border);
         padding: 1.1rem 0.8rem;
         display: flex;
         flex-direction: column;
@@ -198,9 +240,9 @@
         width: 40px;
         height: 40px;
         border-radius: 12px;
-        border: 1px solid #dde4f2;
-        background: #ffffff;
-        color: #596580;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--gray);
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -210,14 +252,16 @@
         transition: all 0.2s ease;
     }
     button.admin-side-icon:hover {
-        border-color: #cfd8ea;
-        color: #2f3e63;
+        border-color: rgba(22, 227, 138, 0.45);
+        color: var(--green);
         transform: translateY(-1px);
+        box-shadow: 0 0 18px rgba(22, 227, 138, 0.18);
     }
     .admin-side-icon.active {
-        background: #ecebff;
-        color: #3c2de2;
-        border-color: #d9d5ff;
+        background: rgba(22, 227, 138, 0.16);
+        color: var(--green);
+        border-color: rgba(22, 227, 138, 0.4);
+        box-shadow: var(--glow-green);
     }
     .admin-main {
         padding: 1.6rem;
@@ -230,17 +274,18 @@
         min-width: 0;
     }
     .admin-topbar {
-        background: #ffffff;
-        border: 1px solid #e0e8f5;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--glass-border);
         border-radius: 18px;
         padding: 1rem 1.1rem;
+        backdrop-filter: blur(12px);
     }
     .hero-card {
         border-radius: 16px;
-        background: linear-gradient(135deg, #3c2de2 0%, #4229f3 60%, #2a46e6 100%);
+        background: linear-gradient(145deg, #0B2F2B 0%, #0a3d34 45%, #08332d 100%);
         color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        box-shadow: 0 16px 26px rgba(58, 44, 198, 0.3);
+        border: 1px solid rgba(22, 227, 138, 0.28);
+        box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35), var(--glow-green);
     }
     .finance-card {
         border-radius: 14px;
@@ -281,9 +326,9 @@
     }
     .routine-card {
         border-radius: 16px;
-        border: 1px solid #dbeafe;
-        background: linear-gradient(160deg, #ffffff 0%, #f8fbff 55%, #eef6ff 100%);
-        box-shadow: 0 14px 28px rgba(59, 130, 246, 0.08);
+        border: 1px solid rgba(22, 227, 138, 0.22);
+        background: linear-gradient(160deg, rgba(11, 47, 43, 0.9) 0%, rgba(8, 40, 36, 0.85) 100%);
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25);
     }
     .routine-date-nav {
         display: flex;
@@ -296,23 +341,24 @@
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: #475569;
+        color: var(--green);
         padding: 0.35rem 0.65rem;
         border-radius: 999px;
-        background: #ffffff;
-        border: 1px solid #dbeafe;
+        background: rgba(22, 227, 138, 0.1);
+        border: 1px solid rgba(22, 227, 138, 0.28);
     }
     .routine-progress {
         height: 0.45rem;
         border-radius: 999px;
-        background: #e2e8f0;
+        background: rgba(255, 255, 255, 0.1);
         overflow: hidden;
     }
     .routine-progress-bar {
         height: 100%;
         border-radius: 999px;
-        background: linear-gradient(90deg, #38bdf8, #6366f1);
+        background: linear-gradient(90deg, var(--green), #0fbf72);
         transition: width 0.25s ease;
+        box-shadow: 0 0 12px rgba(22, 227, 138, 0.35);
     }
     .routine-timeline {
         display: flex;
@@ -326,19 +372,19 @@
         align-items: start;
         padding: 0.75rem 0.85rem;
         border-radius: 0.85rem;
-        border: 1px solid #e2e8f0;
-        background: #ffffff;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.04);
     }
     .routine-item.is-done {
-        background: #f0fdf4;
-        border-color: #bbf7d0;
+        background: rgba(22, 227, 138, 0.08);
+        border-color: rgba(22, 227, 138, 0.35);
     }
     .routine-time {
         min-width: 7.5rem;
         padding: 0.35rem 0.45rem;
         border-radius: 0.65rem;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
+        background: rgba(0, 0, 0, 0.22);
+        border: 1px solid var(--glass-border);
     }
     .routine-time-row {
         display: flex;
@@ -353,11 +399,11 @@
     }
     .routine-time-value {
         font-weight: 700;
-        color: #0f172a;
+        color: var(--white);
         font-variant-numeric: tabular-nums;
     }
     .routine-item.is-done .routine-time-value {
-        color: #166534;
+        color: var(--green);
     }
     .routine-duration {
         display: flex;
@@ -369,15 +415,15 @@
         font-size: 0.68rem;
         font-weight: 700;
         letter-spacing: 0.02em;
-        color: #4338ca;
-        background: #eef2ff;
-        border: 1px solid #c7d2fe;
+        color: var(--gold);
+        background: rgba(255, 201, 74, 0.12);
+        border: 1px solid rgba(255, 201, 74, 0.28);
         text-align: center;
     }
     .routine-item.is-done .routine-duration {
-        color: #166534;
-        background: #dcfce7;
-        border-color: #bbf7d0;
+        color: var(--green);
+        background: rgba(22, 227, 138, 0.12);
+        border-color: rgba(22, 227, 138, 0.3);
     }
     .routine-time-label {
         display: block;
@@ -385,36 +431,88 @@
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: #64748b;
+        color: var(--gray);
         margin-bottom: 0.15rem;
     }
     .routine-duration-preview {
         font-size: 0.78rem;
         font-weight: 700;
-        color: #4338ca;
+        color: var(--gold);
         padding: 0.45rem 0.65rem;
         border-radius: 0.55rem;
-        background: #eef2ff;
-        border: 1px solid #c7d2fe;
+        background: rgba(255, 201, 74, 0.12);
+        border: 1px solid rgba(255, 201, 74, 0.28);
     }
     .routine-block-form {
         padding: 0.75rem;
         border-radius: 0.75rem;
-        border: 1px dashed #cbd5e1;
-        background: #f8fafc;
+        border: 1px dashed rgba(22, 227, 138, 0.28);
+        background: rgba(0, 0, 0, 0.2);
+    }
+    .work-report-card {
+        border-radius: 16px;
+        border: 1px solid rgba(22, 227, 138, 0.28);
+        background: linear-gradient(160deg, rgba(11, 47, 43, 0.95) 0%, rgba(5, 30, 26, 0.92) 100%);
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.28), var(--glow-green);
+    }
+    .work-report-type-btn {
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--gray);
+        border-radius: 999px;
+        padding: 0.4rem 0.85rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        cursor: pointer;
+    }
+    .work-report-type-btn.is-active {
+        border-color: rgba(22, 227, 138, 0.45);
+        background: rgba(22, 227, 138, 0.14);
+        color: var(--green);
+    }
+    .work-report-task-row {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 0.45rem;
+        align-items: center;
+    }
+    .work-report-task-num {
+        width: 1.7rem;
+        height: 1.7rem;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--green);
+        background: rgba(22, 227, 138, 0.14);
+        border: 1px solid rgba(22, 227, 138, 0.32);
+    }
+    .work-report-preview {
+        white-space: pre-wrap;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.82rem;
+        line-height: 1.55;
+        background: rgba(0, 0, 0, 0.35);
+        color: #e7f8ec;
+        border-radius: 0.85rem;
+        padding: 1rem;
+        min-height: 180px;
+        border: 1px solid rgba(22, 227, 138, 0.28);
     }
     .routine-title {
         font-size: 0.88rem;
         font-weight: 600;
-        color: #0f172a;
+        color: var(--white);
     }
     .routine-item.is-done .routine-title {
-        color: #166534;
+        color: var(--green);
         text-decoration: line-through;
     }
     .routine-details {
         font-size: 0.76rem;
-        color: #64748b;
+        color: var(--gray);
         margin-top: 0.2rem;
         white-space: pre-wrap;
     }
@@ -427,21 +525,21 @@
         width: 1.85rem;
         height: 1.85rem;
         border-radius: 999px;
-        border: 1px solid #cbd5e1;
-        background: #ffffff;
-        color: #64748b;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--gray);
         display: inline-flex;
         align-items: center;
         justify-content: center;
     }
     .routine-check-btn.is-done {
-        border-color: #22c55e;
-        background: #dcfce7;
-        color: #15803d;
+        border-color: rgba(22, 227, 138, 0.45);
+        background: rgba(22, 227, 138, 0.16);
+        color: var(--green);
     }
     .card-action-btn {
-        border: 1px solid rgba(15, 23, 42, 0.18);
-        background: rgba(255, 255, 255, 0.82);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        background: rgba(255, 255, 255, 0.14);
         color: #0f172a;
         border-radius: 0.5rem;
         font-size: 0.75rem;
@@ -454,13 +552,17 @@
         justify-content: center;
     }
     .card-action-btn-danger {
-        border-color: rgba(190, 24, 93, 0.35);
+        border-color: rgba(251, 113, 133, 0.45);
         color: #9f1239;
+        background: rgba(255, 241, 242, 0.9);
     }
     .todo-item {
+        border: 1px solid var(--glass-border);
         border-left-width: 4px;
         border-left-style: solid;
-        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--white);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
         backdrop-filter: blur(6px);
     }
     .todo-item.dragging {
@@ -473,31 +575,31 @@
         cursor: grabbing;
     }
     .todo-priority-overdue {
-        border-left-color: #dc2626;
-        background: #fff1f2;
+        border-left-color: #fb7185;
+        background: rgba(251, 113, 133, 0.1);
     }
     .todo-priority-today {
-        border-left-color: #ea580c;
-        background: #fff7ed;
+        border-left-color: #fb923c;
+        background: rgba(251, 146, 60, 0.1);
     }
     .todo-priority-upcoming {
-        border-left-color: #2563eb;
-        background: #eff6ff;
+        border-left-color: var(--green);
+        background: rgba(22, 227, 138, 0.08);
     }
     .todo-priority-soon {
-        border-left-color: #f97316;
-        background: #fff7ed;
+        border-left-color: var(--gold);
+        background: rgba(255, 201, 74, 0.1);
     }
     .todo-priority-mid {
-        border-left-color: #2563eb;
-        background: #eff6ff;
+        border-left-color: #38bdf8;
+        background: rgba(56, 189, 248, 0.08);
     }
     .todo-priority-far {
-        border-left-color: #14b8a6;
-        background: #ecfeff;
+        border-left-color: #2dd4bf;
+        background: rgba(45, 212, 191, 0.08);
     }
     .todo-priority-none {
-        border-left-color: #cbd5e1;
+        border-left-color: rgba(255, 255, 255, 0.22);
     }
     .todo-priority-chip {
         display: inline-flex;
@@ -509,54 +611,54 @@
         border: 1px solid transparent;
     }
     .todo-chip-overdue {
-        background: #fee2e2;
-        color: #b91c1c;
-        border-color: #fecaca;
+        background: rgba(251, 113, 133, 0.16);
+        color: #fda4af;
+        border-color: rgba(251, 113, 133, 0.35);
     }
     .todo-chip-today {
-        background: #ffedd5;
-        color: #c2410c;
-        border-color: #fed7aa;
+        background: rgba(251, 146, 60, 0.16);
+        color: #fdba74;
+        border-color: rgba(251, 146, 60, 0.35);
     }
     .todo-chip-upcoming {
-        background: #dbeafe;
-        color: #1d4ed8;
-        border-color: #bfdbfe;
+        background: rgba(22, 227, 138, 0.14);
+        color: var(--green);
+        border-color: rgba(22, 227, 138, 0.32);
     }
     .todo-chip-soon {
-        background: #ffedd5;
-        color: #c2410c;
-        border-color: #fed7aa;
+        background: rgba(255, 201, 74, 0.14);
+        color: var(--gold);
+        border-color: rgba(255, 201, 74, 0.32);
     }
     .todo-chip-mid {
-        background: #dbeafe;
-        color: #1d4ed8;
-        border-color: #bfdbfe;
+        background: rgba(56, 189, 248, 0.14);
+        color: #7dd3fc;
+        border-color: rgba(56, 189, 248, 0.32);
     }
     .todo-chip-far {
-        background: #ccfbf1;
-        color: #0f766e;
-        border-color: #99f6e4;
+        background: rgba(45, 212, 191, 0.14);
+        color: #5eead4;
+        border-color: rgba(45, 212, 191, 0.32);
     }
     .todo-chip-none {
-        background: #f1f5f9;
-        color: #475569;
-        border-color: #e2e8f0;
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--gray);
+        border-color: var(--glass-border);
     }
     .todo-chip-completed {
-        background: #dcfce7;
-        color: #166534;
-        border-color: #bbf7d0;
+        background: rgba(22, 227, 138, 0.16);
+        color: var(--green);
+        border-color: rgba(22, 227, 138, 0.35);
     }
     .todo-chip-dropped {
-        background: #fee2e2;
-        color: #991b1b;
-        border-color: #fecaca;
+        background: rgba(251, 113, 133, 0.16);
+        color: #fda4af;
+        border-color: rgba(251, 113, 133, 0.35);
     }
     .todo-chip-incomplete {
-        background: #e2e8f0;
-        color: #334155;
-        border-color: #cbd5e1;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--gray);
+        border-color: var(--glass-border);
     }
     .todo-meta-chip {
         display: inline-flex;
@@ -566,16 +668,16 @@
         font-weight: 600;
         border-radius: 999px;
         padding: 0.15rem 0.5rem;
-        background: rgba(15, 23, 42, 0.06);
-        color: #334155;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--gray);
     }
     .todo-action-btn {
         font-size: 0.72rem;
         font-weight: 600;
         border-radius: 0.45rem;
-        border: 1px solid #cbd5e1;
-        background: #ffffff;
-        color: #334155;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--gray);
         padding: 0.2rem 0.45rem;
         min-width: 1.7rem;
         min-height: 1.7rem;
@@ -584,24 +686,24 @@
         justify-content: center;
     }
     .todo-action-btn-danger {
-        border-color: #fecdd3;
-        color: #be123c;
+        border-color: rgba(251, 113, 133, 0.35);
+        color: #fb7185;
     }
     .todo-pin-btn {
         width: 1.7rem;
         height: 1.7rem;
         border-radius: 999px;
-        border: 1px solid #cbd5e1;
-        background: #ffffff;
-        color: #64748b;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--gray);
         display: inline-flex;
         align-items: center;
         justify-content: center;
     }
     .todo-pin-btn.is-pinned {
-        border-color: #fbbf24;
-        background: #fef9c3;
-        color: #b45309;
+        border-color: rgba(255, 201, 74, 0.45);
+        background: rgba(255, 201, 74, 0.16);
+        color: var(--gold);
     }
     .todo-filter-wrap {
         position: relative;
@@ -610,9 +712,9 @@
         width: 2.1rem;
         height: 2.1rem;
         border-radius: 999px;
-        border: 1px solid #cbd5e1;
-        background: #ffffff;
-        color: #334155;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--gray);
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -623,10 +725,10 @@
         right: 0;
         width: 13.5rem;
         z-index: 20;
-        border: 1px solid #dbe3ef;
+        border: 1px solid var(--glass-border);
         border-radius: 0.75rem;
-        background: #ffffff;
-        box-shadow: 0 14px 28px rgba(15, 23, 42, 0.14);
+        background: linear-gradient(160deg, #0B2F2B 0%, #062420 100%);
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.4);
         padding: 0.65rem;
         display: none;
     }
@@ -637,30 +739,30 @@
         font-size: 0.66rem;
         font-weight: 700;
         text-transform: uppercase;
-        color: #64748b;
+        color: var(--gray);
         margin-bottom: 0.25rem;
         display: block;
     }
     .todo-filter-select {
         width: 100%;
-        border: 1px solid #cfd9e8;
-        background: #f8fbff;
+        border: 1px solid var(--glass-border);
+        background: rgba(0, 0, 0, 0.28);
         border-radius: 0.5rem;
         padding: 0.4rem 0.55rem;
         font-size: 0.78rem;
-        color: #1e293b;
+        color: var(--white);
     }
     .todo-premium-card {
-        background: linear-gradient(160deg, #ffffff 0%, #f8fbff 55%, #f0f8ff 100%);
-        border: 1px solid #d8e6fb;
-        box-shadow: 0 18px 34px rgba(59, 130, 246, 0.08), 0 10px 20px rgba(15, 23, 42, 0.05);
+        background: linear-gradient(160deg, rgba(11, 47, 43, 0.92) 0%, rgba(8, 40, 36, 0.88) 100%);
+        border: 1px solid rgba(22, 227, 138, 0.22);
+        box-shadow: 0 18px 34px rgba(0, 0, 0, 0.28);
     }
     .todo-section-title {
         font-size: 0.72rem;
         text-transform: uppercase;
         letter-spacing: 0.06em;
         font-weight: 700;
-        color: #64748b;
+        color: var(--gray);
         margin-top: 0.95rem;
         margin-bottom: 0.45rem;
     }
@@ -668,9 +770,9 @@
         width: 1.7rem;
         height: 1.7rem;
         border-radius: 999px;
-        border: 1px solid #d1d9e6;
-        background: #ffffff;
-        color: #5b6678;
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--gray);
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -680,25 +782,26 @@
         transform: translateY(-1px);
     }
     .todo-status-icon-btn.status-incomplete:hover {
-        border-color: #94a3b8;
-        color: #334155;
+        border-color: rgba(255, 255, 255, 0.28);
+        color: var(--white);
     }
     .todo-status-icon-btn.status-completed:hover {
-        border-color: #86efac;
-        background: #f0fdf4;
-        color: #166534;
+        border-color: rgba(22, 227, 138, 0.45);
+        background: rgba(22, 227, 138, 0.14);
+        color: var(--green);
     }
     .todo-status-icon-btn.status-dropped:hover {
-        border-color: #fda4af;
-        background: #fff1f2;
-        color: #9f1239;
+        border-color: rgba(251, 113, 133, 0.45);
+        background: rgba(251, 113, 133, 0.12);
+        color: #fb7185;
     }
     .history-table-wrap {
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--glass-border);
         border-radius: 0.9rem;
         overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
+        background: rgba(0, 0, 0, 0.18);
     }
     .history-table {
         width: 100%;
@@ -707,29 +810,30 @@
         font-size: 0.85rem;
     }
     .history-table thead th {
-        background: #f8fafc;
-        color: #475569;
+        background: rgba(22, 227, 138, 0.08);
+        color: var(--gray);
         font-size: 0.72rem;
         text-transform: uppercase;
         letter-spacing: 0.03em;
         font-weight: 700;
         padding: 0.72rem 0.75rem;
-        border-bottom: 1px solid #e2e8f0;
+        border-bottom: 1px solid var(--glass-border);
         text-align: left;
         white-space: nowrap;
     }
     .history-table tbody td {
         padding: 0.72rem 0.75rem;
-        border-bottom: 1px solid #eef2f7;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         vertical-align: top;
         text-align: left;
+        color: var(--white);
     }
     .history-table thead th:not(:last-child),
     .history-table tbody td:not(:last-child) {
-        border-right: 1px solid #e5eaf2;
+        border-right: 1px solid rgba(255, 255, 255, 0.06);
     }
     .history-table tbody tr:hover {
-        background: #f8fafc;
+        background: rgba(22, 227, 138, 0.06);
     }
     .history-table tbody tr:last-child td {
         border-bottom: 0;
@@ -737,7 +841,7 @@
     .history-note-cell {
         min-width: 220px;
         max-width: 320px;
-        color: #475569;
+        color: var(--gray);
         white-space: normal;
         line-height: 1.35;
     }
@@ -752,7 +856,7 @@
             flex-direction: row;
             justify-content: center;
             border-right: 0;
-            border-bottom: 1px solid #dde5f2;
+            border-bottom: 1px solid var(--glass-border);
         }
         body {
             font-size: 14px;
@@ -903,9 +1007,10 @@
         width: min(100%, 29rem);
         height: min(100%, 29rem);
         border-radius: 999px;
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(22, 227, 138, 0.08);
         padding: 0.25rem;
-        box-shadow: 0 24px 30px rgba(15, 23, 42, 0.28);
+        box-shadow: 0 24px 30px rgba(0, 0, 0, 0.35), 0 0 28px rgba(22, 227, 138, 0.12);
+        border: 1px solid rgba(22, 227, 138, 0.22);
     }
     .expense-pie-wrap canvas {
         width: 100% !important;
@@ -991,38 +1096,54 @@
     .side-showcase-card {
         border-radius: 0.95rem;
         overflow: hidden;
-        border: 1px solid #d9e4f2;
-        background: #ffffff;
-        box-shadow: 0 14px 26px rgba(15, 23, 42, 0.1);
+        border: 1px solid var(--glass-border);
+        background: rgba(255, 255, 255, 0.04);
+        box-shadow: 0 14px 26px rgba(0, 0, 0, 0.28);
         cursor: pointer;
         transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
     .side-showcase-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 18px 30px rgba(15, 23, 42, 0.14);
+        box-shadow: 0 18px 30px rgba(0, 0, 0, 0.35), 0 0 24px rgba(22, 227, 138, 0.12);
+        border-color: rgba(22, 227, 138, 0.4);
     }
     .side-showcase-card.is-active {
-        border-color: #38bdf8;
-        box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.35), 0 14px 26px rgba(15, 23, 42, 0.12);
+        border-color: rgba(22, 227, 138, 0.55);
+        box-shadow: 0 0 0 2px rgba(22, 227, 138, 0.28), 0 14px 26px rgba(0, 0, 0, 0.3);
     }
     .side-showcase-image {
         width: 100%;
         height: 165px;
         object-fit: cover;
         display: block;
+        filter: saturate(0.9) brightness(0.88);
     }
     .side-showcase-body {
         padding: 0.65rem 0.8rem 0.75rem;
+        background: rgba(4, 28, 26, 0.72);
     }
     .side-showcase-title {
         font-size: 0.78rem;
         font-weight: 700;
-        color: #1e293b;
+        color: var(--white);
     }
     .side-showcase-subtitle {
         font-size: 0.68rem;
-        color: #64748b;
+        color: var(--gray);
         margin-top: 0.2rem;
+    }
+    .side-showcase-work-hero {
+        width: 100%;
+        height: 165px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(145deg, #052e1c 0%, #0B2F2B 45%, #08332d 100%);
+        color: var(--green);
+        font-size: 3rem;
+    }
+    .side-showcase-card-work.is-active .side-showcase-work-hero {
+        color: #86efac;
+        box-shadow: inset 0 0 40px rgba(22, 227, 138, 0.15);
     }
     .dashboard-content-panel {
         display: none;
@@ -1045,6 +1166,93 @@
         .weight-calorie-chart-wrap {
             height: 210px;
         }
+    }
+
+    /* Portfolio theme: neutralize light Tailwind utilities inside admin shell */
+    .admin-shell .bg-white,
+    .admin-shell .bg-slate-50,
+    .admin-shell .bg-slate-100,
+    .admin-shell .bg-white\/80 {
+        background-color: rgba(255, 255, 255, 0.04) !important;
+    }
+    .admin-shell .bg-emerald-50 {
+        background-color: rgba(22, 227, 138, 0.12) !important;
+    }
+    .admin-shell .bg-rose-50 {
+        background-color: rgba(251, 113, 133, 0.12) !important;
+    }
+    .admin-shell .from-indigo-50,
+    .admin-shell .via-sky-50,
+    .admin-shell .to-cyan-50,
+    .admin-shell .from-indigo-100,
+    .admin-shell .from-cyan-50,
+    .admin-shell .from-emerald-50,
+    .admin-shell .from-amber-50,
+    .admin-shell .via-orange-50,
+    .admin-shell .to-rose-50,
+    .admin-shell .to-blue-50 {
+        --tw-gradient-from: rgba(22, 227, 138, 0.12) !important;
+        --tw-gradient-to: rgba(8, 51, 45, 0.55) !important;
+        --tw-gradient-stops: var(--tw-gradient-from), rgba(11, 47, 43, 0.65), var(--tw-gradient-to) !important;
+    }
+    .admin-shell .to-sky-100 {
+        --tw-gradient-to: rgba(8, 51, 45, 0.9) !important;
+    }
+    .admin-shell .border-slate-200,
+    .admin-shell .border-slate-300,
+    .admin-shell .border-emerald-100,
+    .admin-shell .border-indigo-200,
+    .admin-shell .border-indigo-100,
+    .admin-shell .border-cyan-100,
+    .admin-shell .border-cyan-200,
+    .admin-shell .border-teal-100,
+    .admin-shell .border-amber-100 {
+        border-color: var(--glass-border) !important;
+    }
+    .admin-shell .text-cyan-700,
+    .admin-shell .text-indigo-700,
+    .admin-shell .text-indigo-800,
+    .admin-shell .text-sky-700 {
+        color: var(--green) !important;
+    }
+    .admin-shell .text-rose-700,
+    .admin-shell .text-rose-800 {
+        color: #fda4af !important;
+    }
+    .admin-shell .text-slate-900,
+    .admin-shell .text-slate-800,
+    .admin-shell .text-slate-700 {
+        color: var(--white) !important;
+    }
+    .admin-shell .text-slate-600,
+    .admin-shell .text-slate-500,
+    .admin-shell .text-slate-400 {
+        color: var(--gray) !important;
+    }
+    .admin-shell .text-emerald-800,
+    .admin-shell .text-emerald-700 {
+        color: var(--green) !important;
+    }
+    .admin-shell .primary-btn.bg-white {
+        background: linear-gradient(135deg, var(--green), #0fbf72) !important;
+        color: #04221e !important;
+    }
+    .admin-shell select,
+    .admin-shell input[type="text"],
+    .admin-shell input[type="number"],
+    .admin-shell input[type="date"],
+    .admin-shell input[type="time"],
+    .admin-shell input[type="month"],
+    .admin-shell textarea {
+        color-scheme: dark;
+    }
+    .admin-shell .soft-input option,
+    .admin-shell select option {
+        background: #0B2F2B;
+        color: var(--white);
+    }
+    .admin-sidebar {
+        border-bottom-color: var(--glass-border);
     }
 </style>
 <div class="admin-frame">
@@ -1085,7 +1293,7 @@
             <p class="text-sm text-slate-600 mt-1">One page view for your todo list, wallet, and expense pie chart.</p>
         </div>
         <div class="admin-action-group flex items-center gap-2">
-            <a href="{{ route('admin.visitors.index') }}" class="primary-btn bg-white px-4 py-2 text-sm font-medium !text-slate-100">
+            <a href="{{ route('admin.visitors.index') }}" class="primary-btn px-4 py-2 text-sm font-medium">
                 <i class="fa-solid fa-chart-line text-xs"></i>
                 Visitor Logs
             </a>
@@ -1254,7 +1462,7 @@
             <h2 class="text-lg font-semibold">Focus Sections</h2>
             <p class="text-xs text-slate-500">Click a card to open only that category.</p>
         </div>
-        <div class="grid md:grid-cols-3 gap-4">
+        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
             <article class="side-showcase-card" role="button" tabindex="0" data-open-dashboard-panel="money">
                 <img src="{{ asset('images/dashboard/finance-growth.png') }}" alt="Finance growth savings" class="side-showcase-image">
                 <div class="side-showcase-body">
@@ -1276,6 +1484,74 @@
                     <p class="side-showcase-subtitle">Todos, daily routine notes, and net worth goals.</p>
                 </div>
             </article>
+            <article class="side-showcase-card side-showcase-card-work" role="button" tabindex="0" data-open-dashboard-panel="work">
+                <div class="side-showcase-work-hero" aria-hidden="true">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </div>
+                <div class="side-showcase-body">
+                    <p class="side-showcase-title">Office Work Report</p>
+                    <p class="side-showcase-subtitle">Daily work plan / report templates for WhatsApp.</p>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="rounded-xl bg-white p-5 mt-6 panel dashboard-content-panel work-report-card" data-dashboard-panel="work">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+                <h2 class="text-lg font-semibold">Office Work Report</h2>
+                <p class="text-sm text-slate-500 mt-1">Build today’s plan or report, then send to office WhatsApp <span class="font-semibold text-emerald-700">8606012194</span>.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <button type="button" class="work-report-type-btn is-active" data-work-report-type="plan">Today's Work Plan</button>
+                <button type="button" class="work-report-type-btn" data-work-report-type="report">Today's Work Report</button>
+            </div>
+        </div>
+
+        <div class="mt-4 grid lg:grid-cols-2 gap-4">
+            <div class="rounded-xl border border-emerald-100 bg-white p-4">
+                <div class="grid sm:grid-cols-2 gap-2 mb-3">
+                    <label class="block">
+                        <span class="routine-time-label">Date</span>
+                        <input type="date" id="workReportDate" value="{{ now()->toDateString() }}" class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+                    </label>
+                    <label class="block">
+                        <span class="routine-time-label">Name</span>
+                        <input type="text" id="workReportName" value="Arjun Kumar H" class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+                    </label>
+                </div>
+
+                <p class="routine-time-label">Tasks (manual)</p>
+                <div id="workReportTaskList" class="space-y-2 mb-3"></div>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" id="workReportAddTask" class="primary-btn px-3 py-2 text-xs">
+                        <i class="fa-solid fa-plus text-[10px]"></i> Add task
+                    </button>
+                    <button type="button" id="workReportLoadSample" class="card-action-btn px-3 py-2 text-xs" title="Load sample">
+                        Load sample
+                    </button>
+                    <button type="button" id="workReportClearTasks" class="card-action-btn card-action-btn-danger px-3 py-2 text-xs" title="Clear tasks">
+                        Clear
+                    </button>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-2">Type each task in its own line. Numbers are added automatically for WhatsApp.</p>
+            </div>
+
+            <div class="rounded-xl border border-emerald-100 bg-white p-4">
+                <div class="flex items-center justify-between gap-2 mb-2">
+                    <p class="routine-time-label !mb-0">WhatsApp preview</p>
+                    <span class="text-[11px] text-slate-500">Neat numbered list</span>
+                </div>
+                <pre id="workReportPreview" class="work-report-preview" aria-live="polite"></pre>
+                <div class="mt-3 flex flex-wrap gap-2">
+                    <button type="button" id="workReportCopy" class="primary-btn px-4 py-2 text-sm">
+                        <i class="fa-regular fa-copy text-xs"></i> Copy message
+                    </button>
+                    <a id="workReportWhatsApp" href="#" target="_blank" rel="noopener noreferrer" class="primary-btn success-btn px-4 py-2 text-sm inline-flex items-center gap-2">
+                        <i class="fa-brands fa-whatsapp"></i> Send to office WhatsApp
+                    </a>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -1430,9 +1706,9 @@
     <section class="rounded-xl bg-white p-5 mt-6 panel dashboard-content-panel" data-dashboard-panel="money">
         <h2 class="text-lg font-semibold">Stock Value</h2>
         <p class="text-sm text-slate-500 mt-1">Invested stock amount shown separately.</p>
-        <div class="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-indigo-200 bg-gradient-to-r from-indigo-100 to-sky-100 px-5 py-6 text-slate-900 shadow">
-            <div>
-                <p class="text-xs uppercase tracking-wide text-slate-600">Current Total</p>
+        <div class="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[rgba(22,227,138,0.28)] bg-gradient-to-r from-[rgba(22,227,138,0.16)] to-[rgba(8,51,45,0.85)] px-5 py-6 text-[var(--white)] shadow">
+                <div>
+                <p class="text-xs uppercase tracking-wide text-[var(--gray)]">Current Total</p>
                 <p class="text-3xl font-semibold mt-2 text-indigo-900">Rs {{ number_format($totalStockValue, 2) }}</p>
             </div>
             <button type="button" class="primary-btn px-3 py-2 text-xs open-modal" data-modal="stockCreateModal">
@@ -2350,7 +2626,7 @@
     const oldWeightContext = @json($errors->any() && old('weight_kg') !== null);
     const dashboardPanelCards = Array.from(document.querySelectorAll('[data-open-dashboard-panel]'));
     const dashboardPanels = Array.from(document.querySelectorAll('[data-dashboard-panel]'));
-    const dashboardPanelKeys = new Set(['money', 'fitness', 'goal']);
+    const dashboardPanelKeys = new Set(['money', 'fitness', 'goal', 'work']);
 
     function consumeDashboardReturnState() {
         const raw = sessionStorage.getItem(dashboardScrollKey);
@@ -2704,6 +2980,163 @@
     bindPaymentChannelDependencies();
     bindExpensePeriodFilter();
     bindRoutineDurationPreview();
+    bindWorkReportComposer();
+
+    function bindWorkReportComposer() {
+        const taskList = document.getElementById('workReportTaskList');
+        const preview = document.getElementById('workReportPreview');
+        const dateInput = document.getElementById('workReportDate');
+        const nameInput = document.getElementById('workReportName');
+        const whatsappLink = document.getElementById('workReportWhatsApp');
+        const copyBtn = document.getElementById('workReportCopy');
+        const addBtn = document.getElementById('workReportAddTask');
+        const clearBtn = document.getElementById('workReportClearTasks');
+        const sampleBtn = document.getElementById('workReportLoadSample');
+        const typeButtons = Array.from(document.querySelectorAll('[data-work-report-type]'));
+        if (!taskList || !preview || !dateInput || !nameInput || !whatsappLink) {
+            return;
+        }
+
+        const officeWhatsApp = '918606012194';
+        let reportType = 'plan';
+
+        function formatDisplayDate(value) {
+            if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+                const now = new Date();
+                const dd = String(now.getDate()).padStart(2, '0');
+                const mm = String(now.getMonth() + 1).padStart(2, '0');
+                const yyyy = now.getFullYear();
+                return `${dd}/${mm}/${yyyy}`;
+            }
+            const [y, m, d] = value.split('-');
+            return `${d}/${m}/${y}`;
+        }
+
+        function titleForType() {
+            return reportType === 'report' ? "Today's Work Report" : "Today's Work Plan";
+        }
+
+        function getTasks() {
+            return Array.from(taskList.querySelectorAll('[data-work-report-task]'))
+                .map((input) => String(input.value || '').trim())
+                .filter(Boolean);
+        }
+
+        function buildMessage() {
+            const lines = [
+                titleForType(),
+                formatDisplayDate(dateInput.value),
+                String(nameInput.value || 'Arjun Kumar H').trim() || 'Arjun Kumar H',
+                '',
+            ];
+            const tasks = getTasks();
+            if (!tasks.length) {
+                lines.push('1. ');
+            } else {
+                tasks.forEach((task, index) => {
+                    lines.push(`${index + 1}. ${task}`);
+                });
+            }
+            return lines.join('\n');
+        }
+
+        function refreshPreview() {
+            const message = buildMessage();
+            preview.textContent = message;
+            whatsappLink.href = `https://wa.me/${officeWhatsApp}?text=${encodeURIComponent(message)}`;
+            renumberTasks();
+        }
+
+        function renumberTasks() {
+            taskList.querySelectorAll('.work-report-task-row').forEach((row, index) => {
+                const badge = row.querySelector('.work-report-task-num');
+                if (badge) {
+                    badge.textContent = String(index + 1);
+                }
+            });
+        }
+
+        function addTaskRow(value = '') {
+            const row = document.createElement('div');
+            row.className = 'work-report-task-row';
+            row.innerHTML = `
+                <span class="work-report-task-num">1</span>
+                <input type="text" data-work-report-task class="soft-input rounded-lg px-3 py-2 text-sm" placeholder="Describe the task..." value="">
+                <button type="button" class="card-action-btn card-action-btn-danger" data-remove-task title="Remove" aria-label="Remove">
+                    <i class="fa-solid fa-trash text-[10px]"></i>
+                </button>
+            `;
+            const input = row.querySelector('[data-work-report-task]');
+            if (input) {
+                input.value = value;
+                input.addEventListener('input', refreshPreview);
+                input.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        addTaskRow('');
+                        const inputs = taskList.querySelectorAll('[data-work-report-task]');
+                        inputs[inputs.length - 1]?.focus();
+                    }
+                });
+            }
+            row.querySelector('[data-remove-task]')?.addEventListener('click', () => {
+                row.remove();
+                if (!taskList.querySelector('.work-report-task-row')) {
+                    addTaskRow('');
+                }
+                refreshPreview();
+            });
+            taskList.appendChild(row);
+            refreshPreview();
+            return input;
+        }
+
+        typeButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                reportType = button.dataset.workReportType === 'report' ? 'report' : 'plan';
+                typeButtons.forEach((btn) => btn.classList.toggle('is-active', btn === button));
+                refreshPreview();
+            });
+        });
+
+        addBtn?.addEventListener('click', () => {
+            const input = addTaskRow('');
+            input?.focus();
+        });
+        clearBtn?.addEventListener('click', () => {
+            taskList.innerHTML = '';
+            addTaskRow('');
+            refreshPreview();
+        });
+        sampleBtn?.addEventListener('click', () => {
+            reportType = 'plan';
+            typeButtons.forEach((btn) => {
+                btn.classList.toggle('is-active', btn.dataset.workReportType === 'plan');
+            });
+            taskList.innerHTML = '';
+            addTaskRow('E-commerce website our products and profile page layout and UI');
+            addTaskRow('Fix checkout flow and mobile responsiveness');
+            addTaskRow('Prepare daily status update for review');
+            refreshPreview();
+        });
+        copyBtn?.addEventListener('click', async () => {
+            const message = buildMessage();
+            try {
+                await navigator.clipboard.writeText(message);
+                copyBtn.textContent = 'Copied';
+                window.setTimeout(() => {
+                    copyBtn.innerHTML = '<i class="fa-regular fa-copy text-xs"></i> Copy message';
+                }, 1200);
+            } catch (error) {
+                window.prompt('Copy this message:', message);
+            }
+        });
+        dateInput.addEventListener('change', refreshPreview);
+        nameInput.addEventListener('input', refreshPreview);
+
+        addTaskRow('');
+        refreshPreview();
+    }
     bindDashboardPanelCards();
     if (hasValidationErrors) {
         window.requestAnimationFrame(() => {
@@ -2721,7 +3154,7 @@
         scheduleDashboardScrollRestore(dashboardReturnState.y);
     } else {
         const storedPanel = sessionStorage.getItem(dashboardPanelStorageKey);
-        if (storedPanel === 'money' || storedPanel === 'fitness' || storedPanel === 'goal') {
+        if (storedPanel === 'money' || storedPanel === 'fitness' || storedPanel === 'goal' || storedPanel === 'work') {
             setActiveDashboardPanel(storedPanel);
         }
     }
@@ -3102,6 +3535,12 @@
     }
 
     let expensePieInstance = null;
+
+    if (typeof Chart !== 'undefined') {
+        Chart.defaults.color = '#AAB5B1';
+        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.08)';
+        Chart.defaults.plugins.legend.labels.color = '#AAB5B1';
+    }
 
     function renderPieChart() {
         if (!pieChart || !pieLegend || typeof Chart === 'undefined') {
@@ -3601,12 +4040,12 @@
         const barColors = monthlyNet.map((_, i) => {
             const k = monthlyKinds[i] || 'actual';
             if (k === 'forecast') {
-                return 'rgba(148, 163, 184, 0.55)';
+                return 'rgba(170, 181, 177, 0.45)';
             }
             if (k === 'blend') {
-                return 'rgba(56, 189, 248, 0.72)';
+                return 'rgba(255, 201, 74, 0.72)';
             }
-            return 'rgba(14, 165, 233, 0.88)';
+            return 'rgba(22, 227, 138, 0.85)';
         });
 
         const lineEl = document.getElementById('netWorthLineChart');
@@ -3623,8 +4062,8 @@
                     {
                         label: 'Cumulative (Rs)',
                         data: cumulativeFlow,
-                        borderColor: '#0891b2',
-                        backgroundColor: 'rgba(8,145,178,0.2)',
+                        borderColor: '#16E38A',
+                        backgroundColor: 'rgba(22,227,138,0.18)',
                         fill: true,
                         tension: 0.35,
                         pointRadius: 3,
@@ -3647,11 +4086,13 @@
                 },
                 scales: {
                     x: {
-                        grid: { color: 'rgba(148,163,184,0.2)' },
+                        ticks: { color: '#AAB5B1' },
+                        grid: { color: 'rgba(255,255,255,0.08)' },
                     },
                     y: {
-                        grid: { color: 'rgba(148,163,184,0.2)' },
-                        title: { display: true, text: 'Rs (cumulative)' },
+                        ticks: { color: '#AAB5B1' },
+                        grid: { color: 'rgba(255,255,255,0.08)' },
+                        title: { display: true, text: 'Rs (cumulative)', color: '#AAB5B1' },
                     },
                 },
             },
@@ -3666,7 +4107,7 @@
                         label: 'Monthly net (Rs)',
                         data: monthlyNet,
                         backgroundColor: barColors,
-                        borderColor: '#0284c7',
+                        borderColor: '#16E38A',
                         borderWidth: 1.2,
                     },
                 ],
@@ -3691,12 +4132,14 @@
                 },
                 scales: {
                     x: {
-                        grid: { color: 'rgba(148,163,184,0.2)' },
-                        title: { display: true, text: 'Month' },
+                        ticks: { color: '#AAB5B1' },
+                        grid: { color: 'rgba(255,255,255,0.08)' },
+                        title: { display: true, text: 'Month', color: '#AAB5B1' },
                     },
                     y: {
-                        grid: { color: 'rgba(148,163,184,0.2)' },
-                        title: { display: true, text: 'Rs (this month)' },
+                        ticks: { color: '#AAB5B1' },
+                        grid: { color: 'rgba(255,255,255,0.08)' },
+                        title: { display: true, text: 'Rs (this month)', color: '#AAB5B1' },
                     },
                 },
             },
