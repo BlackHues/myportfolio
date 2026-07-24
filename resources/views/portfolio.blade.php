@@ -820,54 +820,163 @@
             font-size: 0.85rem;
         }
 
-        /* —— Journey —— */
-        .journey-list {
-            margin-top: 2.25rem;
+        /* —— Journey (GSAP pinned timeline) —— */
+        .journey-pin-section {
             position: relative;
-            padding-left: 1.5rem;
+            padding: 0;
+            min-height: 100vh;
         }
-        .journey-list::before {
-            content: "";
+        .journey-pin-inner {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4.5rem 0 3rem;
+            box-sizing: border-box;
+        }
+        .journey-stage {
+            margin-top: 1.75rem;
+            display: grid;
+            grid-template-columns: 8px 1fr;
+            gap: 1.35rem;
+            align-items: stretch;
+            min-height: min(58vh, 420px);
+        }
+        .journey-progress-track {
+            position: relative;
+            width: 8px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+            align-self: stretch;
+        }
+        .journey-progress-bar {
             position: absolute;
-            left: 5px;
-            top: 8px;
-            bottom: 8px;
-            width: 2px;
-            background: linear-gradient(180deg, var(--green), rgba(255,201,74,0.5), transparent);
-            box-shadow: 0 0 12px rgba(22,227,138,0.35);
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            transform-origin: top center;
+            transform: scaleY(0);
+            border-radius: inherit;
+            background: linear-gradient(180deg, var(--green), rgba(255, 201, 74, 0.85));
+            box-shadow: 0 0 16px rgba(22, 227, 138, 0.45);
+        }
+        .journey-viewport {
+            position: relative;
+            min-height: min(58vh, 420px);
         }
         .journey-item {
-            position: relative;
-            padding: 0 0 1.5rem 1.25rem;
-        }
-        .journey-item::before {
-            content: "";
             position: absolute;
-            left: -1.5rem;
-            top: 6px;
-            width: 12px;
-            height: 12px;
-            border-radius: 999px;
-            background: var(--bg);
-            border: 2px solid var(--green);
-            box-shadow: 0 0 12px rgba(22,227,138,0.55);
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 1.4rem 1.5rem;
+            border-radius: 1.1rem;
+            border: 1px solid var(--glass-border);
+            background: rgba(8, 40, 36, 0.72);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(36px) scale(0.98);
+        }
+        .journey-item.is-active {
+            pointer-events: auto;
         }
         .journey-item .year {
-            font-size: 0.72rem;
+            font-size: 0.78rem;
             font-weight: 700;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
             color: var(--gold);
         }
         .journey-item h3 {
-            margin: 0.25rem 0 0;
-            font-size: 1.05rem;
+            margin: 0.55rem 0 0;
+            font-size: clamp(1.35rem, 3vw, 2rem);
+            letter-spacing: -0.02em;
         }
         .journey-item p {
-            margin: 0.35rem 0 0;
+            margin: 0.7rem 0 0;
             color: var(--gray);
-            font-size: 0.9rem;
-            max-width: 58ch;
+            font-size: 1rem;
+            max-width: 48ch;
+            line-height: 1.55;
+        }
+        .journey-meta {
+            margin-top: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .journey-counter {
+            font-family: "Syne", "Outfit", sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: 0.04em;
+        }
+        .journey-counter span {
+            color: var(--green);
+        }
+        .journey-dots {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+        .journey-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.18);
+            border: 0;
+            padding: 0;
+            cursor: default;
+            transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .journey-dot.is-on {
+            background: var(--green);
+            transform: scale(1.25);
+            box-shadow: 0 0 12px rgba(22, 227, 138, 0.55);
+        }
+        .journey-hint {
+            margin-top: 0.85rem;
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(170, 181, 177, 0.75);
+        }
+        @media (max-width: 640px) {
+            .journey-pin-inner {
+                padding: 3.5rem 0 2rem;
+            }
+            .journey-stage,
+            .journey-viewport {
+                min-height: min(52vh, 360px);
+            }
+            .journey-item {
+                padding: 1.15rem 1.1rem;
+            }
+        }
+        .journey-no-gsap .journey-item {
+            position: relative;
+            inset: auto;
+            opacity: 1;
+            visibility: visible;
+            transform: none;
+            margin-bottom: 0.85rem;
+            pointer-events: auto;
+        }
+        .journey-no-gsap .journey-viewport {
+            min-height: 0;
+        }
+        .journey-no-gsap .journey-progress-bar {
+            transform: scaleY(1);
         }
 
         /* —— Contact —— */
@@ -1301,20 +1410,38 @@
             ['year' => '2012', 'title' => 'HSE — Computer Science', 'text' => 'Higher Secondary Education with Computer Science.'],
             ['year' => '2010', 'title' => 'SSLC', 'text' => 'Secondary School Leaving Certificate.'],
         ];
+        $journeyCount = count($journeyZigzag);
     @endphp
-    <section class="section" id="journey">
-        <div class="wrap">
+    <section class="section journey-pin-section" id="journey" data-journey-count="{{ $journeyCount }}">
+        <div class="wrap journey-pin-inner">
             <p class="section-kicker reveal">Growth</p>
             <h2 class="section-title reveal d1">My journey</h2>
-            <p class="section-lead reveal d2">From engineering roots to shipping polished products — every chapter compounds.</p>
-            <div class="journey-list">
-                @foreach ($journeyZigzag as $i => $step)
-                    <article class="journey-item reveal {{ $i % 2 === 0 ? 'd1' : 'd2' }}">
-                        <div class="year">{{ $step['year'] }}</div>
-                        <h3>{{ $step['title'] }}</h3>
-                        <p>{{ $step['text'] }}</p>
-                    </article>
-                @endforeach
+            <p class="section-lead reveal d2">Scroll to unlock each chapter — one step at a time.</p>
+
+            <div class="journey-stage">
+                <div class="journey-progress-track" aria-hidden="true">
+                    <div class="journey-progress-bar" id="journeyProgressBar"></div>
+                </div>
+                <div>
+                    <div class="journey-viewport" id="journeyViewport">
+                        @foreach ($journeyZigzag as $i => $step)
+                            <article class="journey-item" data-journey-index="{{ $i }}">
+                                <div class="year">{{ $step['year'] }}</div>
+                                <h3>{{ $step['title'] }}</h3>
+                                <p>{{ $step['text'] }}</p>
+                            </article>
+                        @endforeach
+                    </div>
+                    <div class="journey-meta">
+                        <div class="journey-counter"><span id="journeyCurrent">01</span> / {{ str_pad((string) $journeyCount, 2, '0', STR_PAD_LEFT) }}</div>
+                        <div class="journey-dots" id="journeyDots" aria-hidden="true">
+                            @foreach ($journeyZigzag as $i => $step)
+                                <span class="journey-dot {{ $i === 0 ? 'is-on' : '' }}" data-journey-dot="{{ $i }}"></span>
+                            @endforeach
+                        </div>
+                    </div>
+                    <p class="journey-hint">Scroll to continue the timeline</p>
+                </div>
             </div>
         </div>
     </section>
@@ -1424,6 +1551,8 @@
     </footer>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script>
 (function () {
     var canvas = document.getElementById('particle-canvas');
@@ -1516,6 +1645,93 @@
         });
     }, { threshold: 0.25, rootMargin: '-20% 0px -45% 0px' });
     sections.forEach(function (s) { io.observe(s); });
+})();
+
+(function () {
+    var section = document.getElementById('journey');
+    if (!section) return;
+
+    var items = Array.prototype.slice.call(section.querySelectorAll('.journey-item'));
+    var progressBar = document.getElementById('journeyProgressBar');
+    var counter = document.getElementById('journeyCurrent');
+    var dots = Array.prototype.slice.call(section.querySelectorAll('[data-journey-dot]'));
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var canGsap = window.gsap && window.ScrollTrigger && items.length && !reduced;
+
+    function pad(n) {
+        return String(n).padStart(2, '0');
+    }
+
+    function setActiveIndex(index) {
+        var safe = Math.max(0, Math.min(items.length - 1, index));
+        items.forEach(function (item, i) {
+            item.classList.toggle('is-active', i === safe);
+        });
+        dots.forEach(function (dot, i) {
+            dot.classList.toggle('is-on', i <= safe);
+        });
+        if (counter) counter.textContent = pad(safe + 1);
+        if (progressBar) {
+            progressBar.style.transform = 'scaleY(' + ((safe + 1) / items.length) + ')';
+        }
+    }
+
+    if (!canGsap) {
+        section.classList.add('journey-no-gsap');
+        items.forEach(function (item) {
+            item.style.opacity = '1';
+            item.style.visibility = 'visible';
+            item.style.transform = 'none';
+        });
+        setActiveIndex(items.length - 1);
+        return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.set(items, { autoAlpha: 0, y: 40, scale: 0.98 });
+    gsap.set(items[0], { autoAlpha: 1, y: 0, scale: 1 });
+    setActiveIndex(0);
+
+    var tl = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: {
+            trigger: section,
+            start: 'top top',
+            end: function () {
+                return '+=' + Math.round(window.innerHeight * Math.max(items.length, 1) * 0.9);
+            },
+            pin: true,
+            scrub: 0.65,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            onUpdate: function (self) {
+                var idx = Math.round(self.progress * (items.length - 1));
+                setActiveIndex(idx);
+            },
+            onLeave: function () {
+                setActiveIndex(items.length - 1);
+            },
+        },
+    });
+
+    items.forEach(function (item, index) {
+        if (index === 0) return;
+        var prev = items[index - 1];
+        tl.to(prev, { autoAlpha: 0, y: -28, scale: 0.98, duration: 0.45 }, index - 0.45);
+        tl.fromTo(
+            item,
+            { autoAlpha: 0, y: 40, scale: 0.98 },
+            { autoAlpha: 1, y: 0, scale: 1, duration: 0.55 },
+            index - 0.35
+        );
+    });
+
+    // Hold the last card briefly before unlock.
+    tl.to({}, { duration: 0.35 });
+
+    window.addEventListener('load', function () {
+        ScrollTrigger.refresh();
+    });
 })();
 </script>
 </body>
