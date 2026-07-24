@@ -209,40 +209,53 @@ class AdminDashboardController extends Controller
         $routineDoneCount = $routineItems->where('is_done', true)->count();
         $routineTotalCount = $routineItems->count();
 
-        $workPlanEntry = AdminWorkReport::query()
-            ->where('user_id', $userId)
-            ->whereDate('report_date', $workDate)
-            ->where('entry_type', 'plan')
-            ->first();
-        $workReportEntry = AdminWorkReport::query()
-            ->where('user_id', $userId)
-            ->whereDate('report_date', $workDate)
-            ->where('entry_type', 'report')
-            ->first();
-        $workReportHistory = AdminWorkReport::query()
-            ->where('user_id', $userId)
-            ->orderByDesc('report_date')
-            ->orderByDesc('id')
-            ->limit(60)
-            ->get();
+        $workPlanEntry = null;
+        $workReportEntry = null;
+        $workReportHistory = collect();
+        $weekEntries = collect();
+        $monthEntries = collect();
 
-        $weekStart = Carbon::parse($workWeekStart)->startOfWeek(Carbon::MONDAY)->startOfDay();
-        $weekEnd = $weekStart->copy()->endOfWeek(Carbon::SUNDAY)->endOfDay();
-        $weekEntries = AdminWorkReport::query()
-            ->where('user_id', $userId)
-            ->whereBetween('report_date', [$weekStart->toDateString(), $weekEnd->toDateString()])
-            ->orderBy('report_date')
-            ->orderBy('entry_type')
-            ->get();
+        try {
+            $workPlanEntry = AdminWorkReport::query()
+                ->where('user_id', $userId)
+                ->whereDate('report_date', $workDate)
+                ->where('entry_type', 'plan')
+                ->first();
+            $workReportEntry = AdminWorkReport::query()
+                ->where('user_id', $userId)
+                ->whereDate('report_date', $workDate)
+                ->where('entry_type', 'report')
+                ->first();
+            $workReportHistory = AdminWorkReport::query()
+                ->where('user_id', $userId)
+                ->orderByDesc('report_date')
+                ->orderByDesc('id')
+                ->limit(60)
+                ->get();
 
-        $monthStart = Carbon::create($workYear, $workMonth, 1)->startOfMonth()->startOfDay();
-        $monthEnd = $monthStart->copy()->endOfMonth()->endOfDay();
-        $monthEntries = AdminWorkReport::query()
-            ->where('user_id', $userId)
-            ->whereBetween('report_date', [$monthStart->toDateString(), $monthEnd->toDateString()])
-            ->orderBy('report_date')
-            ->orderBy('entry_type')
-            ->get();
+            $weekStart = Carbon::parse($workWeekStart)->startOfWeek(Carbon::MONDAY)->startOfDay();
+            $weekEnd = $weekStart->copy()->endOfWeek(Carbon::SUNDAY)->endOfDay();
+            $weekEntries = AdminWorkReport::query()
+                ->where('user_id', $userId)
+                ->whereBetween('report_date', [$weekStart->toDateString(), $weekEnd->toDateString()])
+                ->orderBy('report_date')
+                ->orderBy('entry_type')
+                ->get();
+
+            $monthStart = Carbon::create($workYear, $workMonth, 1)->startOfMonth()->startOfDay();
+            $monthEnd = $monthStart->copy()->endOfMonth()->endOfDay();
+            $monthEntries = AdminWorkReport::query()
+                ->where('user_id', $userId)
+                ->whereBetween('report_date', [$monthStart->toDateString(), $monthEnd->toDateString()])
+                ->orderBy('report_date')
+                ->orderBy('entry_type')
+                ->get();
+        } catch (\Throwable) {
+            $weekStart = Carbon::parse($workWeekStart)->startOfWeek(Carbon::MONDAY)->startOfDay();
+            $weekEnd = $weekStart->copy()->endOfWeek(Carbon::SUNDAY)->endOfDay();
+            $monthStart = Carbon::create($workYear, $workMonth, 1)->startOfMonth()->startOfDay();
+            $monthEnd = $monthStart->copy()->endOfMonth()->endOfDay();
+        }
 
         $weeklyWorkSummary = $this->buildWorkPeriodSummary(
             $weekEntries,
@@ -254,6 +267,29 @@ class AdminDashboardController extends Controller
             'Monthly Work Report',
             $monthStart->format('F Y')
         );
+
+        $workReportBootstrap = [
+            'date' => $workDate,
+            'plan' => [
+                'tasks' => $workPlanEntry?->tasks ?? [],
+                'employee_name' => $workPlanEntry?->employee_name,
+            ],
+            'report' => [
+                'tasks' => $workReportEntry?->tasks ?? [],
+                'extra_tasks' => $workReportEntry?->extra_tasks ?? [],
+                'employee_name' => $workReportEntry?->employee_name,
+            ],
+            'history' => $workReportHistory->map(static function (AdminWorkReport $entry): array {
+                return [
+                    'id' => $entry->id,
+                    'report_date' => optional($entry->report_date)->toDateString(),
+                    'entry_type' => $entry->entry_type,
+                    'employee_name' => $entry->employee_name,
+                    'tasks' => $entry->tasks ?? [],
+                    'extra_tasks' => $entry->extra_tasks ?? [],
+                ];
+            })->values()->all(),
+        ];
 
         return view('admin.dashboard', [
             'period' => $period,
@@ -303,6 +339,7 @@ class AdminDashboardController extends Controller
             'workPlanEntry' => $workPlanEntry,
             'workReportEntry' => $workReportEntry,
             'workReportHistory' => $workReportHistory,
+            'workReportBootstrap' => $workReportBootstrap,
             'weeklyWorkSummary' => $weeklyWorkSummary,
             'monthlyWorkSummary' => $monthlyWorkSummary,
         ]);

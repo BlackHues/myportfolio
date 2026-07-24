@@ -2727,30 +2727,6 @@
 @endforeach
 
 <script>
-    @php
-        $workReportBootstrap = [
-            'date' => $workDate ?? now()->toDateString(),
-            'plan' => [
-                'tasks' => optional($workPlanEntry ?? null)->tasks ?? [],
-                'employee_name' => optional($workPlanEntry ?? null)->employee_name,
-            ],
-            'report' => [
-                'tasks' => optional($workReportEntry ?? null)->tasks ?? [],
-                'extra_tasks' => optional($workReportEntry ?? null)->extra_tasks ?? [],
-                'employee_name' => optional($workReportEntry ?? null)->employee_name,
-            ],
-            'history' => ($workReportHistory ?? collect())->map(static function ($entry) {
-                return [
-                    'id' => $entry->id,
-                    'report_date' => optional($entry->report_date)->toDateString(),
-                    'entry_type' => $entry->entry_type,
-                    'employee_name' => $entry->employee_name,
-                    'tasks' => $entry->tasks ?? [],
-                    'extra_tasks' => $entry->extra_tasks ?? [],
-                ];
-            })->values(),
-        ];
-    @endphp
     const dashboardScrollKey = 'admin_dashboard_scroll_y';
     const dashboardPanelStorageKey = 'admin_dashboard_active_panel';
     const categoryTotals = @json($categoryTotals);
@@ -2760,7 +2736,7 @@
     const todoSyncUrl = @json(route('admin.todos.sync'));
     const csrfToken = @json(csrf_token());
     const workReportSaveUrl = @json(route('admin.work-reports.upsert'));
-    const workReportBootstrap = @json($workReportBootstrap);
+    const workReportBootstrap = {!! json_encode($workReportBootstrap) !!};
 
     const todoList = document.getElementById('todoList');
     const todoCompletedList = document.getElementById('todoCompletedList');
