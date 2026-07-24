@@ -864,27 +864,31 @@
         }
         .journey-viewport {
             position: relative;
-            min-height: min(58vh, 420px);
+            min-height: min(58vh, 440px);
+            isolation: isolate;
         }
         .journey-item {
             position: absolute;
             inset: 0;
+            z-index: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 1.4rem 1.5rem;
-            border-radius: 1.1rem;
-            border: 1px solid var(--glass-border);
-            background: rgba(8, 40, 36, 0.72);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
+            padding: 0.35rem 0.25rem 0.35rem 0.15rem;
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            box-shadow: none;
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
-            transform: translateY(36px) scale(0.98);
+            transform: translateY(28px);
+            will-change: opacity, transform;
         }
         .journey-item.is-active {
+            z-index: 3;
             pointer-events: auto;
         }
         .journey-item .year {
@@ -905,6 +909,15 @@
             font-size: 1rem;
             max-width: 48ch;
             line-height: 1.55;
+        }
+        .journey-item .journey-detail {
+            margin-top: 0.55rem;
+            color: rgba(170, 181, 177, 0.9);
+            font-size: 0.9rem;
+            max-width: 46ch;
+            line-height: 1.5;
+            border-left: 2px solid rgba(22, 227, 138, 0.45);
+            padding-left: 0.75rem;
         }
         .journey-meta {
             margin-top: 1.25rem;
@@ -1150,9 +1163,9 @@
     <a href="#about" class="nav-ico" data-tip="About" data-section="about"><i class="fa-solid fa-user"></i></a>
     <a href="#skills" class="nav-ico" data-tip="Skills" data-section="skills"><i class="fa-solid fa-code"></i></a>
     <a href="#projects" class="nav-ico" data-tip="Projects" data-section="projects"><i class="fa-solid fa-diagram-project"></i></a>
-    <a href="#journey" class="nav-ico" data-tip="Journey" data-section="journey"><i class="fa-solid fa-route"></i></a>
     <a href="#certs" class="nav-ico" data-tip="Certifications" data-section="certs"><i class="fa-solid fa-certificate"></i></a>
     <a href="#contact" class="nav-ico" data-tip="Contact" data-section="contact"><i class="fa-solid fa-envelope"></i></a>
+    <a href="#journey" class="nav-ico" data-tip="Journey" data-section="journey"><i class="fa-solid fa-route"></i></a>
     <div class="socials">
         <a href="https://www.linkedin.com/in/arjunkumar21/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
         <a href="https://wa.me/919995956770" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
@@ -1164,8 +1177,8 @@
     <a href="#top" class="is-active" data-section="top"><i class="fa-solid fa-house"></i></a>
     <a href="#skills" data-section="skills"><i class="fa-solid fa-code"></i></a>
     <a href="#projects" data-section="projects"><i class="fa-solid fa-diagram-project"></i></a>
-    <a href="#journey" data-section="journey"><i class="fa-solid fa-route"></i></a>
     <a href="#contact" data-section="contact"><i class="fa-solid fa-envelope"></i></a>
+    <a href="#journey" data-section="journey"><i class="fa-solid fa-route"></i></a>
 </nav>
 
 <div class="shell" id="top">
@@ -1398,54 +1411,6 @@
         </div>
     </section>
 
-    {{-- JOURNEY --}}
-    @php
-        $journeyZigzag = [
-            ['year' => 'Present', 'title' => 'Web Developer', 'text' => 'Full stack delivery with SEO, APIs, and maintainable product code.'],
-            ['year' => '2023', 'title' => 'MBA (CET)', 'text' => 'School of Management — business sense alongside engineering.'],
-            ['year' => '2023', 'title' => 'Web Developer', 'text' => 'Web products and client-facing builds across modern stacks.'],
-            ['year' => '2022', 'title' => 'Python Developer', 'text' => 'Backend scripting, APIs, and automation workflows.'],
-            ['year' => '2019', 'title' => 'Technician — I', 'text' => 'Field service and customer-facing technical work.'],
-            ['year' => '2016', 'title' => 'B.Tech Mechanical', 'text' => 'Younus Institute of Technology — analytical foundation before tech.'],
-            ['year' => '2012', 'title' => 'HSE — Computer Science', 'text' => 'Higher Secondary Education with Computer Science.'],
-            ['year' => '2010', 'title' => 'SSLC', 'text' => 'Secondary School Leaving Certificate.'],
-        ];
-        $journeyCount = count($journeyZigzag);
-    @endphp
-    <section class="section journey-pin-section" id="journey" data-journey-count="{{ $journeyCount }}">
-        <div class="wrap journey-pin-inner">
-            <p class="section-kicker reveal">Growth</p>
-            <h2 class="section-title reveal d1">My journey</h2>
-            <p class="section-lead reveal d2">Scroll to unlock each chapter — one step at a time.</p>
-
-            <div class="journey-stage">
-                <div class="journey-progress-track" aria-hidden="true">
-                    <div class="journey-progress-bar" id="journeyProgressBar"></div>
-                </div>
-                <div>
-                    <div class="journey-viewport" id="journeyViewport">
-                        @foreach ($journeyZigzag as $i => $step)
-                            <article class="journey-item" data-journey-index="{{ $i }}">
-                                <div class="year">{{ $step['year'] }}</div>
-                                <h3>{{ $step['title'] }}</h3>
-                                <p>{{ $step['text'] }}</p>
-                            </article>
-                        @endforeach
-                    </div>
-                    <div class="journey-meta">
-                        <div class="journey-counter"><span id="journeyCurrent">01</span> / {{ str_pad((string) $journeyCount, 2, '0', STR_PAD_LEFT) }}</div>
-                        <div class="journey-dots" id="journeyDots" aria-hidden="true">
-                            @foreach ($journeyZigzag as $i => $step)
-                                <span class="journey-dot {{ $i === 0 ? 'is-on' : '' }}" data-journey-dot="{{ $i }}"></span>
-                            @endforeach
-                        </div>
-                    </div>
-                    <p class="journey-hint">Scroll to continue the timeline</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
     {{-- CONTACT --}}
     <section class="section" id="contact">
         <div class="wrap">
@@ -1527,6 +1492,97 @@
                             <i class="fa-solid fa-paper-plane"></i> Send Message
                         </button>
                     </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- JOURNEY --}}
+    @php
+        $journeyZigzag = [
+            [
+                'year' => 'Present',
+                'title' => 'Web Developer',
+                'text' => 'Building scalable web and mobile products end to end — clean architecture, sharp UI, and SEO-ready delivery.',
+                'detail' => 'Focus: Laravel, React, APIs, and maintainable systems that ship with polish.',
+            ],
+            [
+                'year' => '2023',
+                'title' => 'MBA (CET)',
+                'text' => 'Completed MBA with a business lens on product, people, and growth decisions.',
+                'detail' => 'School of Management — pairing engineering craft with clearer strategy.',
+            ],
+            [
+                'year' => '2023',
+                'title' => 'Web Developer',
+                'text' => 'Shipped client-facing websites and product features across modern front-end and back-end stacks.',
+                'detail' => 'From layout systems to integrations — built for speed, clarity, and conversion.',
+            ],
+            [
+                'year' => '2022',
+                'title' => 'Python Developer',
+                'text' => 'Worked on backend scripting, service APIs, and automation that reduced manual effort.',
+                'detail' => 'Reliable scripts, cleaner data flow, and faster day-to-day engineering loops.',
+            ],
+            [
+                'year' => '2019',
+                'title' => 'Technician — I',
+                'text' => 'Hands-on technical support with real customers — diagnosing issues and closing them cleanly.',
+                'detail' => 'Strong foundation in process, ownership, and clear communication under pressure.',
+            ],
+            [
+                'year' => '2016',
+                'title' => 'B.Tech Mechanical',
+                'text' => 'Engineering degree that sharpened problem-solving before the move into software.',
+                'detail' => 'Younus Institute of Technology — systems thinking that still shapes how I build.',
+            ],
+            [
+                'year' => '2012',
+                'title' => 'HSE — Computer Science',
+                'text' => 'Higher Secondary with Computer Science — first structured step into code and digital systems.',
+                'detail' => 'Where curiosity for software became a clear academic path.',
+            ],
+            [
+                'year' => '2010',
+                'title' => 'SSLC',
+                'text' => 'Secondary School Leaving Certificate — the starting line of a long learning curve.',
+                'detail' => 'Discipline, fundamentals, and the habit of finishing what I start.',
+            ],
+        ];
+        $journeyCount = count($journeyZigzag);
+    @endphp
+    <section class="section journey-pin-section" id="journey" data-journey-count="{{ $journeyCount }}">
+        <div class="wrap journey-pin-inner">
+            <p class="section-kicker reveal">Growth</p>
+            <h2 class="section-title reveal d1">My journey</h2>
+            <p class="section-lead reveal d2">One chapter per scroll — neat, clear, and easy to follow.</p>
+
+            <div class="journey-stage">
+                <div class="journey-progress-track" aria-hidden="true">
+                    <div class="journey-progress-bar" id="journeyProgressBar"></div>
+                </div>
+                <div>
+                    <div class="journey-viewport" id="journeyViewport">
+                        @foreach ($journeyZigzag as $i => $step)
+                            <article class="journey-item" data-journey-index="{{ $i }}">
+                                <div class="year">{{ $step['year'] }}</div>
+                                <h3>{{ $step['title'] }}</h3>
+                                <p>{{ $step['text'] }}</p>
+                                @if (!empty($step['detail']))
+                                    <p class="journey-detail">{{ $step['detail'] }}</p>
+                                @endif
+                            </article>
+                        @endforeach
+                    </div>
+                    <div class="journey-meta">
+                        <div class="journey-counter"><span id="journeyCurrent">01</span> / {{ str_pad((string) $journeyCount, 2, '0', STR_PAD_LEFT) }}</div>
+                        <div class="journey-dots" id="journeyDots" aria-hidden="true">
+                            @foreach ($journeyZigzag as $i => $step)
+                                <span class="journey-dot {{ $i === 0 ? 'is-on' : '' }}" data-journey-dot="{{ $i }}"></span>
+                            @endforeach
+                        </div>
+                    </div>
+                    <p class="journey-hint">Scroll to continue the timeline</p>
                 </div>
             </div>
         </div>
@@ -1657,13 +1713,15 @@
     var dots = Array.prototype.slice.call(section.querySelectorAll('[data-journey-dot]'));
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var canGsap = window.gsap && window.ScrollTrigger && items.length && !reduced;
+    var currentIndex = -1;
+    var total = items.length;
 
     function pad(n) {
         return String(n).padStart(2, '0');
     }
 
-    function setActiveIndex(index) {
-        var safe = Math.max(0, Math.min(items.length - 1, index));
+    function updateChrome(index) {
+        var safe = Math.max(0, Math.min(total - 1, index));
         items.forEach(function (item, i) {
             item.classList.toggle('is-active', i === safe);
         });
@@ -1672,8 +1730,40 @@
         });
         if (counter) counter.textContent = pad(safe + 1);
         if (progressBar) {
-            progressBar.style.transform = 'scaleY(' + ((safe + 1) / items.length) + ')';
+            var scale = (safe + 1) / total;
+            if (window.gsap) {
+                gsap.set(progressBar, { scaleY: scale });
+            } else {
+                progressBar.style.transform = 'scaleY(' + scale + ')';
+            }
         }
+    }
+
+    function showOnly(index, animate) {
+        var safe = Math.max(0, Math.min(total - 1, index));
+        if (safe === currentIndex) {
+            updateChrome(safe);
+            return;
+        }
+        currentIndex = safe;
+
+        items.forEach(function (item, i) {
+            if (i === safe) {
+                if (animate) {
+                    gsap.fromTo(
+                        item,
+                        { autoAlpha: 0, y: 24 },
+                        { autoAlpha: 1, y: 0, duration: 0.28, ease: 'power2.out', overwrite: true, zIndex: 3 }
+                    );
+                } else {
+                    gsap.set(item, { autoAlpha: 1, y: 0, zIndex: 3 });
+                }
+            } else {
+                // Hide instantly so cards never overlap mid-scroll.
+                gsap.set(item, { autoAlpha: 0, y: 18, zIndex: 1 });
+            }
+        });
+        updateChrome(safe);
     }
 
     if (!canGsap) {
@@ -1682,52 +1772,47 @@
             item.style.opacity = '1';
             item.style.visibility = 'visible';
             item.style.transform = 'none';
+            item.style.position = 'relative';
         });
-        setActiveIndex(items.length - 1);
+        currentIndex = total - 1;
+        updateChrome(currentIndex);
         return;
     }
 
     gsap.registerPlugin(ScrollTrigger);
-    gsap.set(items, { autoAlpha: 0, y: 40, scale: 0.98 });
-    gsap.set(items[0], { autoAlpha: 1, y: 0, scale: 1 });
-    setActiveIndex(0);
+    gsap.set(items, { autoAlpha: 0, y: 24, zIndex: 1 });
+    showOnly(0, false);
 
-    var tl = gsap.timeline({
-        defaults: { ease: 'none' },
-        scrollTrigger: {
-            trigger: section,
-            start: 'top top',
-            end: function () {
-                return '+=' + Math.round(window.innerHeight * Math.max(items.length, 1) * 0.9);
+    ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',
+        end: function () {
+            // One full viewport of scroll distance per chapter.
+            return '+=' + Math.round(window.innerHeight * total);
+        },
+        pin: true,
+        scrub: 0.35,
+        snap: {
+            snapTo: function (value) {
+                if (total <= 1) return 0;
+                return Math.round(value * (total - 1)) / (total - 1);
             },
-            pin: true,
-            scrub: 0.65,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-            onUpdate: function (self) {
-                var idx = Math.round(self.progress * (items.length - 1));
-                setActiveIndex(idx);
-            },
-            onLeave: function () {
-                setActiveIndex(items.length - 1);
-            },
+            duration: { min: 0.08, max: 0.22 },
+            ease: 'power1.inOut',
+        },
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onUpdate: function (self) {
+            var idx = total <= 1 ? 0 : Math.round(self.progress * (total - 1));
+            showOnly(idx, true);
+        },
+        onLeave: function () {
+            showOnly(total - 1, false);
+        },
+        onLeaveBack: function () {
+            showOnly(0, false);
         },
     });
-
-    items.forEach(function (item, index) {
-        if (index === 0) return;
-        var prev = items[index - 1];
-        tl.to(prev, { autoAlpha: 0, y: -28, scale: 0.98, duration: 0.45 }, index - 0.45);
-        tl.fromTo(
-            item,
-            { autoAlpha: 0, y: 40, scale: 0.98 },
-            { autoAlpha: 1, y: 0, scale: 1, duration: 0.55 },
-            index - 0.35
-        );
-    });
-
-    // Hold the last card briefly before unlock.
-    tl.to({}, { duration: 0.35 });
 
     window.addEventListener('load', function () {
         ScrollTrigger.refresh();
