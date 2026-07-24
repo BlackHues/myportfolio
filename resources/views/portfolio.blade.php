@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full scroll-smooth">
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="Arjun Kumar H — Full Stack Developer & MBA graduate. Laravel, React, React Native, and polished product builds.">
     <meta name="keywords" content="Arjun Kumar H, Full Stack Developer, Laravel, React, React Native, MBA, web development">
     <meta name="robots" content="index,follow,max-image-preview:large">
@@ -964,16 +964,48 @@
             text-transform: uppercase;
             color: rgba(170, 181, 177, 0.75);
         }
+        .journey-controls {
+            display: none;
+            margin-top: 0.85rem;
+            gap: 0.55rem;
+        }
+        .journey-controls .journey-nav-btn {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            min-height: 42px;
+            border-radius: 999px;
+            border: 1px solid rgba(22, 227, 138, 0.35);
+            background: rgba(22, 227, 138, 0.1);
+            color: var(--green);
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .journey-controls .journey-nav-btn:disabled {
+            opacity: 0.35;
+            cursor: default;
+        }
+        @media (max-width: 900px) {
+            .journey-controls {
+                display: flex;
+            }
+            .journey-hint {
+                display: none;
+            }
+        }
         @media (max-width: 640px) {
             .journey-pin-inner {
-                padding: 3.5rem 0 2rem;
+                padding: 3.25rem 0 5.5rem;
             }
             .journey-stage,
             .journey-viewport {
-                min-height: min(52vh, 360px);
+                min-height: min(48vh, 340px);
             }
             .journey-item {
-                padding: 1.15rem 1.1rem;
+                padding: 0.2rem 0;
             }
         }
         .journey-no-gsap .journey-item {
@@ -990,6 +1022,9 @@
         }
         .journey-no-gsap .journey-progress-bar {
             transform: scaleY(1);
+        }
+        .journey-no-gsap .journey-controls {
+            display: none;
         }
 
         /* —— Contact —— */
@@ -1583,6 +1618,14 @@
                         </div>
                     </div>
                     <p class="journey-hint">Scroll to continue the timeline</p>
+                    <div class="journey-controls" aria-label="Journey controls">
+                        <button type="button" class="journey-nav-btn" id="journeyPrevBtn" aria-label="Previous chapter">
+                            <i class="fa-solid fa-arrow-left"></i> Prev
+                        </button>
+                        <button type="button" class="journey-nav-btn" id="journeyNextBtn" aria-label="Next chapter">
+                            Next <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1711,10 +1754,13 @@
     var progressBar = document.getElementById('journeyProgressBar');
     var counter = document.getElementById('journeyCurrent');
     var dots = Array.prototype.slice.call(section.querySelectorAll('[data-journey-dot]'));
+    var prevBtn = document.getElementById('journeyPrevBtn');
+    var nextBtn = document.getElementById('journeyNextBtn');
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var canGsap = window.gsap && window.ScrollTrigger && items.length && !reduced;
+    var canGsap = !!(window.gsap && window.ScrollTrigger && items.length);
     var currentIndex = -1;
     var total = items.length;
+    var trigger = null;
 
     function pad(n) {
         return String(n).padStart(2, '0');
@@ -1737,6 +1783,8 @@
                 progressBar.style.transform = 'scaleY(' + scale + ')';
             }
         }
+        if (prevBtn) prevBtn.disabled = safe <= 0;
+        if (nextBtn) nextBtn.disabled = safe >= total - 1;
     }
 
     function showOnly(index, animate) {
@@ -1746,24 +1794,41 @@
             return;
         }
         currentIndex = safe;
+        var shouldAnimate = animate && window.gsap && !reduced;
 
         items.forEach(function (item, i) {
             if (i === safe) {
-                if (animate) {
+                if (shouldAnimate) {
                     gsap.fromTo(
                         item,
-                        { autoAlpha: 0, y: 24 },
-                        { autoAlpha: 1, y: 0, duration: 0.28, ease: 'power2.out', overwrite: true, zIndex: 3 }
+                        { autoAlpha: 0, y: 20 },
+                        { autoAlpha: 1, y: 0, duration: 0.25, ease: 'power2.out', overwrite: true, zIndex: 3 }
                     );
-                } else {
+                } else if (window.gsap) {
                     gsap.set(item, { autoAlpha: 1, y: 0, zIndex: 3 });
+                } else {
+                    item.style.opacity = '1';
+                    item.style.visibility = 'visible';
+                    item.style.transform = 'none';
+                    item.style.zIndex = '3';
                 }
+            } else if (window.gsap) {
+                gsap.set(item, { autoAlpha: 0, y: 16, zIndex: 1 });
             } else {
-                // Hide instantly so cards never overlap mid-scroll.
-                gsap.set(item, { autoAlpha: 0, y: 18, zIndex: 1 });
+                item.style.opacity = '0';
+                item.style.visibility = 'hidden';
             }
         });
         updateChrome(safe);
+    }
+
+    function goToIndex(index) {
+        var safe = Math.max(0, Math.min(total - 1, index));
+        showOnly(safe, true);
+        if (!trigger) return;
+        var progress = total <= 1 ? 0 : safe / (total - 1);
+        var y = trigger.start + (trigger.end - trigger.start) * progress;
+        window.scrollTo(0, y);
     }
 
     if (!canGsap) {
@@ -1780,31 +1845,41 @@
     }
 
     gsap.registerPlugin(ScrollTrigger);
-    gsap.set(items, { autoAlpha: 0, y: 24, zIndex: 1 });
+    ScrollTrigger.config({ ignoreMobileResize: true });
+
+    var isTouch = ScrollTrigger.isTouch === 1
+        || window.matchMedia('(pointer: coarse)').matches
+        || window.matchMedia('(max-width: 900px)').matches;
+
+    gsap.set(items, { autoAlpha: 0, y: 16, zIndex: 1 });
     showOnly(0, false);
 
-    ScrollTrigger.create({
+    trigger = ScrollTrigger.create({
         trigger: section,
         start: 'top top',
         end: function () {
-            // One full viewport of scroll distance per chapter.
-            return '+=' + Math.round(window.innerHeight * total);
+            var factor = isTouch ? 1.2 : 1;
+            return '+=' + Math.round(window.innerHeight * total * factor);
         },
         pin: true,
-        scrub: 0.35,
-        snap: {
-            snapTo: function (value) {
-                if (total <= 1) return 0;
-                return Math.round(value * (total - 1)) / (total - 1);
+        pinSpacing: true,
+        scrub: isTouch ? true : 0.35,
+        snap: isTouch
+            ? false
+            : {
+                snapTo: function (value) {
+                    if (total <= 1) return 0;
+                    return Math.round(value * (total - 1)) / (total - 1);
+                },
+                duration: { min: 0.08, max: 0.22 },
+                ease: 'power1.inOut',
             },
-            duration: { min: 0.08, max: 0.22 },
-            ease: 'power1.inOut',
-        },
         anticipatePin: 1,
         invalidateOnRefresh: true,
+        fastScrollEnd: true,
         onUpdate: function (self) {
             var idx = total <= 1 ? 0 : Math.round(self.progress * (total - 1));
-            showOnly(idx, true);
+            showOnly(idx, !isTouch);
         },
         onLeave: function () {
             showOnly(total - 1, false);
@@ -1814,8 +1889,24 @@
         },
     });
 
-    window.addEventListener('load', function () {
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function () {
+            goToIndex(currentIndex - 1);
+        });
+    }
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function () {
+            goToIndex(currentIndex + 1);
+        });
+    }
+
+    function refreshJourney() {
         ScrollTrigger.refresh();
+    }
+
+    window.addEventListener('load', refreshJourney);
+    window.addEventListener('orientationchange', function () {
+        window.setTimeout(refreshJourney, 250);
     });
 })();
 </script>
