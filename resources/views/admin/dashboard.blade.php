@@ -491,6 +491,14 @@
         box-shadow: inset 0 0 12px rgba(22, 227, 138, 0.08);
         flex-shrink: 0;
     }
+    .work-report-task-num[data-bullet-style="report"] {
+        color: var(--gold);
+        background: rgba(255, 201, 74, 0.12);
+        border-color: rgba(255, 201, 74, 0.35);
+        box-shadow: inset 0 0 12px rgba(255, 201, 74, 0.08);
+        border-radius: 999px;
+        font-size: 0.55rem;
+    }
     .work-report-task-num i {
         line-height: 1;
     }
@@ -1539,13 +1547,13 @@
                         Clear
                     </button>
                 </div>
-                <p class="text-[11px] text-slate-500 mt-2">Type each task in its own line. Coder-style bullets are added automatically for WhatsApp.</p>
+                <p class="text-[11px] text-slate-500 mt-2">Plan uses → · Report uses ● for WhatsApp bullets.</p>
             </div>
 
             <div class="rounded-xl border border-emerald-100 bg-white p-4">
                 <div class="flex items-center justify-between gap-2 mb-2">
                     <p class="routine-time-label !mb-0">WhatsApp preview</p>
-                    <span class="text-[11px] text-slate-500">Terminal-style bullets</span>
+                    <span class="text-[11px] text-slate-500">→ plan · ● report</span>
                 </div>
                 <pre id="workReportPreview" class="work-report-preview" aria-live="polite"></pre>
                 <div class="mt-3 flex flex-wrap gap-2">
@@ -3004,17 +3012,14 @@
 
         const officeWhatsApp = '918606012194';
         let reportType = 'plan';
-        const coderIcons = [
-            'fa-solid fa-terminal',
-            'fa-solid fa-code',
-            'fa-solid fa-brackets-curly',
-            'fa-solid fa-laptop-code',
-            'fa-solid fa-bug',
-            'fa-brands fa-git-alt',
-            'fa-solid fa-microchip',
-            'fa-solid fa-file-code',
-        ];
-        const coderBullets = ['▸', '▹', '◆', '◇', '›', '→', '●', '○'];
+        const bulletByType = {
+            plan: '→',
+            report: '●',
+        };
+        const iconByType = {
+            plan: 'fa-solid fa-arrow-right',
+            report: 'fa-solid fa-circle',
+        };
 
         function formatDisplayDate(value) {
             if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
@@ -3032,6 +3037,14 @@
             return reportType === 'report' ? "Today's Work Report" : "Today's Work Plan";
         }
 
+        function activeBullet() {
+            return bulletByType[reportType] || '→';
+        }
+
+        function activeIcon() {
+            return iconByType[reportType] || iconByType.plan;
+        }
+
         function getTasks() {
             return Array.from(taskList.querySelectorAll('[data-work-report-task]'))
                 .map((input) => String(input.value || '').trim())
@@ -3046,11 +3059,11 @@
                 '',
             ];
             const tasks = getTasks();
+            const bullet = activeBullet();
             if (!tasks.length) {
-                lines.push(`${coderBullets[0]} `);
+                lines.push(`${bullet} `);
             } else {
-                tasks.forEach((task, index) => {
-                    const bullet = coderBullets[index % coderBullets.length];
+                tasks.forEach((task) => {
                     lines.push(`${bullet} ${task}`);
                 });
             }
@@ -3065,12 +3078,13 @@
         }
 
         function restyleTaskBullets() {
+            const icon = activeIcon();
             taskList.querySelectorAll('.work-report-task-row').forEach((row, index) => {
                 const badge = row.querySelector('.work-report-task-num');
                 if (badge) {
-                    const icon = coderIcons[index % coderIcons.length];
                     badge.innerHTML = `<i class="${icon}" aria-hidden="true"></i>`;
                     badge.title = `Task ${index + 1}`;
+                    badge.dataset.bulletStyle = reportType;
                 }
             });
         }
@@ -3079,7 +3093,7 @@
             const row = document.createElement('div');
             row.className = 'work-report-task-row';
             row.innerHTML = `
-                <span class="work-report-task-num" aria-hidden="true"><i class="fa-solid fa-terminal"></i></span>
+                <span class="work-report-task-num" aria-hidden="true"><i class="${activeIcon()}"></i></span>
                 <input type="text" data-work-report-task class="soft-input rounded-lg px-3 py-2 text-sm" placeholder="Describe the task..." value="">
                 <button type="button" class="card-action-btn card-action-btn-danger" data-remove-task title="Remove" aria-label="Remove">
                     <i class="fa-solid fa-trash text-[10px]"></i>
