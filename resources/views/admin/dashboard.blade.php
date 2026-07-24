@@ -1534,11 +1534,11 @@
                     </label>
                 </div>
 
-                <p class="routine-time-label">Tasks (manual)</p>
+                <p class="routine-time-label" id="workReportTasksLabel">Plan tasks</p>
                 <div id="workReportTaskList" class="space-y-2 mb-3"></div>
                 <div class="flex flex-wrap gap-2">
                     <button type="button" id="workReportAddTask" class="primary-btn px-3 py-2 text-xs">
-                        <i class="fa-solid fa-plus text-[10px]"></i> Add task
+                        <i class="fa-solid fa-plus text-[10px]"></i> <span id="workReportAddTaskLabel">Add task</span>
                     </button>
                     <button type="button" id="workReportLoadSample" class="card-action-btn px-3 py-2 text-xs" title="Load sample">
                         Load sample
@@ -1547,7 +1547,9 @@
                         Clear
                     </button>
                 </div>
-                <p class="text-[11px] text-slate-500 mt-2">Plan uses → · Report uses ● for WhatsApp bullets.</p>
+                <p class="text-[11px] text-slate-500 mt-2" id="workReportHint">
+                    Write morning plan with →. Switch to Report to auto-convert into completed ● lines; add extra tasks if any.
+                </p>
             </div>
 
             <div class="rounded-xl border border-emerald-100 bg-white p-4">
@@ -3005,13 +3007,21 @@
         const addBtn = document.getElementById('workReportAddTask');
         const clearBtn = document.getElementById('workReportClearTasks');
         const sampleBtn = document.getElementById('workReportLoadSample');
+        const tasksLabel = document.getElementById('workReportTasksLabel');
+        const addTaskLabel = document.getElementById('workReportAddTaskLabel');
+        const hintEl = document.getElementById('workReportHint');
         const typeButtons = Array.from(document.querySelectorAll('[data-work-report-type]'));
         if (!taskList || !preview || !dateInput || !nameInput || !whatsappLink) {
             return;
         }
 
         const officeWhatsApp = '918606012194';
+        const storageKey = 'admin-work-report-composer-v1';
         let reportType = 'plan';
+        let planTasks = [];
+        let reportCompleted = [];
+        let reportExtras = [];
+        let planFingerprint = '';
         const bulletByType = {
             plan: '→',
             report: '●',
@@ -3020,6 +3030,10 @@
             plan: 'fa-solid fa-arrow-right',
             report: 'fa-solid fa-circle',
         };
+
+        function tasksFingerprint(tasks) {
+            return (Array.isArray(tasks) ? tasks : []).map((item) => String(item || '').trim()).filter(Boolean).join('\n');
+        }
 
         function formatDisplayDate(value) {
             if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
@@ -3045,10 +3059,160 @@
             return iconByType[reportType] || iconByType.plan;
         }
 
+        function toCompletedSentence(raw) {
+            const text = String(raw || '').trim();
+            if (!text) {
+                return '';
+            }
+
+            if (/^(completed|finished|done|fixed|prepared|created|updated|added|implemented|built|worked|reviewed|designed|developed|checked|tested|deployed|wrote|made|did|set up|resolved|improved|optimized|refactored|integrated|configured|documented)\b/i.test(text)) {
+                return text.charAt(0).toUpperCase() + text.slice(1);
+            }
+
+            const rules = [
+                [/^fix(es|ing)?\b/i, 'Fixed'],
+                [/^prepare(d|s|ing)?\b/i, 'Prepared'],
+                [/^create(d|s|ing)?\b/i, 'Created'],
+                [/^update(d|s|ing)?\b/i, 'Updated'],
+                [/^add(ed|s|ing)?\b/i, 'Added'],
+                [/^implement(ed|s|ing)?\b/i, 'Implemented'],
+                [/^build(ing)?\b/i, 'Built'],
+                [/^built\b/i, 'Built'],
+                [/^work(ed|s|ing)? on\b/i, 'Worked on'],
+                [/^work(ed|s|ing)?\b/i, 'Worked on'],
+                [/^review(ed|s|ing)?\b/i, 'Reviewed'],
+                [/^design(ed|s|ing)?\b/i, 'Designed'],
+                [/^develop(ed|s|ing)?\b/i, 'Developed'],
+                [/^check(ed|s|ing)?\b/i, 'Checked'],
+                [/^test(ed|s|ing)?\b/i, 'Tested'],
+                [/^deploy(ed|s|ing)?\b/i, 'Deployed'],
+                [/^write\b/i, 'Wrote'],
+                [/^wrote\b/i, 'Wrote'],
+                [/^make\b/i, 'Made'],
+                [/^made\b/i, 'Made'],
+                [/^do\b/i, 'Did'],
+                [/^did\b/i, 'Did'],
+                [/^set[\s-]?up\b/i, 'Set up'],
+                [/^setup\b/i, 'Set up'],
+                [/^resolve(d|s|ing)?\b/i, 'Resolved'],
+                [/^improve(d|s|ing)?\b/i, 'Improved'],
+                [/^optimiz(e|ed|es|ing)\b/i, 'Optimized'],
+                [/^refactor(ed|s|ing)?\b/i, 'Refactored'],
+                [/^integrat(e|ed|es|ing)\b/i, 'Integrated'],
+                [/^configur(e|ed|es|ing)\b/i, 'Configured'],
+                [/^document(ed|s|ing)?\b/i, 'Documented'],
+                [/^complete(d|s|ing)?\b/i, 'Completed'],
+                [/^finish(ed|es|ing)?\b/i, 'Finished'],
+                [/^start(ed|s|ing)?\b/i, 'Started'],
+                [/^plan(ned|s|ning)?\b/i, 'Planned'],
+                [/^debug(ged|s|ging)?\b/i, 'Debugged'],
+                [/^research(ed|es|ing)?\b/i, 'Researched'],
+            ];
+
+            for (const [pattern, replacement] of rules) {
+                if (pattern.test(text)) {
+                    return text.replace(pattern, replacement);
+                }
+            }
+
+            const rest = text.charAt(0).toLowerCase() + text.slice(1);
+            return `Completed ${rest}`;
+        }
+
         function getTasks() {
             return Array.from(taskList.querySelectorAll('[data-work-report-task]'))
                 .map((input) => String(input.value || '').trim())
                 .filter(Boolean);
+        }
+
+        function getExtraTasksFromDom() {
+            return Array.from(taskList.querySelectorAll('.work-report-task-row'))
+                .filter((row) => row.dataset.fromPlan !== '1')
+                .map((row) => row.querySelector('[data-work-report-task]'))
+                .map((input) => String(input?.value || '').trim())
+                .filter(Boolean);
+        }
+
+        function getCompletedTasksFromDom() {
+            return Array.from(taskList.querySelectorAll('.work-report-task-row'))
+                .filter((row) => row.dataset.fromPlan === '1')
+                .map((row) => row.querySelector('[data-work-report-task]'))
+                .map((input) => String(input?.value || '').trim())
+                .filter(Boolean);
+        }
+
+        function ensureReportCompletedFromPlan(force = false) {
+            const nextFingerprint = tasksFingerprint(planTasks);
+            if (force || nextFingerprint !== planFingerprint || !reportCompleted.length) {
+                reportCompleted = planTasks.map(toCompletedSentence).filter(Boolean);
+                planFingerprint = nextFingerprint;
+            }
+        }
+
+        function persistState() {
+            try {
+                sessionStorage.setItem(storageKey, JSON.stringify({
+                    type: reportType,
+                    date: dateInput.value,
+                    name: nameInput.value,
+                    planTasks,
+                    reportCompleted,
+                    reportExtras,
+                    planFingerprint,
+                }));
+            } catch (error) {
+                // Ignore storage failures.
+            }
+        }
+
+        function restoreState() {
+            try {
+                const raw = sessionStorage.getItem(storageKey);
+                if (!raw) {
+                    return;
+                }
+                const saved = JSON.parse(raw);
+                if (!saved || typeof saved !== 'object') {
+                    return;
+                }
+                if (Array.isArray(saved.planTasks)) {
+                    planTasks = saved.planTasks.map((item) => String(item || '').trim()).filter(Boolean);
+                }
+                if (Array.isArray(saved.reportCompleted)) {
+                    reportCompleted = saved.reportCompleted.map((item) => String(item || '').trim()).filter(Boolean);
+                }
+                if (Array.isArray(saved.reportExtras)) {
+                    reportExtras = saved.reportExtras.map((item) => String(item || '').trim()).filter(Boolean);
+                }
+                if (typeof saved.planFingerprint === 'string') {
+                    planFingerprint = saved.planFingerprint;
+                }
+                if (saved.name) {
+                    nameInput.value = saved.name;
+                }
+                if (saved.type === 'report' || saved.type === 'plan') {
+                    reportType = saved.type;
+                }
+            } catch (error) {
+                // Ignore storage failures.
+            }
+        }
+
+        function syncLabels() {
+            if (tasksLabel) {
+                tasksLabel.textContent = reportType === 'report' ? 'Completed tasks (+ extras)' : 'Plan tasks';
+            }
+            if (addTaskLabel) {
+                addTaskLabel.textContent = reportType === 'report' ? 'Add extra task' : 'Add task';
+            }
+            if (hintEl) {
+                hintEl.textContent = reportType === 'report'
+                    ? 'Auto-filled from your plan as completed lines. Edit if needed, then add any extra tasks.'
+                    : 'Write morning plan with →. Switch to Report to auto-convert into completed ● lines; add extra tasks if any.';
+            }
+            typeButtons.forEach((btn) => {
+                btn.classList.toggle('is-active', btn.dataset.workReportType === reportType);
+            });
         }
 
         function buildMessage() {
@@ -3075,6 +3239,13 @@
             preview.textContent = message;
             whatsappLink.href = `https://wa.me/${officeWhatsApp}?text=${encodeURIComponent(message)}`;
             restyleTaskBullets();
+            if (reportType === 'plan') {
+                planTasks = getTasks();
+            } else {
+                reportCompleted = getCompletedTasksFromDom();
+                reportExtras = getExtraTasksFromDom();
+            }
+            persistState();
         }
 
         function restyleTaskBullets() {
@@ -3083,18 +3254,25 @@
                 const badge = row.querySelector('.work-report-task-num');
                 if (badge) {
                     badge.innerHTML = `<i class="${icon}" aria-hidden="true"></i>`;
-                    badge.title = `Task ${index + 1}`;
+                    badge.title = row.dataset.fromPlan === '1' ? `From plan #${index + 1}` : `Task ${index + 1}`;
                     badge.dataset.bulletStyle = reportType;
                 }
             });
         }
 
-        function addTaskRow(value = '') {
+        function addTaskRow(value = '', options = {}) {
+            const fromPlan = Boolean(options.fromPlan);
             const row = document.createElement('div');
             row.className = 'work-report-task-row';
+            if (fromPlan) {
+                row.dataset.fromPlan = '1';
+            }
+            const placeholder = reportType === 'report'
+                ? (fromPlan ? 'Completed task from plan...' : 'Extra completed task...')
+                : 'Describe the task...';
             row.innerHTML = `
                 <span class="work-report-task-num" aria-hidden="true"><i class="${activeIcon()}"></i></span>
-                <input type="text" data-work-report-task class="soft-input rounded-lg px-3 py-2 text-sm" placeholder="Describe the task..." value="">
+                <input type="text" data-work-report-task class="soft-input rounded-lg px-3 py-2 text-sm" placeholder="${placeholder}" value="">
                 <button type="button" class="card-action-btn card-action-btn-danger" data-remove-task title="Remove" aria-label="Remove">
                     <i class="fa-solid fa-trash text-[10px]"></i>
                 </button>
@@ -3106,7 +3284,7 @@
                 input.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter') {
                         event.preventDefault();
-                        addTaskRow('');
+                        addTaskRow('', { fromPlan: false });
                         const inputs = taskList.querySelectorAll('[data-work-report-task]');
                         inputs[inputs.length - 1]?.focus();
                     }
@@ -3115,7 +3293,7 @@
             row.querySelector('[data-remove-task]')?.addEventListener('click', () => {
                 row.remove();
                 if (!taskList.querySelector('.work-report-task-row')) {
-                    addTaskRow('');
+                    addTaskRow('', { fromPlan: false });
                 }
                 refreshPreview();
             });
@@ -3124,33 +3302,83 @@
             return input;
         }
 
+        function renderTaskList(tasks, options = {}) {
+            const fromPlan = Boolean(options.fromPlan);
+            taskList.innerHTML = '';
+            const list = Array.isArray(tasks) ? tasks.filter((item) => String(item || '').trim()) : [];
+            if (!list.length) {
+                addTaskRow('', { fromPlan: false });
+                return;
+            }
+            list.forEach((task) => addTaskRow(task, { fromPlan }));
+        }
+
+        function renderCurrentType() {
+            syncLabels();
+            if (reportType === 'plan') {
+                renderTaskList(planTasks, { fromPlan: false });
+            } else {
+                ensureReportCompletedFromPlan(false);
+                taskList.innerHTML = '';
+                reportCompleted.forEach((task) => addTaskRow(task, { fromPlan: true }));
+                reportExtras.forEach((task) => addTaskRow(task, { fromPlan: false }));
+                if (!reportCompleted.length && !reportExtras.length) {
+                    addTaskRow('', { fromPlan: false });
+                }
+            }
+            refreshPreview();
+        }
+
+        function switchType(nextType) {
+            const next = nextType === 'report' ? 'report' : 'plan';
+            if (next === reportType) {
+                return;
+            }
+            if (reportType === 'plan') {
+                planTasks = getTasks();
+            } else {
+                reportCompleted = getCompletedTasksFromDom();
+                reportExtras = getExtraTasksFromDom();
+            }
+            reportType = next;
+            renderCurrentType();
+        }
+
         typeButtons.forEach((button) => {
             button.addEventListener('click', () => {
-                reportType = button.dataset.workReportType === 'report' ? 'report' : 'plan';
-                typeButtons.forEach((btn) => btn.classList.toggle('is-active', btn === button));
-                refreshPreview();
+                switchType(button.dataset.workReportType === 'report' ? 'report' : 'plan');
             });
         });
 
         addBtn?.addEventListener('click', () => {
-            const input = addTaskRow('');
+            const input = addTaskRow('', { fromPlan: false });
             input?.focus();
         });
         clearBtn?.addEventListener('click', () => {
             taskList.innerHTML = '';
-            addTaskRow('');
+            addTaskRow('', { fromPlan: false });
+            if (reportType === 'plan') {
+                planTasks = [];
+                reportCompleted = [];
+                planFingerprint = '';
+            } else {
+                reportCompleted = [];
+                reportExtras = [];
+                planFingerprint = '';
+            }
             refreshPreview();
         });
         sampleBtn?.addEventListener('click', () => {
             reportType = 'plan';
-            typeButtons.forEach((btn) => {
-                btn.classList.toggle('is-active', btn.dataset.workReportType === 'plan');
-            });
-            taskList.innerHTML = '';
-            addTaskRow('E-commerce website our products and profile page layout and UI');
-            addTaskRow('Fix checkout flow and mobile responsiveness');
-            addTaskRow('Prepare daily status update for review');
-            refreshPreview();
+            planTasks = [
+                'E-commerce website our products and profile page layout and UI',
+                'Fix checkout flow and mobile responsiveness',
+                'Prepare daily status update for review',
+            ];
+            reportCompleted = [];
+            reportExtras = [];
+            planFingerprint = '';
+            renderCurrentType();
         });
         copyBtn?.addEventListener('click', async () => {
             const message = buildMessage();
@@ -3167,8 +3395,8 @@
         dateInput.addEventListener('change', refreshPreview);
         nameInput.addEventListener('input', refreshPreview);
 
-        addTaskRow('');
-        refreshPreview();
+        restoreState();
+        renderCurrentType();
     }
     bindDashboardPanelCards();
     if (hasValidationErrors) {
