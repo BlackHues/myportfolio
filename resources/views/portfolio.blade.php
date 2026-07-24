@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Arjun Kumar H — Full Stack Developer & MBA graduate. Laravel, React, React Native, and healthcare product builds.">
-    <meta name="keywords" content="Arjun Kumar H, Full Stack Developer, Laravel, React, React Native, MBA, healthcare software">
+    <meta name="description" content="Arjun Kumar H — Full Stack Developer & MBA graduate. Laravel, React, React Native, and polished product builds.">
+    <meta name="keywords" content="Arjun Kumar H, Full Stack Developer, Laravel, React, React Native, MBA, web development">
     <meta name="robots" content="index,follow,max-image-preview:large">
     <title>Arjun Kumar H · Full Stack Developer & MBA</title>
     <link rel="canonical" href="{{ url()->current() }}">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Arjun Kumar H · Full Stack Developer & MBA">
-    <meta property="og:description" content="Premium full stack builds — Laravel, React, React Native, healthcare products.">
+    <meta property="og:description" content="Premium full stack builds — Laravel, React, React Native, and polished product delivery.">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:image" content="{{ url('/images/arjun-hero-cutout.png') }}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Arjun Kumar H · Full Stack Developer & MBA">
-    <meta name="twitter:description" content="Premium full stack builds — Laravel, React, React Native, healthcare products.">
+    <meta name="twitter:description" content="Premium full stack builds — Laravel, React, React Native, and polished product delivery.">
     <meta name="twitter:image" content="{{ url('/images/arjun-hero-cutout.png') }}">
     <link rel="icon" type="image/svg+xml" href="/ak-favicon.svg?v=1">
     <script type="application/ld+json">
@@ -480,13 +480,24 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
-        .hero-portrait {
+        .hero-portrait-wrap {
             position: relative;
             z-index: 2;
             width: min(78%, 340px);
-            filter: grayscale(1) contrast(1.08) drop-shadow(0 30px 40px rgba(0,0,0,0.45));
-            mix-blend-mode: screen;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            overflow: hidden;
             animation: float-y 6s ease-in-out infinite;
+            box-shadow: 0 30px 40px rgba(0, 0, 0, 0.35);
+        }
+        .hero-portrait {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 18%;
+            filter: grayscale(1) contrast(1.08);
+            mix-blend-mode: screen;
         }
         @keyframes float-y {
             0%, 100% { transform: translateY(0); }
@@ -635,13 +646,29 @@
             box-shadow: 0 24px 50px rgba(0,0,0,0.35), 0 0 40px rgba(22,227,138,0.12);
         }
         .project-visual {
-            height: 150px;
+            height: 170px;
             position: relative;
             overflow: hidden;
             background:
                 radial-gradient(circle at 20% 30%, rgba(22,227,138,0.35), transparent 45%),
                 radial-gradient(circle at 80% 40%, rgba(255,201,74,0.22), transparent 40%),
                 linear-gradient(145deg, #0B2F2B, #051f1c);
+        }
+        .project-visual.has-image {
+            background: #041C1A;
+        }
+        .project-visual .project-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            display: block;
+            transition: transform 0.45s ease;
+        }
+        .project-card:hover .project-visual .project-image {
+            transform: scale(1.04);
         }
         .project-visual .mock {
             position: absolute;
@@ -727,10 +754,26 @@
         }
         .project-body .cta {
             align-self: flex-start;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
             font-size: 0.8rem;
             color: var(--green);
             text-decoration: none;
             font-weight: 600;
+            letter-spacing: 0.02em;
+            transition: gap 0.25s ease, color 0.25s ease;
+        }
+        .project-body .cta .cta-arrow {
+            display: inline-flex;
+            transition: transform 0.25s ease;
+        }
+        .project-body .cta:hover {
+            gap: 0.7rem;
+            color: #7dffb5;
+        }
+        .project-body .cta:hover .cta-arrow {
+            transform: translateX(4px);
         }
 
         /* —— Certs —— */
@@ -1027,11 +1070,10 @@
                     <span class="pill">Full Stack Developer</span>
                     <span class="pill">Laravel</span>
                     <span class="pill">React & React Native</span>
-                    <span class="pill">Healthcare Products</span>
                     <span class="pill">MBA Graduate</span>
                 </div>
                 <p class="hero-bio reveal d3">
-                    I design and ship scalable, user-friendly web and mobile products — from healthcare platforms to polished business sites — with clean architecture, sharp UI, and search-ready delivery.
+                    I design and ship scalable, user-friendly web and mobile products — from business platforms to polished brand sites — with clean architecture, sharp UI, and search-ready delivery.
                 </p>
                 <div class="hero-ctas reveal d4">
                     <a class="btn btn-primary" href="#contact"><i class="fa-solid fa-paper-plane"></i> Let's Connect</a>
@@ -1041,16 +1083,18 @@
             </div>
             <div class="hero-stage reveal d2">
                 <div class="hero-ring" aria-hidden="true"></div>
-                <img class="hero-portrait" src="{{ asset('images/arjun-hero-cutout.png') }}" alt="Arjun Kumar H" width="420" height="520" loading="eager">
+                <div class="hero-portrait-wrap">
+                    <img class="hero-portrait" src="{{ asset('images/arjun-hero-cutout.png') }}" alt="Arjun Kumar H" width="420" height="520" loading="eager">
+                </div>
                 <div class="float-card glass right">
                     <div class="ico"><i class="fa-solid fa-code"></i></div>
                     <strong>Product mindset</strong>
                     <p>Turning ideas into products with clean code and great UI.</p>
                 </div>
                 <div class="float-card glass left">
-                    <div class="ico"><i class="fa-solid fa-heart-pulse"></i></div>
-                    <strong>Healthcare builder</strong>
-                    <p>Staffing, clinic, and commerce systems that scale.</p>
+                    <div class="ico"><i class="fa-solid fa-globe"></i></div>
+                    <strong>Website craftsman</strong>
+                    <p>Fast, polished sites built to convert and grow.</p>
                 </div>
             </div>
         </div>
@@ -1075,11 +1119,6 @@
                 <div class="lbl">Technologies</div>
             </article>
             <article class="stat-card glass reveal d3">
-                <div class="ico"><i class="fa-solid fa-hospital"></i></div>
-                <div class="num">Health</div>
-                <div class="lbl">Care Products</div>
-            </article>
-            <article class="stat-card glass reveal d4">
                 <div class="ico"><i class="fa-solid fa-graduation-cap"></i></div>
                 <div class="num">MBA</div>
                 <div class="lbl">Graduate · CET</div>
@@ -1158,13 +1197,38 @@
         <div class="wrap">
             <p class="section-kicker reveal">Featured work</p>
             <h2 class="section-title reveal d1">Products & platforms</h2>
-            <p class="section-lead reveal d2">Healthcare systems, commerce, and brand sites — shipped with polish and performance.</p>
+            <p class="section-lead reveal d2">Business platforms, commerce, and brand sites — shipped with polish and performance.</p>
             <div class="project-rail">
                 @foreach (config('projects.featured', []) as $i => $project)
+                    @php
+                        $projectImage = $project['image'] ?? null;
+                        $projectImageUrl = null;
+                        if (is_string($projectImage) && $projectImage !== '') {
+                            if (str_starts_with($projectImage, 'http://') || str_starts_with($projectImage, 'https://')) {
+                                $projectImageUrl = $projectImage;
+                            } else {
+                                $relative = ltrim($projectImage, '/');
+                                if (is_file(public_path($relative))) {
+                                    $projectImageUrl = asset($relative);
+                                }
+                            }
+                        }
+                    @endphp
                     <article class="project-card glass reveal {{ $i > 0 ? 'd' . min($i, 3) : '' }}">
-                        <div class="project-visual">
+                        <div class="project-visual {{ $projectImageUrl ? 'has-image' : '' }}">
                             <span class="live-badge"><span class="pulse"></span> Live</span>
-                            <div class="mock" aria-hidden="true"></div>
+                            @if ($projectImageUrl)
+                                <img
+                                    class="project-image"
+                                    src="{{ $projectImageUrl }}"
+                                    alt="{{ $project['title'] }} preview"
+                                    loading="lazy"
+                                    width="640"
+                                    height="360"
+                                >
+                            @else
+                                <div class="mock" aria-hidden="true"></div>
+                            @endif
                         </div>
                         <div class="project-body">
                             <h3><a href="{{ $project['url'] }}" target="_blank" rel="noopener noreferrer">{{ $project['title'] }}</a></h3>
@@ -1174,7 +1238,10 @@
                                 <span class="pill">Responsive</span>
                                 <span class="pill">SEO</span>
                             </div>
-                            <a class="cta" href="{{ $project['url'] }}" target="_blank" rel="noopener noreferrer">{{ $project['cta_label'] ?? 'Visit site' }} <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                            <a class="cta" href="{{ $project['url'] }}" target="_blank" rel="noopener noreferrer">
+                                {{ $project['cta_label'] ?? 'View project' }}
+                                <span class="cta-arrow" aria-hidden="true">→</span>
+                            </a>
                         </div>
                     </article>
                 @endforeach
@@ -1225,19 +1292,21 @@
     {{-- JOURNEY --}}
     @php
         $journeyZigzag = [
-            ['year' => 'Present', 'title' => 'Web Developer', 'text' => 'Alverstone Healthcare Pvt Ltd — full stack delivery with SEO, APIs, and maintainable code.'],
+            ['year' => 'Present', 'title' => 'Web Developer', 'text' => 'Full stack delivery with SEO, APIs, and maintainable product code.'],
             ['year' => '2023', 'title' => 'MBA (CET)', 'text' => 'School of Management — business sense alongside engineering.'],
-            ['year' => '2023', 'title' => 'Web Developer', 'text' => 'Sairaworld Pvt Ltd — web products and client-facing builds.'],
-            ['year' => '2022', 'title' => 'Python Developer', 'text' => 'Futuro IT Solutions — backend scripting, APIs, and automation.'],
-            ['year' => '2019', 'title' => 'Technician — I', 'text' => 'IFB Home Appliances — field service and customer-facing work.'],
+            ['year' => '2023', 'title' => 'Web Developer', 'text' => 'Web products and client-facing builds across modern stacks.'],
+            ['year' => '2022', 'title' => 'Python Developer', 'text' => 'Backend scripting, APIs, and automation workflows.'],
+            ['year' => '2019', 'title' => 'Technician — I', 'text' => 'Field service and customer-facing technical work.'],
             ['year' => '2016', 'title' => 'B.Tech Mechanical', 'text' => 'Younus Institute of Technology — analytical foundation before tech.'],
+            ['year' => '2012', 'title' => 'HSE — Computer Science', 'text' => 'Higher Secondary Education with Computer Science.'],
+            ['year' => '2010', 'title' => 'SSLC', 'text' => 'Secondary School Leaving Certificate.'],
         ];
     @endphp
     <section class="section" id="journey">
         <div class="wrap">
             <p class="section-kicker reveal">Growth</p>
             <h2 class="section-title reveal d1">My journey</h2>
-            <p class="section-lead reveal d2">From engineering roots to shipping healthcare products — every chapter compounds.</p>
+            <p class="section-lead reveal d2">From engineering roots to shipping polished products — every chapter compounds.</p>
             <div class="journey-list">
                 @foreach ($journeyZigzag as $i => $step)
                     <article class="journey-item reveal {{ $i % 2 === 0 ? 'd1' : 'd2' }}">

@@ -502,6 +502,20 @@
     .work-report-task-num i {
         line-height: 1;
     }
+    .work-history-item {
+        background: rgba(255, 255, 255, 0.04);
+        border-color: var(--glass-border) !important;
+        color: var(--white);
+        transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+    .work-history-item:hover {
+        border-color: rgba(22, 227, 138, 0.45) !important;
+        transform: translateY(-1px);
+    }
+    .work-history-item.is-active {
+        border-color: rgba(22, 227, 138, 0.55) !important;
+        box-shadow: 0 0 0 1px rgba(22, 227, 138, 0.25);
+    }
     .work-report-preview {
         white-space: pre-wrap;
         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -1513,7 +1527,7 @@
         <div class="flex flex-wrap items-start justify-between gap-3">
             <div>
                 <h2 class="text-lg font-semibold">Office Work Report</h2>
-                <p class="text-sm text-slate-500 mt-1">Build today’s plan or report, then send to office WhatsApp <span class="font-semibold text-emerald-700">8606012194</span>.</p>
+                <p class="text-sm text-slate-500 mt-1">Save daily plan/report anytime. Build weekly and monthly summaries from saved days. WhatsApp: <span class="font-semibold text-emerald-700">8606012194</span>.</p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
                 <button type="button" class="work-report-type-btn is-active" data-work-report-type="plan">Today's Work Plan</button>
@@ -1526,11 +1540,11 @@
                 <div class="grid sm:grid-cols-2 gap-2 mb-3">
                     <label class="block">
                         <span class="routine-time-label">Date</span>
-                        <input type="date" id="workReportDate" value="{{ now()->toDateString() }}" class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+                        <input type="date" id="workReportDate" value="{{ $workDate ?? now()->toDateString() }}" class="soft-input rounded-lg px-3 py-2 text-sm w-full">
                     </label>
                     <label class="block">
                         <span class="routine-time-label">Name</span>
-                        <input type="text" id="workReportName" value="Arjun Kumar H" class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+                        <input type="text" id="workReportName" value="{{ old('employee_name', optional($workPlanEntry ?? $workReportEntry)->employee_name ?: 'Arjun Kumar H') }}" class="soft-input rounded-lg px-3 py-2 text-sm w-full">
                     </label>
                 </div>
 
@@ -1540,6 +1554,9 @@
                     <button type="button" id="workReportAddTask" class="primary-btn px-3 py-2 text-xs">
                         <i class="fa-solid fa-plus text-[10px]"></i> <span id="workReportAddTaskLabel">Add task</span>
                     </button>
+                    <button type="button" id="workReportSave" class="primary-btn success-btn px-3 py-2 text-xs">
+                        <i class="fa-solid fa-floppy-disk text-[10px]"></i> <span id="workReportSaveLabel">Save plan</span>
+                    </button>
                     <button type="button" id="workReportLoadSample" class="card-action-btn px-3 py-2 text-xs" title="Load sample">
                         Load sample
                     </button>
@@ -1548,8 +1565,9 @@
                     </button>
                 </div>
                 <p class="text-[11px] text-slate-500 mt-2" id="workReportHint">
-                    Write morning plan with →. Switch to Report to auto-convert into completed ● lines; add extra tasks if any.
+                    Write morning plan with →. Switch to Report to auto-convert into completed ● lines; add extra tasks if any. Save to keep forever.
                 </p>
+                <p id="workReportSaveStatus" class="text-[11px] text-emerald-700 mt-2 hidden"></p>
             </div>
 
             <div class="rounded-xl border border-emerald-100 bg-white p-4">
@@ -1564,6 +1582,108 @@
                     </button>
                     <a id="workReportWhatsApp" href="#" target="_blank" rel="noopener noreferrer" class="primary-btn success-btn px-4 py-2 text-sm inline-flex items-center gap-2">
                         <i class="fa-brands fa-whatsapp"></i> Send to office WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 grid lg:grid-cols-3 gap-4">
+            <div class="rounded-xl border border-emerald-100 bg-white p-4">
+                <div class="flex items-center justify-between gap-2 mb-2">
+                    <p class="routine-time-label !mb-0">Saved history</p>
+                    <span class="text-[11px] text-slate-500">Tap to load</span>
+                </div>
+                <div id="workReportHistoryList" class="space-y-2 max-h-72 overflow-auto pr-1">
+                    @forelse (($workReportHistory ?? collect()) as $entry)
+                        <button
+                            type="button"
+                            class="work-history-item w-full text-left rounded-lg border border-slate-200 px-3 py-2"
+                            data-work-history-id="{{ $entry->id }}"
+                            data-work-history-date="{{ optional($entry->report_date)->toDateString() }}"
+                            data-work-history-type="{{ $entry->entry_type }}"
+                            data-work-history-name="{{ $entry->employee_name }}"
+                            data-work-history-tasks='@json($entry->tasks ?? [])'
+                            data-work-history-extras='@json($entry->extra_tasks ?? [])'
+                        >
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-xs font-semibold">{{ optional($entry->report_date)->format('d/m/Y') }}</span>
+                                <span class="text-[10px] uppercase tracking-wide {{ $entry->entry_type === 'report' ? 'text-amber-300' : 'text-emerald-700' }}">{{ $entry->entry_type }}</span>
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-1 truncate">
+                                {{ collect(array_merge($entry->tasks ?? [], $entry->extra_tasks ?? []))->filter()->take(2)->implode(' · ') ?: 'Empty entry' }}
+                            </p>
+                        </button>
+                    @empty
+                        <p class="text-xs text-slate-500">No saved plans/reports yet. Save today’s plan to start history.</p>
+                    @endforelse
+                </div>
+            </div>
+
+            <div class="rounded-xl border border-emerald-100 bg-white p-4">
+                <p class="routine-time-label !mb-2">Weekly report</p>
+                <form method="get" action="{{ route('admin.dashboard') }}" class="grid grid-cols-[1fr_auto] gap-2 mb-3">
+                    <input type="hidden" name="period" value="{{ $period }}">
+                    <input type="hidden" name="year" value="{{ $selectedYear }}">
+                    <input type="hidden" name="month" value="{{ $selectedMonth }}">
+                    <input type="hidden" name="work_date" id="workWeekFormDate" value="{{ $workDate ?? now()->toDateString() }}">
+                    <input type="hidden" name="work_month" value="{{ $workMonth ?? now()->month }}">
+                    <input type="hidden" name="work_year" value="{{ $workYear ?? now()->year }}">
+                    <label class="block">
+                        <span class="routine-time-label">Week starting (Mon)</span>
+                        <input type="date" name="work_week_start" value="{{ $workWeekStart ?? now()->startOfWeek(\Carbon\Carbon::MONDAY)->toDateString() }}" class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+                    </label>
+                    <button type="submit" class="primary-btn px-3 py-2 text-xs self-end">Show</button>
+                </form>
+                <p class="text-[11px] text-slate-500 mb-2">
+                    {{ $weeklyWorkSummary['period_label'] ?? '' }} · {{ $weeklyWorkSummary['days_logged'] ?? 0 }} days · {{ $weeklyWorkSummary['tasks_completed'] ?? 0 }} tasks
+                </p>
+                <pre id="workWeeklyPreview" class="work-report-preview min-h-[10rem]">{{ $weeklyWorkSummary['message'] ?? '' }}</pre>
+                <div class="mt-3 flex flex-wrap gap-2">
+                    <button type="button" class="primary-btn px-3 py-2 text-xs" data-copy-target="workWeeklyPreview">
+                        <i class="fa-regular fa-copy text-[10px]"></i> Copy week
+                    </button>
+                    <a id="workWeeklyWhatsApp" href="https://wa.me/918606012194?text={{ urlencode($weeklyWorkSummary['message'] ?? '') }}" target="_blank" rel="noopener noreferrer" class="primary-btn success-btn px-3 py-2 text-xs inline-flex items-center gap-1">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                    </a>
+                </div>
+            </div>
+
+            <div class="rounded-xl border border-emerald-100 bg-white p-4">
+                <p class="routine-time-label !mb-2">Monthly report</p>
+                <form method="get" action="{{ route('admin.dashboard') }}" class="grid grid-cols-2 gap-2 mb-3">
+                    <input type="hidden" name="period" value="{{ $period }}">
+                    <input type="hidden" name="year" value="{{ $selectedYear }}">
+                    <input type="hidden" name="month" value="{{ $selectedMonth }}">
+                    <input type="hidden" name="work_date" id="workMonthFormDate" value="{{ $workDate ?? now()->toDateString() }}">
+                    <input type="hidden" name="work_week_start" value="{{ $workWeekStart ?? now()->startOfWeek(\Carbon\Carbon::MONDAY)->toDateString() }}">
+                    <label class="block">
+                        <span class="routine-time-label">Month</span>
+                        <select name="work_month" class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+                            @for ($m = 1; $m <= 12; $m++)
+                                <option value="{{ $m }}" @selected((int) ($workMonth ?? now()->month) === $m)>{{ \Carbon\Carbon::createFromDate(2020, $m, 1)->format('F') }}</option>
+                            @endfor
+                        </select>
+                    </label>
+                    <label class="block">
+                        <span class="routine-time-label">Year</span>
+                        <select name="work_year" class="soft-input rounded-lg px-3 py-2 text-sm w-full">
+                            @for ($y = now()->year; $y >= now()->year - 4; $y--)
+                                <option value="{{ $y }}" @selected((int) ($workYear ?? now()->year) === $y)>{{ $y }}</option>
+                            @endfor
+                        </select>
+                    </label>
+                    <button type="submit" class="primary-btn px-3 py-2 text-xs col-span-2">Generate monthly report</button>
+                </form>
+                <p class="text-[11px] text-slate-500 mb-2">
+                    {{ $monthlyWorkSummary['period_label'] ?? '' }} · {{ $monthlyWorkSummary['days_logged'] ?? 0 }} days · {{ $monthlyWorkSummary['tasks_completed'] ?? 0 }} tasks
+                </p>
+                <pre id="workMonthlyPreview" class="work-report-preview min-h-[10rem]">{{ $monthlyWorkSummary['message'] ?? '' }}</pre>
+                <div class="mt-3 flex flex-wrap gap-2">
+                    <button type="button" class="primary-btn px-3 py-2 text-xs" data-copy-target="workMonthlyPreview">
+                        <i class="fa-regular fa-copy text-[10px]"></i> Copy month
+                    </button>
+                    <a id="workMonthlyWhatsApp" href="https://wa.me/918606012194?text={{ urlencode($monthlyWorkSummary['message'] ?? '') }}" target="_blank" rel="noopener noreferrer" class="primary-btn success-btn px-3 py-2 text-xs inline-flex items-center gap-1">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp
                     </a>
                 </div>
             </div>
@@ -2615,6 +2735,29 @@
     const initialTodos = @json($todoItems ?? []);
     const todoSyncUrl = @json(route('admin.todos.sync'));
     const csrfToken = @json(csrf_token());
+    const workReportSaveUrl = @json(route('admin.work-reports.upsert'));
+    const workReportBootstrap = {
+        date: @json($workDate ?? now()->toDateString()),
+        plan: @json([
+            'tasks' => optional($workPlanEntry)->tasks ?? [],
+            'employee_name' => optional($workPlanEntry)->employee_name,
+        ]),
+        report: @json([
+            'tasks' => optional($workReportEntry)->tasks ?? [],
+            'extra_tasks' => optional($workReportEntry)->extra_tasks ?? [],
+            'employee_name' => optional($workReportEntry)->employee_name,
+        ]),
+        history: @json(($workReportHistory ?? collect())->map(static function ($entry) {
+            return [
+                'id' => $entry->id,
+                'report_date' => optional($entry->report_date)->toDateString(),
+                'entry_type' => $entry->entry_type,
+                'employee_name' => $entry->employee_name,
+                'tasks' => $entry->tasks ?? [],
+                'extra_tasks' => $entry->extra_tasks ?? [],
+            ];
+        })->values()),
+    };
 
     const todoList = document.getElementById('todoList');
     const todoCompletedList = document.getElementById('todoCompletedList');
@@ -3007,6 +3150,9 @@
         const addBtn = document.getElementById('workReportAddTask');
         const clearBtn = document.getElementById('workReportClearTasks');
         const sampleBtn = document.getElementById('workReportLoadSample');
+        const saveBtn = document.getElementById('workReportSave');
+        const saveLabel = document.getElementById('workReportSaveLabel');
+        const saveStatus = document.getElementById('workReportSaveStatus');
         const tasksLabel = document.getElementById('workReportTasksLabel');
         const addTaskLabel = document.getElementById('workReportAddTaskLabel');
         const hintEl = document.getElementById('workReportHint');
@@ -3022,6 +3168,7 @@
         let reportCompleted = [];
         let reportExtras = [];
         let planFingerprint = '';
+        let historyCache = Array.isArray(workReportBootstrap?.history) ? [...workReportBootstrap.history] : [];
         const bulletByType = {
             plan: '→',
             report: '●',
@@ -3149,6 +3296,157 @@
             }
         }
 
+        function showSaveStatus(message, isError = false) {
+            if (!saveStatus) {
+                return;
+            }
+            saveStatus.textContent = message;
+            saveStatus.classList.remove('hidden');
+            saveStatus.classList.toggle('text-rose-700', isError);
+            saveStatus.classList.toggle('text-emerald-700', !isError);
+            window.setTimeout(() => {
+                saveStatus.classList.add('hidden');
+            }, 2500);
+        }
+
+        function findHistoryEntry(date, type) {
+            return historyCache.find((entry) => entry.report_date === date && entry.entry_type === type) || null;
+        }
+
+        function upsertHistoryCache(entry) {
+            if (!entry?.report_date || !entry?.entry_type) {
+                return;
+            }
+            const idx = historyCache.findIndex((item) => item.report_date === entry.report_date && item.entry_type === entry.entry_type);
+            if (idx >= 0) {
+                historyCache[idx] = { ...historyCache[idx], ...entry };
+            } else {
+                historyCache.unshift(entry);
+            }
+            historyCache.sort((a, b) => String(b.report_date).localeCompare(String(a.report_date)));
+            renderHistoryList();
+        }
+
+        function renderHistoryList() {
+            const list = document.getElementById('workReportHistoryList');
+            if (!list) {
+                return;
+            }
+            if (!historyCache.length) {
+                list.innerHTML = '<p class="text-xs text-slate-500">No saved plans/reports yet. Save today’s plan to start history.</p>';
+                return;
+            }
+            list.innerHTML = historyCache.map((entry) => {
+                const previewText = [...(entry.tasks || []), ...(entry.extra_tasks || [])].filter(Boolean).slice(0, 2).join(' · ') || 'Empty entry';
+                const dateLabel = formatDisplayDate(entry.report_date);
+                const typeClass = entry.entry_type === 'report' ? 'text-amber-300' : 'text-emerald-700';
+                return `
+                    <button
+                        type="button"
+                        class="work-history-item w-full text-left rounded-lg border border-slate-200 px-3 py-2"
+                        data-work-history-date="${entry.report_date}"
+                        data-work-history-type="${entry.entry_type}"
+                    >
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs font-semibold">${dateLabel}</span>
+                            <span class="text-[10px] uppercase tracking-wide ${typeClass}">${entry.entry_type}</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 mt-1 truncate">${previewText.replace(/</g, '&lt;')}</p>
+                    </button>
+                `;
+            }).join('');
+
+            list.querySelectorAll('.work-history-item').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const date = button.dataset.workHistoryDate;
+                    const type = button.dataset.workHistoryType === 'report' ? 'report' : 'plan';
+                    loadEntryForDate(date, type);
+                    list.querySelectorAll('.work-history-item').forEach((item) => item.classList.remove('is-active'));
+                    button.classList.add('is-active');
+                });
+            });
+        }
+
+        function applyEntryToState(entry, type) {
+            if (!entry) {
+                if (type === 'plan') {
+                    planTasks = [];
+                } else {
+                    reportCompleted = [];
+                    reportExtras = [];
+                    planFingerprint = '';
+                }
+                return;
+            }
+            if (entry.employee_name) {
+                nameInput.value = entry.employee_name;
+            }
+            if (type === 'plan') {
+                planTasks = (entry.tasks || []).map((item) => String(item || '').trim()).filter(Boolean);
+            } else {
+                reportCompleted = (entry.tasks || []).map((item) => String(item || '').trim()).filter(Boolean);
+                reportExtras = (entry.extra_tasks || []).map((item) => String(item || '').trim()).filter(Boolean);
+                planFingerprint = tasksFingerprint(planTasks);
+            }
+        }
+
+        function loadEntryForDate(date, type = 'plan') {
+            dateInput.value = date;
+            const weekFormDate = document.getElementById('workWeekFormDate');
+            const monthFormDate = document.getElementById('workMonthFormDate');
+            if (weekFormDate) weekFormDate.value = date;
+            if (monthFormDate) monthFormDate.value = date;
+
+            const planEntry = findHistoryEntry(date, 'plan');
+            const reportEntry = findHistoryEntry(date, 'report');
+            applyEntryToState(planEntry, 'plan');
+            applyEntryToState(reportEntry, 'report');
+
+            if (!planEntry && !reportEntry) {
+                // Keep current draft if switching to empty date? Prefer clean load for selected date.
+                if (type === 'plan') {
+                    planTasks = [];
+                }
+                if (!reportEntry) {
+                    reportCompleted = [];
+                    reportExtras = [];
+                    planFingerprint = '';
+                }
+            }
+
+            reportType = type;
+            if (type === 'report' && !reportEntry && planTasks.length) {
+                ensureReportCompletedFromPlan(true);
+            }
+            renderCurrentType();
+        }
+
+        function loadFromServerBootstrap() {
+            const bootDate = workReportBootstrap?.date || dateInput.value;
+            dateInput.value = bootDate;
+            const plan = workReportBootstrap?.plan || {};
+            const report = workReportBootstrap?.report || {};
+            if (Array.isArray(plan.tasks) && plan.tasks.length) {
+                planTasks = plan.tasks.map((item) => String(item || '').trim()).filter(Boolean);
+            }
+            if (plan.employee_name) {
+                nameInput.value = plan.employee_name;
+            }
+            if (Array.isArray(report.tasks) && report.tasks.length) {
+                reportCompleted = report.tasks.map((item) => String(item || '').trim()).filter(Boolean);
+                reportExtras = (report.extra_tasks || []).map((item) => String(item || '').trim()).filter(Boolean);
+                planFingerprint = tasksFingerprint(planTasks);
+            }
+            if (report.employee_name && !plan.employee_name) {
+                nameInput.value = report.employee_name;
+            }
+            if (reportCompleted.length || reportExtras.length) {
+                reportType = 'report';
+            } else {
+                reportType = 'plan';
+            }
+        }
+
         function persistState() {
             try {
                 sessionStorage.setItem(storageKey, JSON.stringify({
@@ -3166,6 +3464,13 @@
         }
 
         function restoreState() {
+            // Server data wins for the selected work date; sessionStorage is draft fallback only.
+            const hasServerPlan = Array.isArray(workReportBootstrap?.plan?.tasks) && workReportBootstrap.plan.tasks.length > 0;
+            const hasServerReport = Array.isArray(workReportBootstrap?.report?.tasks) && workReportBootstrap.report.tasks.length > 0;
+            if (hasServerPlan || hasServerReport) {
+                loadFromServerBootstrap();
+                return;
+            }
             try {
                 const raw = sessionStorage.getItem(storageKey);
                 if (!raw) {
@@ -3173,6 +3478,9 @@
                 }
                 const saved = JSON.parse(raw);
                 if (!saved || typeof saved !== 'object') {
+                    return;
+                }
+                if (saved.date && saved.date !== dateInput.value) {
                     return;
                 }
                 if (Array.isArray(saved.planTasks)) {
@@ -3205,14 +3513,57 @@
             if (addTaskLabel) {
                 addTaskLabel.textContent = reportType === 'report' ? 'Add extra task' : 'Add task';
             }
+            if (saveLabel) {
+                saveLabel.textContent = reportType === 'report' ? 'Save report' : 'Save plan';
+            }
             if (hintEl) {
                 hintEl.textContent = reportType === 'report'
-                    ? 'Auto-filled from your plan as completed lines. Edit if needed, then add any extra tasks.'
-                    : 'Write morning plan with →. Switch to Report to auto-convert into completed ● lines; add extra tasks if any.';
+                    ? 'Auto-filled from your plan as completed lines. Edit if needed, add extras, then Save report.'
+                    : 'Write morning plan with →. Switch to Report to auto-convert into completed ● lines. Save to keep forever.';
             }
             typeButtons.forEach((btn) => {
                 btn.classList.toggle('is-active', btn.dataset.workReportType === reportType);
             });
+        }
+
+        async function saveCurrentEntry() {
+            refreshPreview();
+            const payload = {
+                report_date: dateInput.value,
+                entry_type: reportType,
+                employee_name: String(nameInput.value || 'Arjun Kumar H').trim() || 'Arjun Kumar H',
+                tasks: reportType === 'plan' ? planTasks : reportCompleted,
+                extra_tasks: reportType === 'report' ? reportExtras : [],
+                message_snapshot: buildMessage(),
+            };
+            if (saveBtn) {
+                saveBtn.disabled = true;
+            }
+            try {
+                const response = await fetch(workReportSaveUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: JSON.stringify(payload),
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data?.message || 'Save failed');
+                }
+                if (data.entry) {
+                    upsertHistoryCache(data.entry);
+                }
+                showSaveStatus(data.message || 'Saved.');
+            } catch (error) {
+                showSaveStatus(error?.message || 'Could not save. Try again.', true);
+            } finally {
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                }
+            }
         }
 
         function buildMessage() {
@@ -3354,6 +3705,9 @@
             const input = addTaskRow('', { fromPlan: false });
             input?.focus();
         });
+        saveBtn?.addEventListener('click', () => {
+            saveCurrentEntry();
+        });
         clearBtn?.addEventListener('click', () => {
             taskList.innerHTML = '';
             addTaskRow('', { fromPlan: false });
@@ -3392,8 +3746,70 @@
                 window.prompt('Copy this message:', message);
             }
         });
-        dateInput.addEventListener('change', refreshPreview);
+        document.querySelectorAll('[data-copy-target]').forEach((button) => {
+            button.addEventListener('click', async () => {
+                const targetId = button.getAttribute('data-copy-target');
+                const target = targetId ? document.getElementById(targetId) : null;
+                const message = target?.textContent || '';
+                if (!message.trim()) {
+                    return;
+                }
+                try {
+                    await navigator.clipboard.writeText(message);
+                    const original = button.innerHTML;
+                    button.textContent = 'Copied';
+                    window.setTimeout(() => {
+                        button.innerHTML = original;
+                    }, 1200);
+                } catch (error) {
+                    window.prompt('Copy this message:', message);
+                }
+            });
+        });
+        dateInput.addEventListener('change', () => {
+            const date = dateInput.value;
+            const planEntry = findHistoryEntry(date, 'plan');
+            const reportEntry = findHistoryEntry(date, 'report');
+            if (planEntry || reportEntry) {
+                loadEntryForDate(date, reportEntry ? 'report' : 'plan');
+            } else {
+                planTasks = [];
+                reportCompleted = [];
+                reportExtras = [];
+                planFingerprint = '';
+                reportType = 'plan';
+                renderCurrentType();
+            }
+        });
         nameInput.addEventListener('input', refreshPreview);
+
+        // Prefer history buttons already in DOM from Blade on first paint.
+        document.querySelectorAll('#workReportHistoryList .work-history-item').forEach((button) => {
+            button.addEventListener('click', () => {
+                const date = button.dataset.workHistoryDate;
+                const type = button.dataset.workHistoryType === 'report' ? 'report' : 'plan';
+                const tasksRaw = button.getAttribute('data-work-history-tasks');
+                const extrasRaw = button.getAttribute('data-work-history-extras');
+                const name = button.getAttribute('data-work-history-name') || '';
+                try {
+                    const tasks = JSON.parse(tasksRaw || '[]');
+                    const extras = JSON.parse(extrasRaw || '[]');
+                    upsertHistoryCache({
+                        id: Number(button.dataset.workHistoryId || 0),
+                        report_date: date,
+                        entry_type: type,
+                        employee_name: name,
+                        tasks,
+                        extra_tasks: extras,
+                    });
+                } catch (error) {
+                    // ignore parse errors
+                }
+                loadEntryForDate(date, type);
+                document.querySelectorAll('#workReportHistoryList .work-history-item').forEach((item) => item.classList.remove('is-active'));
+                button.classList.add('is-active');
+            });
+        });
 
         restoreState();
         renderCurrentType();
@@ -3415,7 +3831,11 @@
         scheduleDashboardScrollRestore(dashboardReturnState.y);
     } else {
         const storedPanel = sessionStorage.getItem(dashboardPanelStorageKey);
-        if (storedPanel === 'money' || storedPanel === 'fitness' || storedPanel === 'goal' || storedPanel === 'work') {
+        const urlParams = new URLSearchParams(window.location.search);
+        const openWorkFromQuery = urlParams.has('work_week_start') || urlParams.has('work_month') || urlParams.has('work_year') || urlParams.has('work_date');
+        if (openWorkFromQuery) {
+            setActiveDashboardPanel('work');
+        } else if (storedPanel === 'money' || storedPanel === 'fitness' || storedPanel === 'goal' || storedPanel === 'work') {
             setActiveDashboardPanel(storedPanel);
         }
     }

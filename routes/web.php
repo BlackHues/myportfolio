@@ -149,6 +149,12 @@ Route::patch('/admin/routine-items/{routineItem}/toggle', [AdminDashboardControl
 Route::delete('/admin/routine-items/{routineItem}', [AdminDashboardController::class, 'deleteRoutineItem'])
     ->middleware('admin.auth')
     ->name('admin.routine-items.delete');
+Route::put('/admin/work-reports', [AdminDashboardController::class, 'upsertWorkReport'])
+    ->middleware('admin.auth')
+    ->name('admin.work-reports.upsert');
+Route::delete('/admin/work-reports/{workReport}', [AdminDashboardController::class, 'deleteWorkReport'])
+    ->middleware('admin.auth')
+    ->name('admin.work-reports.delete');
 Route::get('/admin/dashboard-image/{slug}', [AdminDashboardController::class, 'dashboardImage'])
     ->middleware('admin.auth')
     ->name('admin.dashboard.image');

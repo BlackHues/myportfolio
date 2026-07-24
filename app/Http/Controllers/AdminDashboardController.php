@@ -11,6 +11,7 @@ use App\Models\DebitCard;
 use App\Models\AdminTodo;
 use App\Models\AdminDailyNote;
 use App\Models\AdminRoutineItem;
+use App\Models\AdminWorkReport;
 use App\Models\NetWorthEntry;
 use App\Models\SavingsAdjustment;
 use App\Models\StockHolding;
@@ -187,6 +188,13 @@ class AdminDashboardController extends Controller
 
         $userId = (int) $request->user()->id;
         $routineDate = $this->resolveRoutineDate((string) $request->query('routine_date', now()->toDateString()));
+        $workDate = $this->resolveRoutineDate((string) $request->query('work_date', now()->toDateString()));
+        $workMonth = max(1, min(12, (int) $request->query('work_month', now()->month)));
+        $workYear = (int) $request->query('work_year', now()->year);
+        $workWeekStart = $this->resolveRoutineDate(
+            (string) $request->query('work_week_start', now()->startOfWeek(Carbon::MONDAY)->toDateString())
+        );
+
         $dailyNote = AdminDailyNote::query()
             ->where('user_id', $userId)
             ->whereDate('note_date', $routineDate)
@@ -200,6 +208,52 @@ class AdminDashboardController extends Controller
             ->get();
         $routineDoneCount = $routineItems->where('is_done', true)->count();
         $routineTotalCount = $routineItems->count();
+
+        $workPlanEntry = AdminWorkReport::query()
+            ->where('user_id', $userId)
+            ->whereDate('report_date', $workDate)
+            ->where('entry_type', 'plan')
+            ->first();
+        $workReportEntry = AdminWorkReport::query()
+            ->where('user_id', $userId)
+            ->whereDate('report_date', $workDate)
+            ->where('entry_type', 'report')
+            ->first();
+        $workReportHistory = AdminWorkReport::query()
+            ->where('user_id', $userId)
+            ->orderByDesc('report_date')
+            ->orderByDesc('id')
+            ->limit(60)
+            ->get();
+
+        $weekStart = Carbon::parse($workWeekStart)->startOfWeek(Carbon::MONDAY)->startOfDay();
+        $weekEnd = $weekStart->copy()->endOfWeek(Carbon::SUNDAY)->endOfDay();
+        $weekEntries = AdminWorkReport::query()
+            ->where('user_id', $userId)
+            ->whereBetween('report_date', [$weekStart->toDateString(), $weekEnd->toDateString()])
+            ->orderBy('report_date')
+            ->orderBy('entry_type')
+            ->get();
+
+        $monthStart = Carbon::create($workYear, $workMonth, 1)->startOfMonth()->startOfDay();
+        $monthEnd = $monthStart->copy()->endOfMonth()->endOfDay();
+        $monthEntries = AdminWorkReport::query()
+            ->where('user_id', $userId)
+            ->whereBetween('report_date', [$monthStart->toDateString(), $monthEnd->toDateString()])
+            ->orderBy('report_date')
+            ->orderBy('entry_type')
+            ->get();
+
+        $weeklyWorkSummary = $this->buildWorkPeriodSummary(
+            $weekEntries,
+            'Weekly Work Report',
+            $weekStart->format('d/m/Y').' – '.$weekEnd->format('d/m/Y')
+        );
+        $monthlyWorkSummary = $this->buildWorkPeriodSummary(
+            $monthEntries,
+            'Monthly Work Report',
+            $monthStart->format('F Y')
+        );
 
         return view('admin.dashboard', [
             'period' => $period,
@@ -242,6 +296,15 @@ class AdminDashboardController extends Controller
             'routineItems' => $routineItems,
             'routineDoneCount' => $routineDoneCount,
             'routineTotalCount' => $routineTotalCount,
+            'workDate' => $workDate,
+            'workMonth' => $workMonth,
+            'workYear' => $workYear,
+            'workWeekStart' => $weekStart->toDateString(),
+            'workPlanEntry' => $workPlanEntry,
+            'workReportEntry' => $workReportEntry,
+            'workReportHistory' => $workReportHistory,
+            'weeklyWorkSummary' => $weeklyWorkSummary,
+            'monthlyWorkSummary' => $monthlyWorkSummary,
         ]);
     }
 
@@ -981,6 +1044,157 @@ class AdminDashboardController extends Controller
 
         return redirect($this->dashboardReturnUrl($request, $routineDate))
             ->with('status', 'Routine block removed.');
+    }
+
+    public function upsertWorkReport(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'report_date' => ['required', 'date'],
+            'entry_type' => ['required', 'in:plan,report'],
+            'employee_name' => ['required', 'string', 'max:120'],
+            'tasks' => ['array', 'max:100'],
+            'tasks.*' => ['nullable', 'string', 'max:1000'],
+            'extra_tasks' => ['nullable', 'array', 'max:100'],
+            'extra_tasks.*' => ['nullable', 'string', 'max:1000'],
+            'message_snapshot' => ['nullable', 'string', 'max:20000'],
+        ]);
+
+        $userId = (int) $request->user()->id;
+        $reportDate = $this->resolveRoutineDate($data['report_date']);
+        $tasks = collect($data['tasks'] ?? [])
+            ->map(static fn ($task) => trim((string) $task))
+            ->filter()
+            ->values()
+            ->all();
+        $extraTasks = collect($data['extra_tasks'] ?? [])
+            ->map(static fn ($task) => trim((string) $task))
+            ->filter()
+            ->values()
+            ->all();
+
+        $entry = AdminWorkReport::query()->updateOrCreate(
+            [
+                'user_id' => $userId,
+                'report_date' => $reportDate,
+                'entry_type' => $data['entry_type'],
+            ],
+            [
+                'employee_name' => trim($data['employee_name']),
+                'tasks' => $tasks,
+                'extra_tasks' => $data['entry_type'] === 'report' ? $extraTasks : [],
+                'message_snapshot' => $data['message_snapshot'] ?? null,
+            ],
+        );
+
+        return response()->json([
+            'ok' => true,
+            'message' => $data['entry_type'] === 'plan' ? 'Work plan saved.' : 'Work report saved.',
+            'entry' => [
+                'id' => $entry->id,
+                'report_date' => optional($entry->report_date)->toDateString(),
+                'entry_type' => $entry->entry_type,
+                'employee_name' => $entry->employee_name,
+                'tasks' => $entry->tasks ?? [],
+                'extra_tasks' => $entry->extra_tasks ?? [],
+                'message_snapshot' => $entry->message_snapshot,
+            ],
+        ]);
+    }
+
+    public function deleteWorkReport(Request $request, AdminWorkReport $workReport): JsonResponse
+    {
+        if ((int) $workReport->user_id !== (int) $request->user()->id) {
+            abort(403);
+        }
+
+        $workReport->delete();
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'Saved entry deleted.',
+        ]);
+    }
+
+    /**
+     * @param  \Illuminate\Support\Collection<int, AdminWorkReport>  $entries
+     * @return array{title: string, period_label: string, employee_name: string, days_logged: int, tasks_completed: int, message: string, days: array<int, array{date: string, label: string, tasks: array<int, string>}>}
+     */
+    private function buildWorkPeriodSummary($entries, string $title, string $periodLabel): array
+    {
+        $reportEntries = $entries
+            ->filter(static fn (AdminWorkReport $entry): bool => $entry->entry_type === 'report')
+            ->values();
+
+        if ($reportEntries->isEmpty()) {
+            $reportEntries = $entries
+                ->filter(static fn (AdminWorkReport $entry): bool => $entry->entry_type === 'plan')
+                ->values();
+        }
+
+        $employeeName = (string) optional($reportEntries->first())->employee_name
+            ?: (string) optional($entries->first())->employee_name
+            ?: 'Arjun Kumar H';
+
+        $days = [];
+        foreach ($reportEntries->groupBy(static fn (AdminWorkReport $entry) => optional($entry->report_date)->toDateString()) as $dateKey => $dayEntries) {
+            if (!$dateKey) {
+                continue;
+            }
+            $tasks = [];
+            foreach ($dayEntries as $entry) {
+                foreach ($entry->allTasks() as $task) {
+                    $tasks[] = $task;
+                }
+            }
+            $tasks = array_values(array_unique($tasks));
+            if ($tasks === []) {
+                continue;
+            }
+            $carbon = Carbon::parse($dateKey);
+            $days[] = [
+                'date' => $dateKey,
+                'label' => $carbon->format('d/m/Y'),
+                'weekday' => $carbon->format('l'),
+                'tasks' => $tasks,
+            ];
+        }
+
+        usort($days, static fn (array $a, array $b): int => strcmp($a['date'], $b['date']));
+
+        $tasksCompleted = collect($days)->sum(static fn (array $day): int => count($day['tasks']));
+        $lines = [
+            $title,
+            $periodLabel,
+            $employeeName,
+            '',
+            'Summary',
+            '• Working days logged: '.count($days),
+            '• Tasks completed: '.$tasksCompleted,
+            '',
+            'Completed work',
+        ];
+
+        if ($days === []) {
+            $lines[] = '• No saved work entries for this period yet.';
+        } else {
+            foreach ($days as $day) {
+                $lines[] = '';
+                $lines[] = $day['label'].' ('.$day['weekday'].')';
+                foreach ($day['tasks'] as $task) {
+                    $lines[] = '● '.$task;
+                }
+            }
+        }
+
+        return [
+            'title' => $title,
+            'period_label' => $periodLabel,
+            'employee_name' => $employeeName,
+            'days_logged' => count($days),
+            'tasks_completed' => $tasksCompleted,
+            'message' => implode("\n", $lines),
+            'days' => $days,
+        ];
     }
 
     public function updateCashBalance(Request $request): RedirectResponse

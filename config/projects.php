@@ -9,12 +9,14 @@ return [
             'url' => 'https://www.bestwayfc.com/',
             'region_badge' => 'Corporate · UAE',
             'description' => 'Premium aluminium and glazing facade contractor serving the UAE construction market.',
+            // Put file in public/images/projects/ then set path below (or use a full https URL)
+            'image' => 'images/projects/bestwayfc.png',
             'highlights' => [
                 'Showcases curtainwall, glass facades, cladding, doors & windows, and skylights with clear product storytelling.',
                 'Structured sections for projects, divisions, careers, and enquiries so visitors can explore and get in touch easily.',
                 'Responsive, image-led layout that works smoothly on mobile and desktop.',
             ],
-            'cta_label' => 'Visit bestwayfc.com',
+            'cta_label' => 'View project',
             'ui' => [
                 // Fallback if live URL palette cannot be fetched (cached 24h from site)
                 'primary_hex' => '#047857',
@@ -33,13 +35,14 @@ return [
             'title' => 'Maha Vidhya Charitable Trust',
             'url' => 'https://mahavidhyacharitabletrust.org.in/',
             'region_badge' => 'NGO · India',
-            'description' => 'Non-profit focused on education, healthcare, and community support for underprivileged families.',
+            'description' => 'Non-profit focused on education and community support for underprivileged families.',
+            'image' => 'images/projects/maha-vidhya.png',
             'highlights' => [
-                'Explains programmes in education, health, social welfare, and relief with simple navigation for donors.',
+                'Explains programmes in education, social welfare, and relief with simple navigation for donors.',
                 'Clear paths to donate, volunteer, view leadership, gallery, and contact—including WhatsApp-friendly reach.',
                 'Warm, accessible visuals and typography that build trust with supporters.',
             ],
-            'cta_label' => 'Visit mahavidhyacharitabletrust.org.in',
+            'cta_label' => 'View project',
             'ui' => [
                 // Fallback if live URL palette cannot be fetched
                 'primary_hex' => '#6d28d9',
